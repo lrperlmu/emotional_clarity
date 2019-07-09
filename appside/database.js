@@ -18,10 +18,9 @@ function Database() {
   Database.readyCallback = null;
 
   /* 
-  * Firebase configuration information otbained from the Firebase console
+  * Firebase configuration information obtained from the Firebase console
   */
-  Database.config = {
-  };
+  Database.config = DATABASE_CONFIG;
 
   this.database= Database.config["databaseURL"];
   this.app = firebase.initializeApp(Database.config);
