@@ -21,13 +21,6 @@ function Database() {
   * Firebase configuration information otbained from the Firebase console
   */
   Database.config = {
-    apiKey: "AIzaSyBJB60vHefTp2wAH749dLLWFEW7vM3MtPE",
-    authDomain: "emotional-clarity.firebaseapp.com",
-    databaseURL: "https://emotional-clarity.firebaseio.com",
-    projectId: "emotional-clarity",
-    storageBucket: "",
-    messagingSenderId: "650523646400",
-    appId: "1:650523646400:web:1c1f15dfecdf4a0d"
   };
 
   this.database= Database.config["databaseURL"];
