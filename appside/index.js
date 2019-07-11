@@ -1,69 +1,113 @@
 "use strict";
 
+
 let data = KNOWLEDGEBASE_DATA;
 console.log(data);
 
 // display the anger data sheet
 // first, filter data to get only anger bullets
 
-let anger_data = [];
-for (let item of data) {
-    if (item.Emotion === 'Anger') {
-        anger_data.push(item);
-    }
+let emotions = ['Anger', 'Disgust', 'Envy', 'Fear', 'Guilt', 'Jealousy', 'Sadness', 'Shame']
+let selected_emotion = 'Anger';
+
+// bread crumbs link to other emotions
+let crumbs = $('#crumbs')[0];
+
+for (let emotion of emotions) {
+    // create a link for that emotion
+    // let emotion_button = document.createElement('button');
+    // emotion_button.appendChild(document.createTextNode(emotion));
+    // crumbs.appendChild(emotion_button);
+
+    let emotion_link = document.createElement('a');
+    let emotion_href = document.createAttribute('href');
+    emotion_href.value = '#' + emotion;
+    emotion_link.setAttributeNode(emotion_href);
+    emotion_link.appendChild(document.createTextNode(emotion));
+    let e_link_class = document.createAttribute('class');
+    e_link_class.value = 'emotion_link';
+    emotion_link.setAttributeNode(e_link_class);
+
+    // when selected
+    emotion_link.addEventListener('click', function() { 
+        click_emotion(emotion);
+    });
+
+    crumbs.appendChild(emotion_link);
+    crumbs.appendChild(document.createTextNode('\xa0\xa0\xa0'));
 }
 
-console.log(anger_data);
+click_emotion(selected_emotion);
 
-// get the category names
-let categories = [];
-for (let item of anger_data) {
-    let item_cat = item.Category;
-    if (!categories.includes(item_cat)) {
-        categories.push(item_cat);
-    }
-}
+function click_emotion(selected_emotion) {
 
-let acc = document.createElement('div');
-let acc_id = document.createAttribute('id');
-acc_id.value = 'stmt-accordion';
-acc.setAttributeNode(acc_id);
-document.body.appendChild(acc);
+    // un-bold all the others, and make this one bold
+    $('.emotion_link').css('font-weight', 'normal');
+    $('a[href^="#' + selected_emotion + '"]').css('font-weight', 'bold');
 
-// create dom elements for the headers
-for (let cat of categories) {
-    let cat_header = document.createElement('h3');
-    cat_header.appendChild(document.createTextNode(cat));
-    acc.appendChild(cat_header);
-
-    // create dom elements (unordered list) for the statements in this header
-    let cat_body = document.createElement('div');
-    acc.appendChild(cat_body);
-    let cat_list = document.createElement('ul');
-    cat_body.appendChild(cat_list);
-    let cat_body_class = document.createAttribute('class');
-    cat_body_class.value = 'cat_body';
-    cat_body.setAttributeNode(cat_body_class);
-    
-    
-    for (let item of anger_data) {
-        if (item.Category === cat) {
-            let statement = document.createElement('li');
-            statement.appendChild(document.createTextNode(item.Statement));
-            cat_list.appendChild(statement);
+    let emotion_data = [];
+    for (let item of data) {
+        if (item.Emotion === selected_emotion) {
+            emotion_data.push(item);
         }
     }
 
+    let title = $('#title')[0];
+    title.innerHTML = '';
+    title.appendChild(document.createTextNode(selected_emotion));
+
+    // get the category names
+    let categories = [];
+    for (let item of emotion_data) {
+        let item_cat = item.Category;
+        if (!categories.includes(item_cat)) {
+            categories.push(item_cat);
+        }
+    }
+
+    // eew why does it take 3 lines of code to create an attribute and set it!?
+    // can we do it more easily?
+
+    // create the accordion dom element
+    let acc = $('#stmt-accordion')[0];
+    let new_acc = document.createElement('div');
+    let new_acc_id = document.createAttribute('id');
+    new_acc_id.value = 'stmt-accordion';
+    new_acc.setAttributeNode(new_acc_id);
+    acc.replaceWith(new_acc);
+    acc = new_acc;
+
+    // clear existing elements
+    acc.innerHTML = '';
+
+    // create dom elements for the headers and statements
+    for (let cat of categories) {
+        let cat_header = document.createElement('h3');
+        cat_header.appendChild(document.createTextNode(cat));
+        acc.appendChild(cat_header);
+
+        // create dom elements (unordered list) for the statements in this header
+        let cat_body = document.createElement('div');
+        acc.appendChild(cat_body);
+        let cat_list = document.createElement('ul');
+        cat_body.appendChild(cat_list);
+        let cat_body_class = document.createAttribute('class');
+        cat_body_class.value = 'cat_body';
+        cat_body.setAttributeNode(cat_body_class);
+        
+        // populate with statements
+        for (let item of emotion_data) {
+            if (item.Category === cat) {
+                let statement = document.createElement('li');
+                statement.appendChild(document.createTextNode(item.Statement));
+                cat_list.appendChild(statement);
+            }
+        }
+    }
+
+    $('#stmt-accordion').accordion();
+
 }
-
-
-$('#stmt-accordion').accordion();
-
-// create an accordion for the dom elements we've just created
-
-// Display it in the dom with headers for categories and list items under them for statements
-
-
 
 
 
