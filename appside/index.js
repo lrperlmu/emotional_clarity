@@ -4,40 +4,35 @@
 let data = KNOWLEDGEBASE_DATA;
 console.log(data);
 
-// display the anger data sheet
-// first, filter data to get only anger bullets
-
 let emotions = ['Anger', 'Disgust', 'Envy', 'Fear', 'Guilt', 'Jealousy', 'Sadness', 'Shame']
 let selected_emotion = 'Anger';
 
-// bread crumbs link to other emotions
-let crumbs = $('#crumbs')[0];
+$(document).ready( function() {
+    // bread crumbs link to other emotions
+    let crumbs = $('#crumbs')[0];
 
-for (let emotion of emotions) {
-    // create a link for that emotion
-    // let emotion_button = document.createElement('button');
-    // emotion_button.appendChild(document.createTextNode(emotion));
-    // crumbs.appendChild(emotion_button);
+    for (let emotion of emotions) {
+        // create a link for that emotion
+        let emotion_link = document.createElement('a');
+        let emotion_href = document.createAttribute('href');
+        emotion_href.value = '#' + emotion;
+        emotion_link.setAttributeNode(emotion_href);
+        emotion_link.appendChild(document.createTextNode(emotion));
+        let e_link_class = document.createAttribute('class');
+        e_link_class.value = 'emotion_link';
+        emotion_link.setAttributeNode(e_link_class);
 
-    let emotion_link = document.createElement('a');
-    let emotion_href = document.createAttribute('href');
-    emotion_href.value = '#' + emotion;
-    emotion_link.setAttributeNode(emotion_href);
-    emotion_link.appendChild(document.createTextNode(emotion));
-    let e_link_class = document.createAttribute('class');
-    e_link_class.value = 'emotion_link';
-    emotion_link.setAttributeNode(e_link_class);
+        // when selected
+        emotion_link.addEventListener('click', function() { 
+            click_emotion(emotion);
+        });
 
-    // when selected
-    emotion_link.addEventListener('click', function() { 
-        click_emotion(emotion);
-    });
+        crumbs.appendChild(emotion_link);
+        crumbs.appendChild(document.createTextNode('\xa0\xa0\xa0'));
+    }
 
-    crumbs.appendChild(emotion_link);
-    crumbs.appendChild(document.createTextNode('\xa0\xa0\xa0'));
-}
-
-click_emotion(selected_emotion);
+    click_emotion(selected_emotion);
+});
 
 function click_emotion(selected_emotion) {
 
