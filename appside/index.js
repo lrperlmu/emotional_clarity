@@ -14,13 +14,9 @@ $(document).ready( function() {
     for (let emotion of emotions) {
         // create a link for that emotion
         let emotion_link = document.createElement('a');
-        let emotion_href = document.createAttribute('href');
-        emotion_href.value = '#' + emotion;
-        emotion_link.setAttributeNode(emotion_href);
+        $(emotion_link).attr('href', '#' + emotion);
         emotion_link.appendChild(document.createTextNode(emotion));
-        let e_link_class = document.createAttribute('class');
-        e_link_class.value = 'emotion_link';
-        emotion_link.setAttributeNode(e_link_class);
+        $(emotion_link).attr('class', 'emotion_link');
 
         // when selected
         emotion_link.addEventListener('click', function() { 
@@ -60,15 +56,10 @@ function click_emotion(selected_emotion) {
         }
     }
 
-    // eew why does it take 3 lines of code to create an attribute and set it!?
-    // can we do it more easily?
-
     // create the accordion dom element
     let acc = $('#stmt-accordion')[0];
     let new_acc = document.createElement('div');
-    let new_acc_id = document.createAttribute('id');
-    new_acc_id.value = 'stmt-accordion';
-    new_acc.setAttributeNode(new_acc_id);
+    $(new_acc).attr('id', 'stmt-accordion');
     acc.replaceWith(new_acc);
     acc = new_acc;
 
@@ -86,9 +77,7 @@ function click_emotion(selected_emotion) {
         acc.appendChild(cat_body);
         let cat_list = document.createElement('ul');
         cat_body.appendChild(cat_list);
-        let cat_body_class = document.createAttribute('class');
-        cat_body_class.value = 'cat_body';
-        cat_body.setAttributeNode(cat_body_class);
+        $(cat_body).attr('class', 'cat_body');
         
         // populate with statements
         for (let item of emotion_data) {
