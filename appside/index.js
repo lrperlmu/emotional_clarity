@@ -93,6 +93,3 @@ function click_emotion(selected_emotion) {
 
 }
 
-
-
-
