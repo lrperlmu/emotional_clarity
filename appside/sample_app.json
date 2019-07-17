@@ -1,0 +1,62 @@
+
+{
+    'intro': {
+        'title': 'Spec Testing app!',
+        'text': 'Look at this lovely app, it demonstrates all the stuff in our spec :)',
+        'graphic': 'https://kittentoob.com/wp-content/uploads/2018/07/Purrito-750x392.jpg',
+    },
+
+    'body': {
+
+        // use actual classes for this.
+        // make sure this definition matches with the way classes actually serialize
+        0: {
+            // specify which template to use.
+            // depending on what this is, there will be different parameters
+            'template': 'statements',
+            'title': 'Kittens',
+            'question': 'Which is the best part of a kitten?',
+            'statements': [
+                'its purr',
+                'its floof',
+                'its bark',
+            ],
+        },
+        1: {
+            'template': 'bodymap_statements',
+            'title': 'Body map example slide',
+            'question': 'What is your favorite body part?',
+            // app needs to specify the graphic.
+            'statements': [
+                'Head',
+                'Shoulders',
+                'Knees',
+                'Toes',
+            ],
+        },
+        2: {
+            'template': 'bodymap_color',
+            'title': 'Bodymap coloring activity',
+            'question': 'Color in the parts that you have exercised most recently',
+            // graphic is built in
+        },
+        3: {
+            'template': 'words',
+            'title': 'Word selection example',
+            'question': 'Which words are palindromes?',
+            'words': [
+                'pop',
+                'purr',
+                'kittens',
+                'puppies',
+            ],
+
+        },
+       
+    },
+
+    'summary': {},
+}
+
+
+
