@@ -1,5 +1,3 @@
-
-
 // for displaying jquery collections in the chrome console as expandable dom trees
 // copy not guaranteed to be deep -- manipulating contents might affect dom
 function disp(param) {
