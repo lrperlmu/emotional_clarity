@@ -9,24 +9,32 @@ let selected_emotion = 'Anger';
 
 $(document).ready( function() {
     // bread crumbs link to other emotions
-    let crumbs = $('#crumbs')[0];
+    let crumbs = $('#crumbs');
 
     for (let emotion of emotions) {
         // create a link for that emotion
-        let emotion_link = document.createElement('a');
-        $(emotion_link).attr('href', '#' + emotion);
-        emotion_link.appendChild(document.createTextNode(emotion));
-        $(emotion_link).attr('class', 'emotion_link');
-
-        // when selected
-        emotion_link.addEventListener('click', function() { 
-            click_emotion(emotion);
+        let emotion_link = $('<a>', {
+            'href': '#' + emotion,
+            'class': 'emotion_link',
+            'text': emotion,
+            'click': function() {
+                click_emotion(emotion);
+            },
         });
 
-        crumbs.appendChild(emotion_link);
-        crumbs.appendChild(document.createTextNode('\xa0\xa0\xa0'));
+        crumbs.append(emotion_link);
+        crumbs.append(document.createTextNode('\xa0\xa0\xa0'));
     }
 
+    // see if an emotion was selected in the anchor, otherwise use default
+    let anchor = $(location).attr('hash');
+    console.log('anchor "' + anchor + '"');
+    if (anchor.length > 0) {
+        let anchor_text = anchor.substring(1, anchor.length);
+        if (emotions.includes(anchor_text)) {
+            selected_emotion = anchor_text;
+        }
+    }
     click_emotion(selected_emotion);
 });
 
