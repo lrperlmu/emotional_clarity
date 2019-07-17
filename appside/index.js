@@ -4,12 +4,12 @@
 let data = KNOWLEDGEBASE_DATA;
 console.log(data);
 
-let emotions = ['Anger', 'Disgust', 'Envy', 'Fear', 'Guilt', 'Jealousy', 'Sadness', 'Shame']
+let emotions = ['Anger', 'Disgust', 'Envy', 'Fear', 'Guilt', 'Jealousy', 'Sadness', 'Shame'];
 let selected_emotion = 'Anger';
 
 $(document).ready( function() {
-    // bread crumbs link to other emotions
-    let crumbs = $('#crumbs');
+    // links to other emotions
+    let emotion_links = $('#emotion-links');
 
     for (let emotion of emotions) {
         // create a link for that emotion
@@ -22,8 +22,8 @@ $(document).ready( function() {
             },
         });
 
-        crumbs.append(emotion_link);
-        crumbs.append(document.createTextNode('\xa0\xa0\xa0'));
+        emotion_links.append(emotion_link);
+        emotion_links.append(document.createTextNode('\xa0\xa0\xa0'));
     }
 
     // see if an emotion was selected in the anchor, otherwise use default
