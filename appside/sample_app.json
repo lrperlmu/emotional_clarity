@@ -1,9 +1,11 @@
 
 {
     'intro': {
-        'title': 'Spec Testing app!',
-        'text': 'Look at this lovely app, it demonstrates all the stuff in our spec :)',
-        'graphic': 'https://kittentoob.com/wp-content/uploads/2018/07/Purrito-750x392.jpg',
+        0: {
+            'title': 'Spec Testing app!',
+            'text': 'Look at this lovely app, it demonstrates all the stuff in our spec :)',
+            'graphic': 'https://kittentoob.com/wp-content/uploads/2018/07/Purrito-750x392.jpg',
+        }
     },
 
     'body': {
@@ -55,7 +57,26 @@
        
     },
 
-    'summary': {},
+    'summary': {
+        'title': 'Summarific summary <3',
+        'description': 'Dangit',
+        'matched_emotions': {
+            0: {
+
+            },
+            1: {
+
+            },
+            2: {
+
+            },
+        }
+        'info_sheet_links': false,
+        'offer_ideas': false,
+
+    },
+
+
 }
 
 
