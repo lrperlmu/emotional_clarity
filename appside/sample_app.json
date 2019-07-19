@@ -1,5 +1,10 @@
 
 {
+    'meta': {
+        'category': '1 DBT worksheets',
+        'direction': 'R',
+        'subsection': 'Prompting Events',
+    },
     'intro': {
         0: {
             'title': 'Spec Testing app!',
@@ -60,15 +65,38 @@
     'summary': {
         'title': 'Summarific summary <3',
         'description': 'Dangit',
-        'matched_emotions': {
-            0: {
+        'graphic': 'https://www.washingtonpost.com/resizer/xEOALOr9qrImfg4OWCupZ1OS4kQ=/1396x0/arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/ZGD2JCRBUAI6TJ2ZFOCUDO56EA.jpg',
 
+        'matched_emotions': {
+            'type': 'count', // or qualifier
+            0: {
+                'emotion': 'anger',
+                //'count': 5, (see responses.length)
+                'responses': [
+                    'Having an important goal blocked.',
+                    'You or someone you care about being attacked or threatened by others.',
+                    'Losing power, status, or respect.',
+                    'Not having things turn out as expected.',
+                    'Physical or emotional pain.',
+                ],
             },
             1: {
-
+                'emotion': 'sadness',
+                //'count': 5, (see responses.length)
+                'responses': [
+                    'Losing something or someone irretrievably.',
+                    'The death of someone you love.',
+                    'Things not being what you expected or wanted.',
+                    'Things being worse than you expected.',
+                    'Being separated from someone you care for.'
+                ],
             },
             2: {
-
+                'emotion': 'guilt',
+                //'count': 1, (see responses.length)
+                'responses': [
+                    'Not doing something you said that you would do.',
+                ],
             },
         }
         'info_sheet_links': false,
