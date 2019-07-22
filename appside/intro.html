@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Introduction</title>
+	<style>
+		body {
+			font-family: sans-serif;
+		}
+		#container {
+			padding: 50px;
+			padding-top: 0px;
+		}
+		#accordion {
+			position: center;
+		}
+		#accordion h3 {
+			background-color: orange;
+		}
+		.button {
+			background-color: #FE9901; /* Orange */
+			color: #FFFFFF;		/* White */
+			padding: 15px;
+			text-align: center;
+			font-size: 16px;
+			border-radius: 12px;
+			display: inline-block;
+			float: right;
+		}
+
+	</style>
+</head>
+
+<body>
+	<h2 id="title"></h2>
+
+	<div id="container">
+		<div id="accordion"></div>
+		<br />
+		<button class="button" id="exit" onclick="exit()">EXIT</button>
+		<button class="button" id="start" onclick="start()">START</button>
+		<p id="text"></p> <!-- WILL BE DELETED !!!!!! -->
+	</div>
+
+	<link rel="stylesheet" href="jquery/jquery-ui.min.css">
+	<script src="jquery/external/jquery/jquery.js"></script>
+	<script src="jquery/jquery-ui.min.js"></script>
+
+	<script src="intro.js"></script>
+	<script src="debug/tools.js"></script>
+</body>
+</html>
