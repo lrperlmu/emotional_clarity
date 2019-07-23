@@ -1,15 +1,16 @@
 "use strict";
 
-
 let data = KNOWLEDGEBASE_DATA;
-console.log(data);
-
 let emotions = ['Anger', 'Disgust', 'Envy', 'Fear', 'Guilt', 'Jealousy', 'Sadness', 'Shame'];
 let selected_emotion = 'Anger';
+let sample_app = SAMPLE_APP;
 
 $(document).ready( function() {
-    // links to other emotions
-    let emotion_links = $('#emotion-links');
+
+    test_sample_app();
+
+    // bread crumbs link to other emotions
+    let $emotion_links = $('#emotion-links');
 
     for (let emotion of emotions) {
         // create a link for that emotion
@@ -22,21 +23,25 @@ $(document).ready( function() {
             },
         });
 
-        emotion_links.append(emotion_link);
-        emotion_links.append(document.createTextNode('\xa0\xa0\xa0'));
+        $emotion_links.append(emotion_link);
+        $emotion_links.append(document.createTextNode('\xa0\xa0\xa0'));
     }
 
     // see if an emotion was selected in the anchor, otherwise use default
-    let anchor = $(location).attr('hash');
-    console.log('anchor "' + anchor + '"');
-    if (anchor.length > 0) {
-        let anchor_text = anchor.substring(1, anchor.length);
+    let $anchor = $(location).attr('hash');
+    console.log('anchor "' + $anchor + '"');
+    if ($anchor.length > 0) {
+        let anchor_text = $anchor.substring(1, $anchor.length);
         if (emotions.includes(anchor_text)) {
             selected_emotion = anchor_text;
         }
     }
     click_emotion(selected_emotion);
 });
+
+function test_sample_app() {
+    console.log(SAMPLE_APP);
+}
 
 function click_emotion(selected_emotion) {
 
@@ -51,9 +56,9 @@ function click_emotion(selected_emotion) {
         }
     }
 
-    let title = $('#title')[0];
-    title.innerHTML = '';
-    title.appendChild(document.createTextNode(selected_emotion));
+    let $title = $('#title')[0];
+    $title.innerHTML = '';
+    $title.appendChild(document.createTextNode(selected_emotion));
 
     // get the category names
     let categories = [];
@@ -65,11 +70,8 @@ function click_emotion(selected_emotion) {
     }
 
     // create the accordion dom element
-    let acc = $('#stmt-accordion')[0];
-    let new_acc = document.createElement('div');
-    $(new_acc).attr('id', 'stmt-accordion');
-    acc.replaceWith(new_acc);
-    acc = new_acc;
+    let acc = document.createElement('div');
+    $(acc).attr('id', 'stmt-accordion');
 
     // clear existing elements
     acc.innerHTML = '';
@@ -96,6 +98,8 @@ function click_emotion(selected_emotion) {
             }
         }
     }
+    let old_acc = $('#stmt-accordion')[0];
+    old_acc.replaceWith(acc);
 
     $('#stmt-accordion').accordion();
 
