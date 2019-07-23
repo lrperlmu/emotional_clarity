@@ -3,8 +3,12 @@
 let data = KNOWLEDGEBASE_DATA;
 let emotions = ['Anger', 'Disgust', 'Envy', 'Fear', 'Guilt', 'Jealousy', 'Sadness', 'Shame'];
 let selected_emotion = 'Anger';
+let sample_app = SAMPLE_APP;
 
 $(document).ready( function() {
+
+    test_sample_app();
+
     // bread crumbs link to other emotions
     let $emotion_links = $('#emotion-links');
 
@@ -34,6 +38,10 @@ $(document).ready( function() {
     }
     click_emotion(selected_emotion);
 });
+
+function test_sample_app() {
+    console.log(SAMPLE_APP);
+}
 
 function click_emotion(selected_emotion) {
 

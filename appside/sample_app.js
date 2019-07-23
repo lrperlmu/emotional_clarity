@@ -1,5 +1,5 @@
 
-{
+var SAMPLE_APP = {
     'meta': {
         'category': '1 DBT worksheets',
         'direction': 'R',
@@ -19,7 +19,7 @@
         // make sure this definition matches with the way classes actually serialize
         0: {
             // specify which template to use.
-            // depending on what this is, there will be different parameters
+            // depending on what this is, there will be different parameters.
             'template': 'statements',
             'title': 'Kittens',
             'question': 'Which is the best part of a kitten?',
@@ -98,14 +98,14 @@
                     'Not doing something you said that you would do.',
                 ],
             },
-        }
+        },
         'info_sheet_links': false,
         'offer_ideas': false,
 
     },
 
 
-}
+};
 
 
 
