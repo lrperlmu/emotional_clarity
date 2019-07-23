@@ -6,12 +6,12 @@ let content = ['Try this activity when you are experiencing a negative emotion a
 let acc = $( '#accordion' )[0];
 acc.innerHTML = '';
 
-//Title
+// Title
 let title = $( '#title')[0];
 title.innerHTML = '';
 title.appendChild(document.createTextNode(name));
 
-//Accordion
+// Accordion
 for (let i = 0; i < headers.length; i++) {
         let header = document.createElement('h3');
         header.appendChild(document.createTextNode(headers[i]));
@@ -27,10 +27,10 @@ $( '#accordion' ).accordion({
 	collapsible: true,
 });
 
-function start() {
+function start() {	// filler method for now
 	$( '#text' )[0].innerHTML = 'Start button clicked';
 }
 
-function exit() {
+function exit() {	// filler method for now
 	$( '#text' )[0].innerHTML = 'Exit button clicked';
 }
