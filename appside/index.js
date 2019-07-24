@@ -5,16 +5,17 @@ let emotions = ['Anger', 'Disgust', 'Envy', 'Fear', 'Guilt', 'Jealousy', 'Sadnes
 let selected_emotion = 'Anger';
 let sample_app = SAMPLE_APP;
 
-$(document).ready( function() {
+$(document).ready(function() {
 
-    test_sample_app();
+    statements_frame_main();
+    return;
 
     // bread crumbs link to other emotions
     let $emotion_links = $('#emotion-links');
 
     for (let emotion of emotions) {
         // create a link for that emotion
-        let emotion_link = $('<a>', {
+        let $emotion_link = $('<a>', {
             'href': '#' + emotion,
             'class': 'emotion_link',
             'text': emotion,
@@ -23,13 +24,12 @@ $(document).ready( function() {
             },
         });
 
-        $emotion_links.append(emotion_link);
+        $emotion_links.append($emotion_link);
         $emotion_links.append(document.createTextNode('\xa0\xa0\xa0'));
     }
 
     // see if an emotion was selected in the anchor, otherwise use default
     let $anchor = $(location).attr('hash');
-    console.log('anchor "' + $anchor + '"');
     if ($anchor.length > 0) {
         let anchor_text = $anchor.substring(1, $anchor.length);
         if (emotions.includes(anchor_text)) {
@@ -38,10 +38,6 @@ $(document).ready( function() {
     }
     click_emotion(selected_emotion);
 });
-
-function test_sample_app() {
-    console.log(SAMPLE_APP);
-}
 
 function click_emotion(selected_emotion) {
 
