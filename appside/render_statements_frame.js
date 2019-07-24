@@ -1,4 +1,8 @@
+"use strict";
 
+$(document).ready(function() {
+    statements_frame_main();
+});
 
 function statements_frame_main() {
     // get the sample app data
@@ -33,13 +37,13 @@ function render_statements_frame(frame_data) {
     
     // insert a h2 node for the title
     let title = document.createElement('h2');
-    $(title).attr('text', frame_data.title);
+    $(title).text(frame_data.title);
     frame.appendChild(title);
 
     // insert a p node for the question
     let question = document.createElement('p');
-    $(question).attr('text', frame_data.question);
-    frame.appendChild(title);
+    $(question).text(frame_data.question);
+    frame.appendChild(question);
     
     // Insert a checkbox list for the statements
     let statements = document.createElement('div');
@@ -57,7 +61,10 @@ function render_statements_frame(frame_data) {
         // label that can also be clicked to select the checkbox
         let label = document.createElement('label');
         $(label).attr('for', name);
+        $(label).text(statement);
         statements.appendChild(label);
+        
+        statements.appendChild(document.createElement('br'));
     }
     frame.appendChild(statements);
 
@@ -66,16 +73,18 @@ function render_statements_frame(frame_data) {
 
 }
 
+/**
+Example object to render
 
-// 0: {
-//     // specify which template to use.
-//     // depending on what this is, there will be different parameters
-//     'template': 'statements',
-//     'title': 'Kittens',
-//     'question': 'Which is the best part of a kitten?',
-//     'statements': [
-//         'its purr',
-//         'its floof',
-//         'its bark',
-//     ],
-// },
+{
+    'template': 'statements',
+    'title': 'Kittens',
+    'question': 'Which is the best part of a kitten?',
+    'statements': [
+        'its purr',
+        'its floof',
+        'its bark',
+    ],
+},
+
+**/
