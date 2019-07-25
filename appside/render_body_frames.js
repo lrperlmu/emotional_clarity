@@ -5,6 +5,7 @@ $(document).ready(function() {
     let test_methods = {
         'statements': statements_frame_main,
         'words': words_frame_main,
+        'summary': summary_frame_main,
     };
     let page_types = Object.keys(test_methods);
     let page_to_show = page_types[0];
@@ -23,6 +24,14 @@ $(document).ready(function() {
 });
 
 
+function summary_frame_main() {
+    // get the sample app data
+    let sample_app = SAMPLE_APP;
+    let frame = sample_app.summary;
+
+    render_summary_frame(frame);
+}
+
 function words_frame_main() {
     // get the sample app data
     let sample_app = SAMPLE_APP;
@@ -38,6 +47,37 @@ function statements_frame_main() {
 
     render_statements_frame(frame);
 }
+
+
+
+
+/**
+ * Render a summary frame.
+ * 
+ * @param frame -- Object containing the frame's data. Expected fields:
+ *    frame.title (string) -- The frame's title
+ *    frame.description (string) -- Text to appear before the list of matched emotions
+ *    frame.graphic (string) -- URL of an image to display
+ *    frame.matched_emotions (object) -- list of matched emotions e with the following fields:
+ *       type -- 'count' to display numeric match strength, 'qualifier' to display match strength
+ *       [numeric keys] -- sequence of matched emotions e, with the following fields
+ *         e.emotion -- the name of the emotion
+ *         e.responses (list of string) (if type is count) -- list of matching user responses 
+ *         e.qualifier (string) (if type is qualifier) -- string describing strength of the match
+ *  Behavior undefined if frame does not have these properties.
+ * 
+ * @require -- DOM must have a div whose ID is 'frame'
+ * 
+ * @effects -- Does not preserve former content of <div id="frame">.
+ *     Renders the data from the argument into that div.
+ * 
+ **/
+function render_summary_frame(frame) {
+
+
+
+}
+
 
 /**
  * Render a frame whose template is 'words'. The words will be rendered as
