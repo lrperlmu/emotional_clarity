@@ -1,9 +1,5 @@
-"use strict";
 
-let headers = ['When to do this activity', 'How this activity works', 'Instructions'];
-let content = ['Try this activity when you are experiencing a negative emotion and are not certain about which emotion it is.',
-'Research shows that different people tend to have similar body feelings associated with the same emotion. By knowing your body feelings, I can suggest which emotions you might be feeling.',
-'Think about how your body is currently feeling. In the left silhouette, color in the body parts where you are feeling increased activity. In the right silhouette, color in body parts where you are feeling decreased activity.']
+// let headers = ['When to do this activity', 'How this activity works', 'Instructions'];
 
 $(document).ready(function() {
     main();
@@ -33,7 +29,6 @@ function main() {
  **/
  function render_intro_frame(frame_data) {
 
-
     // make a new empty div with id frame, not yet in the dom
     let frame = document.createElement('div');
     $(frame).attr('id', 'frame');
@@ -47,7 +42,7 @@ function main() {
 
     // insert a h5 node for the header1
     let header = document.createElement('h5');
-    $(header).text(headers[0]);
+    $(header).text('When to do this activity');
     frame.appendChild(header);
 
 
@@ -56,14 +51,13 @@ function main() {
     $(content).text(frame_data.text);
     frame.appendChild(content);
 
-    // insert graphic
-    if (frame_data.graphic != '') {
-        let graphic = document.createElement('img');
-        $(graphic).setAttribute("src", frame_data.graphic);
-        $(graphic).setAttribute("width", "304");
-        $(graphic).setAttribute("height", "228");
-        frame.appendChild(graphic);
 
+    // insert graphic
+    if (frame_data.graphic != "") {
+        var graphic = document.createElement("img");
+        graphic.setAttribute("src", frame_data.graphic);
+        graphic.setAttribute("height", "228");
+        frame.appendChild(graphic);
     }
 
     let old_frame = $('#frame')[0];
@@ -93,8 +87,6 @@ $( '#accordion' ).accordion({
 	collapsible: true,
 });
 
-*/
-
 function start() {	// filler method for now
 	$( '#text' )[0].innerHTML = 'Start button clicked';
 }
@@ -102,3 +94,6 @@ function start() {	// filler method for now
 function exit() {	// filler method for now
 	$( '#text' )[0].innerHTML = 'Exit button clicked';
 }
+
+
+**/
