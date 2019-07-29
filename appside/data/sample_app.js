@@ -64,12 +64,12 @@ var SAMPLE_APP = {
 
     'summary': {
         'title': 'Summarific summary <3',
-        'description': 'Dangit',
+        'description': 'This text appears at the top of the summary! I like hedgehogs because they are so so cute.',
         'graphic': 'https://www.washingtonpost.com/resizer/xEOALOr9qrImfg4OWCupZ1OS4kQ=/1396x0/arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/ZGD2JCRBUAI6TJ2ZFOCUDO56EA.jpg',
+        'type': 'count', // or qualifier
 
-        'matched_emotions': {
-            'type': 'count', // or qualifier
-            0: {
+        'matched_emotions': [
+            {
                 'emotion': 'anger',
                 //'count': 5, (see responses.length)
                 'responses': [
@@ -80,7 +80,7 @@ var SAMPLE_APP = {
                     'Physical or emotional pain.',
                 ],
             },
-            1: {
+            {
                 'emotion': 'sadness',
                 //'count': 5, (see responses.length)
                 'responses': [
@@ -91,14 +91,14 @@ var SAMPLE_APP = {
                     'Being separated from someone you care for.'
                 ],
             },
-            2: {
+            {
                 'emotion': 'guilt',
                 //'count': 1, (see responses.length)
                 'responses': [
                     'Not doing something you said that you would do.',
                 ],
             },
-        },
+        ],
         'info_sheet_links': false,
         'offer_ideas': false,
 

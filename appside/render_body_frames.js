@@ -29,7 +29,7 @@ function summary_frame_main() {
     let sample_app = SAMPLE_APP;
     let frame = sample_app.summary;
 
-    render_summary_frame(frame);
+    render_summary_frame_count(frame);
 }
 
 function words_frame_main() {
@@ -52,15 +52,15 @@ function statements_frame_main() {
 
 
 /**
- * Render a summary frame.
+ * Render a summary frame whose type is count.
  * 
  * @param frame -- Object containing the frame's data. Expected fields:
  *    frame.title (string) -- The frame's title
  *    frame.description (string) -- Text to appear before the list of matched emotions
  *    frame.graphic (string) -- URL of an image to display
+ *    frame.type -- the exact string'count'
  *    frame.matched_emotions (object) -- list of matched emotions e with the following fields:
- *       type -- 'count' to display numeric match strength, 'qualifier' to display match strength
- *       [numeric keys] -- sequence of matched emotions e, with the following fields
+ *       [] -- sequence of matched emotions e, with the following fields
  *         e.emotion -- the name of the emotion
  *         e.responses (list of string) (if type is count) -- list of matching user responses 
  *         e.qualifier (string) (if type is qualifier) -- string describing strength of the match
@@ -72,7 +72,7 @@ function statements_frame_main() {
  *     Renders the data from the argument into that div.
  * 
  **/
-function render_summary_frame(frame_data) {
+function render_summary_frame_count(frame_data) {
 
     // make a new empty div with id frame, not yet in the dom
     let frame = document.createElement('div'); 
@@ -104,26 +104,55 @@ function render_summary_frame(frame_data) {
         flex_div.appendChild(graphic_col);
     }
     
-    // If not, text will be the whole width.
-    // (frame.graphic)
+    // If no graphic, this text will be the whole width.
     let text_col = document.createElement('div');
     $(text_col).attr('class', 'summary_body');
-    
-
-
     flex_div.appendChild(text_col);
-    
 
+    // function to construct match string using count
+    let build_match_string = function(count) {
+        let ret = '';
+        if (count === 1) {
+            ret = '1 of your responses corresponds with ';
+        }
+        else {
+            ret = count + ' of your responses correspond with ';
+        }
+        return ret;
+    };
 
-    // branch on type of frame.matched_emotions (count or qualifier)
     // Iterate over matched emotions and put in a line for each
     //   element.emotion, element.responses
+    let match_list = text_col.appendChild(document.createElement('ul'));
+    for (let item of frame_data.matched_emotions) {
+        let list_item = match_list.appendChild(document.createElement('li'));
 
+        let match_string = build_match_string(item.responses.length);
+        $(list_item).text(match_string);
+        $(list_item).attr('class', 'summary_match_list_item');
 
+        let emotion_button = document.createElement('button');
+        $(emotion_button).attr('type', 'button');
+        $(emotion_button).text(item.emotion);
+        $(emotion_button).click(function() {
+            alert('placeholder for navigating to emotion info page for ' + item.emotion);
+        });
+        list_item.appendChild(emotion_button);
 
+        match_list.appendChild(list_item);
+    }
+    text_col.appendChild(match_list);
+    
     let old_frame = $('#frame')[0];
     old_frame.replaceWith(frame);
 
+}
+
+// use this later in render_summary_frame_qualifier (?)
+function built_string_with_qualifier(qualifier) {
+    let capitalized_qualifier = qualifier.charAt(0).toUpperCase() + qualifier.slice(1);
+    let ret = capitalized_qualifier + ' match with';
+    return ret;
 }
 
 
