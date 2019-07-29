@@ -72,9 +72,57 @@ function statements_frame_main() {
  *     Renders the data from the argument into that div.
  * 
  **/
-function render_summary_frame(frame) {
+function render_summary_frame(frame_data) {
+
+    // make a new empty div with id frame, not yet in the dom
+    let frame = document.createElement('div'); 
+    $(frame).attr('id', 'frame');
+
+    // insert a h2 node for the title
+    let title = document.createElement('h2');
+    $(title).text(frame_data.title);
+    frame.appendChild(title);
+
+    // insert a p node for the description
+    let description = document.createElement('p');
+    $(description).text(frame_data.description);
+    frame.appendChild(description);
+
+    let flex_div = document.createElement('div');
+    $(flex_div).attr('class', 'flex');
+    frame.appendChild(flex_div);
+
+    // if there is a graphic, make a two-column layout and put the graphic on the left. 
+    // there is a more object oriented way to do this check. Refactor.
+    if ('graphic' in frame_data && frame_data.graphic.length > 0) {
+        let graphic_col = document.createElement('div');
+        $(graphic_col).attr('class', 'summary_graphic');
+        let graphic_img = document.createElement('img');
+        $(graphic_img).attr('src', frame_data.graphic);
+        $(graphic_img).attr('class', 'summary_img');
+        graphic_col.appendChild(graphic_img);
+        flex_div.appendChild(graphic_col);
+    }
+    
+    // If not, text will be the whole width.
+    // (frame.graphic)
+    let text_col = document.createElement('div');
+    $(text_col).attr('class', 'summary_body');
+    
 
 
+    flex_div.appendChild(text_col);
+    
+
+
+    // branch on type of frame.matched_emotions (count or qualifier)
+    // Iterate over matched emotions and put in a line for each
+    //   element.emotion, element.responses
+
+
+
+    let old_frame = $('#frame')[0];
+    old_frame.replaceWith(frame);
 
 }
 
@@ -130,7 +178,7 @@ function render_statements_frame(frame_data) {
 
     // make a new empty div with id frame, not yet in the dom
     let frame = document.createElement('div'); 
-   $(frame).attr('id', 'frame');
+    $(frame).attr('id', 'frame');
     
     // insert a h2 node for the title
     let title = document.createElement('h2');
