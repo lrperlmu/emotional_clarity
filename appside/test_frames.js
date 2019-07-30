@@ -1,13 +1,19 @@
 "use strict";
 
-// test method for rendering any of several kinds of frame, specified in query string.
+/**
+ * Supports manual testing of each frame type, excluding navigation panel.
+ * Use the query string to specify which frame type to render.
+ */
 $(document).ready(function() {
+    // Add new test methods here!
+    // query_string : method to call
     let test_methods = {
         'statements': statements_frame_main,
         'words': words_frame_main,
         'summary_count': summary_count_frame_main,
         'summary_qual': summary_qualifier_frame_main,
     };
+
     let page_types = Object.keys(test_methods);
     let page_to_show = page_types[0];
 
@@ -24,6 +30,13 @@ $(document).ready(function() {
     test_fcn();
 });
 
+/*
+  Each method below manually obtains some data representing the given frame type
+  and constructs a frame renderer from that data.
+
+  In the full app, the Navigation module will construct frame renderers. This
+  lets us test frame rendering without depending on the Navigation module.
+*/
 
 function summary_qualifier_frame_main() {
     // get the sample app data

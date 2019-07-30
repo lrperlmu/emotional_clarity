@@ -5,24 +5,29 @@
  * @author Leah Perlmutter
  */
 
+
+/**
+ * Renderer (View) for the Summary Frame
+ *
+ * Abstract parent class of the specific types of summary frame.
+ */
 class SummaryFrame extends Frame {
     /**
-     * @param frame_data -- Object containing the frame's data. Expected fields:
-     *    frame_data.title (string) -- The frame's title
-     *    frame_data.description (string) -- Text to appear before the list of matched emotions
-     *    frame_data.graphic (string) -- URL of an image to display
-     *    frame_data.follow_text -- text that comes after the list
-     * 
-     *    TODO: revise
-     *    frame_data.type -- the exact string'count'
-     *    frame_data.matched_emotions (object) -- list of matched emotions e with these fields:
-     *       [] -- sequence of matched emotions e, with the following fields
-     *         e.emotion -- the name of the emotion
-     *         e.responses (list of string) -- list of matcbhing user responses 
-     *  Behavior undefined if frame does not have these properties.
-     * 
+     * Construct SummaryFrame from frame_data
+     *
+     * @param frame_data - Object containing the frame's data. Expected fields:
+     *    frame_data.title (string) - The frame's title
+     *    frame_data.description (string) - Text to appear before the list of matched emotions
+     *    frame_data.graphic (string) - URL of an image to display
+     *    frame_data.follow_text - text that comes after the list
+     *    frame_data.info_sheet_links - true to show 'more info on [emotion]' buttons
+     *    frame_data.offer_ideas - true to show 'ideas for dealing with [emotion]' buttons
      */
     constructor(frame_data) {
+        if (new.target == SummaryFrame) {
+            throw new TypeError('cannot construct SummaryFrame directly (use child)');
+        }
+
         super(frame_data);
         this.title = frame_data.title;
         this.description = frame_data.description;
@@ -34,11 +39,10 @@ class SummaryFrame extends Frame {
             }
         }
         this.follow_text = frame_data.follow_text;
-
-        // todo: account for frame.type and frame.matched_emotions
         this.matched_emotions = frame_data.matched_emotions;
         
         // list of functions to call to append additional content to a list item
+        // this serves as a hook for child classes to add content
         this.additional_content = [];
         if (frame_data.info_sheet_links) {
             this.additional_content.push(this.create_emotion_button);
@@ -46,15 +50,14 @@ class SummaryFrame extends Frame {
         if (frame_data.offer_ideas) {
             this.additional_content.push(this.create_ideas_button);
         }
-
     }
 
     /**
      * Render this frame into the DOM
-     * 
+     *
      * @require -- DOM must have a div whose ID is 'frame'
-     * 
-     * @effects -- Does not preserve former content of <div id="frame">.
+     *
+     * @effects -- Does not preserve former content or attributes of <div id="frame">.
      *    Renders the data from this into that div.
      */
     render() {
@@ -73,7 +76,6 @@ class SummaryFrame extends Frame {
         frame.appendChild(flex_div);
 
         // if there is a graphic, make a two-column layout and put the graphic on the left. 
-        // there is a more object oriented way to do this check. Refactor.
         if (this.has_graphic) {
             let graphic_col = document.createElement('div');
             $(graphic_col).attr('class', 'summary_graphic');
@@ -104,7 +106,7 @@ class SummaryFrame extends Frame {
         old_frame.replaceWith(frame);
     }
 
-
+    // Helper method to render the list of emotions
     render_emotion_list() {
         let match_list = document.createElement('ul');
         for (let item of this.matched_emotions) {
@@ -118,6 +120,7 @@ class SummaryFrame extends Frame {
             $(list_item).attr('class', 'summary_match_list_item');
             list_item.appendChild(document.createElement('br'));
 
+            // optional content and child-specified content
             list_item.appendChild(this.create_additional_content(item));
 
             match_list.appendChild(list_item);
@@ -126,6 +129,21 @@ class SummaryFrame extends Frame {
     }
 
 
+    // Helper method that strings together the additional content of this.
+    // Appends each content creator's content, then whitespace.
+    create_additional_content(item) {
+        let ret = document.createElement('div');
+        for (let creator of this.additional_content) {
+            let element = creator(item);
+            ret.appendChild(element);
+            ret.appendChild(document.createTextNode(' '));
+        }
+        return ret;
+    }
+
+    // Creates "Ideas for dealing with [emotion]" Buttons
+    // @param item - object with fields:
+    //     emotion - name of emotion
     create_ideas_button(item) {
         let ideas_button = document.createElement('button');
         $(ideas_button).attr('type', 'button');
@@ -139,16 +157,9 @@ class SummaryFrame extends Frame {
         return ideas_button;
     }
 
-    create_additional_content(item) {
-        let ret = document.createElement('div');
-        for (let creator of this.additional_content) {
-            let element = creator(item);
-            ret.appendChild(element);
-            ret.appendChild(document.createTextNode(' '));
-        }
-        return ret;
-    }
-
+    // Creates "More info on [emotion]" Buttons
+    // @param item - object with fields:
+    //     emotion - name of emotion
     create_emotion_button(item) {
         let emotion_button = document.createElement('button');
         $(emotion_button).attr('type', 'button');
@@ -158,11 +169,27 @@ class SummaryFrame extends Frame {
         });
         return emotion_button;
     }
-
 }
 
 
+/**
+ * Renderer (View) for the SummaryFrameCount
+ *
+ * This kind of summary frame can show how many and which user responses match each
+ *  emotion in its list.
+ */
 class SummaryFrameCount extends SummaryFrame {
+
+    /**
+     * Construct SummaryFrameCount from frame_data
+     *
+     * @param frame_data - Object containing the frame's data. Expected fields:
+     *    [All fields specified in parent constructor] and the following:
+     *    frame_data.type - the exact string 'count'
+     *    frame_data.matched_emotions (object) - list of emotions e, each having these fields:
+     *         e.emotion - the name of the emotion
+     *         e.responses (list of string) - list of matching user responses
+     */
     constructor(frame_data) {
         super(frame_data);
         this.additional_content.unshift(this.create_responses_button);
@@ -183,8 +210,12 @@ class SummaryFrameCount extends SummaryFrame {
         return ret;
     }
 
+    // Creates "See which ones" Buttons to display the list of responses
+    //     matching the given emotion.
+    // @param item - object with fields:
+    //     emotion - name of emotion
+    //     responses - list of user responses matching this emotion
     create_responses_button(item) {
-        // Create SEE RESPONSES button
         let responses_button = document.createElement('button');
         $(responses_button).attr('type', 'button');
         $(responses_button).text('see which ones');
@@ -193,11 +224,27 @@ class SummaryFrameCount extends SummaryFrame {
         });
         return responses_button;
     }
-
 }
 
 
+/**
+ * Renderer (View) for the SummaryFrameQualifier
+ *
+ * This kind of summary frame can show "how strong" of a match the user's response is
+ *   for each emotion in its list
+ */
 class SummaryFrameQualifier extends SummaryFrame {
+
+    /**
+     * Construct SummaryFrameQualifier from frame_data
+     *
+     * @param frame_data - Object containing the frame's data. Expected fields:
+     *    [All fields specified in parent constructor] and the following:
+     *    frame_data.type - the exact string 'qualifier'
+     *    frame_data.matched_emotions (object) - list of emotions e, each having these fields:
+     *         e.emotion - the name of the emotion
+     *         e.qualifier - string describing strength of match
+     */
     constructor(frame_data) {
         super(frame_data);
     }
@@ -205,10 +252,7 @@ class SummaryFrameQualifier extends SummaryFrame {
     // helper method to construct match string using qualifier
     build_match_string(item) {
         let qualifier = item.qualifier;
-        //let capitalized_qualifier = qualifier.charAt(0).toUpperCase() + qualifier.slice(1);
         let ret = 'A ' + qualifier + ' match with ' + item.emotion;
         return ret;
     }
-
-
 }
