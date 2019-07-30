@@ -1,7 +1,18 @@
 "use strict";
 
-// test method for rendering any of several kinds of frame, specified in query string.
+/**
+ * Rendering (View) code for body frames
+ * @author Leah Perlmutter
+ */
+
+
+/**
+ * Supports manual testing of each frame type, excluding navigation panel.
+ * Use the query string to specify which frame type to render.
+ */
 $(document).ready(function() {
+    // Add new test methods here!
+    // query_string : method to call
     let test_methods = {
         'statements': statements_frame_main,
         'words': words_frame_main,
@@ -22,6 +33,13 @@ $(document).ready(function() {
     test_fcn();
 });
 
+/*
+  Each test method below manually obtains some data representing the given frame type
+  and constructs a frame renderer from that data.
+
+  In the full app, the Navigation module will construct frame renderers. This
+  lets us test frame rendering without depending on the Navigation module.
+*/
 
 function words_frame_main() {
     // get the sample app data
@@ -38,6 +56,10 @@ function statements_frame_main() {
 
     render_statements_frame(frame);
 }
+
+/*
+  End test methods
+*/
 
 /**
  * Render a frame whose template is 'words'. The words will be rendered as
