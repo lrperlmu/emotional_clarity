@@ -6,9 +6,27 @@
  */
 
 
-
+/**
+ * Renderer (View) for Frame
+ *
+ * Abstract parent class of the specific types of frame.
+ */
 class Frame {
 
+    constructor() {
+        if (new.target == Frame) {
+            throw new TypeError('cannot construct Frame directly (use child)');
+        }
+    }
+
+    /**
+     * Render this frame into the DOM
+     *
+     * @require -- DOM must have a div whose ID is 'frame'
+     *
+     * @effects -- Does not preserve former content or attributes of <div id="frame">.
+     *    Renders the data from this into that div.
+     */
     render() {
         // replace the old frame with a placeholder
         let frame = document.createElement('div'); 
