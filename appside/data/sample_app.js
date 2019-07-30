@@ -100,14 +100,14 @@ var SAMPLE_APP = {
             },
         ],
         'follow_text': 'In conclusion, please come pet a cuddly hedgehog for numerous therapeautic benefits!',
-        'info_sheet_links': true,
-        'offer_ideas': true,
+        'info_sheet_links': false,
+        'offer_ideas': false,
 
     },
 
     'summary_qualifier': {
         'title': 'A Quality Summary',
-        'description': 'This text appears at the top of the summary! I like hedgehogs because they are so so cute.',
+        'description': 'This text appears at the top of the summary! Your input for this activity suggests:',
         'type': 'qualifier',
         'matched_emotions': [
             {
@@ -124,8 +124,8 @@ var SAMPLE_APP = {
             },
         ],
         'follow_text': 'In conclusion, please come pet a cuddly hedgehog for numerous therapeautic benefits!',
-        'info_sheet_links': false,
-        'offer_ideas': false,
+        'info_sheet_links': true,
+        'offer_ideas': true,
 
     }
 

@@ -30,7 +30,7 @@ function summary_qualifier_frame_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.summary_qualifier;
 
-    let frame = new SummaryFrame(frame_data);
+    let frame = new SummaryFrameQualifier(frame_data);
     frame.render();
 }
 
@@ -39,7 +39,7 @@ function summary_count_frame_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.summary_count;
 
-    let frame = new SummaryFrame(frame_data);
+    let frame = new SummaryFrameCount(frame_data);
     frame.render();
 }
 
