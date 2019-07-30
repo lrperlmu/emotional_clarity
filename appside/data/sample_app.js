@@ -62,7 +62,7 @@ var SAMPLE_APP = {
        
     },
 
-    'summary': {
+    'summary_count': {
         'title': 'Summarific summary <3',
         'description': 'This text appears at the top of the summary! I like hedgehogs because they are so so cute.',
         'graphic': 'https://www.washingtonpost.com/resizer/xEOALOr9qrImfg4OWCupZ1OS4kQ=/1396x0/arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/ZGD2JCRBUAI6TJ2ZFOCUDO56EA.jpg',
@@ -99,10 +99,35 @@ var SAMPLE_APP = {
                 ],
             },
         ],
+        'follow_text': 'In conclusion, please come pet a cuddly hedgehog for numerous therapeautic benefits!',
+        'info_sheet_links': true,
+        'offer_ideas': true,
+
+    },
+
+    'summary_qualifier': {
+        'title': 'A Quality Summary',
+        'description': 'This text appears at the top of the summary! I like hedgehogs because they are so so cute.',
+        'type': 'qualifier',
+        'matched_emotions': [
+            {
+                'emotion': 'jealousy',
+                'qualifier': 'strong',
+            },
+            {
+                'emotion': 'envy',
+                'qualifier': 'moderate',
+            },
+            {
+                'emotion': 'sadness',
+                'qualifier': 'mild',
+            },
+        ],
+        'follow_text': 'In conclusion, please come pet a cuddly hedgehog for numerous therapeautic benefits!',
         'info_sheet_links': false,
         'offer_ideas': false,
 
-    },
+    }
 
 
 };
