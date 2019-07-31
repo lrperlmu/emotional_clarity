@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 $(document).ready(function() {
     main();
@@ -17,22 +17,22 @@ function main() {
  *
  * @param frame -- Object containing the frame's data. Expected fields:
  *      frame.title (string)
- *		frame.question (string) -- text before checkboxes
+ *      frame.graphic (string) -- link of URL to body map outline (png)
+ *      frame.question (string) -- text before checkboxes
  *      frame.statements (list of string) -- checkbox statements
  * Behavior undefined if frame doe snot have these properties.
  *
  * @require -- DOM must have a div whose ID is 'frame'
  *
- * @effects -- Does not preserve former content of <div id="frame">.
+ * @effects -- Does not preserve former content of <div id='frame'>.
  *      Renders the data from the argument into that div,
- 		including graphic for body map.
+        including graphic for body map.
  *
  **/
 
-
 function render_bodymap_frame(frame_data) {
 
-	// make a new empty div with id frame, not yet in the dom
+    // make a new empty div with id frame, not yet in the dom
     let frame = document.createElement('div');
     $(frame).attr('id', 'frame');
 
@@ -41,25 +41,23 @@ function render_bodymap_frame(frame_data) {
     frame.appendChild(title);
 
     let left = document.createElement('div');
-    left.style.backgroundColor = "lightpink";
-    left.style.width = "300px";
+    left.style.backgroundColor = 'lightpink';
+    left.style.width = '300px';
     left.style.left = '0px';
     left.style.height = '100%';
     left.style.position = 'absolute';
 
     let right = document.createElement('div');
-    right.style.backgroundColor = "lightblue";
+    right.style.backgroundColor = 'lightblue';
     right.style.left = '300px';
     right.style.height = '100%';
     right.style.position = 'absolute';
 
-
-	// body maps graphic column
-    var graphic = document.createElement('img');
-    graphic.setAttribute("src", "https://upload.wikimedia.org/wikipedia/en/0/0e/Outline-body.png");
-    graphic.setAttribute("width", "300px");
+    // body maps graphic column
+    const graphic = document.createElement('img');
+    graphic.setAttribute('src', frame_data.graphic);
+    graphic.setAttribute('width', '300px');
     left.appendChild(graphic);
-
 
     // statement column
     $(right).attr('text-align', 'left');
@@ -71,28 +69,25 @@ function render_bodymap_frame(frame_data) {
     // checkboxes
     let i = 0;
     for (let stmt of frame_data.statements) {
-    	let name = 'label' + i;
-    	i++;
+        let name = 'label' + i;
+        i++;
 
-    	let check = document.createElement('input');
-    	$(check).attr('type', 'checkbox');
-    	$(check).attr('id', name);
-    	right.appendChild(check);
+        let check = document.createElement('input');
+        $(check).attr('type', 'checkbox');
+        $(check).attr('id', name);
+        right.appendChild(check);
 
-    	let label = document.createElement('label');
-    	$(label).text(stmt);
-    	right.appendChild(label);
-
-    	right.appendChild(document.createElement('br'));
+        let label = document.createElement('label');
+        $(label).attr('for', name);
+        $(label).text(stmt);
+        right.appendChild(label);
+        right.appendChild(document.createElement('br'));
     }
-
 
     // append both columns to frame
     frame.appendChild(right);
     frame.appendChild(left);
 
-
     let old_frame = $('#frame')[0];
     old_frame.replaceWith(frame);
 }
-
