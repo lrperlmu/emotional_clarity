@@ -42,21 +42,21 @@ function render_bodymap_frame(frame_data) {
 
     let left = document.createElement('div');
     left.style.backgroundColor = 'lightpink';
-    left.style.width = '300px';
+    left.style.width = '150px';
     left.style.left = '0px';
     left.style.height = '100%';
     left.style.position = 'absolute';
 
     let right = document.createElement('div');
     right.style.backgroundColor = 'lightblue';
-    right.style.left = '300px';
+    right.style.left = '150px';
     right.style.height = '100%';
     right.style.position = 'absolute';
 
     // body maps graphic column
     const graphic = document.createElement('img');
     graphic.setAttribute('src', frame_data.graphic);
-    graphic.setAttribute('width', '300px');
+    graphic.setAttribute('width', '150px');
     left.appendChild(graphic);
 
     // statement column
