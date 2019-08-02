@@ -43,8 +43,8 @@ var SAMPLE_APP = {
         },
         2: {
             'template': 'bodymap_color',
-            'title': 'Bodymap coloring activity',
-            'question': 'Color in the parts that you have exercised most recently',
+            'title': 'Body map coloring activity',
+            'question': 'How much does this apply to you?',
             // graphic is built in
         },
         3: {
