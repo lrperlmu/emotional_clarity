@@ -10,6 +10,9 @@
  * Renderer (View) for the Summary Frame
  *
  * Abstract parent class of the specific types of summary frame.
+ *
+ * Child classes must implement build_match_string which takes in an object
+ *   returns a string saying how well the users's responses match that object's emotion.
  */
 class SummaryFrame extends Frame {
     /**
@@ -134,7 +137,9 @@ class SummaryFrame extends Frame {
     create_additional_content(item) {
         let ret = document.createElement('div');
         for (let creator of this.additional_content) {
-            let element = creator(item);
+            // need to pass in this in case the method needs to use it, because the way
+            //   we're calling these methods makes the 'this' context get lost
+            let element = creator(this, item);
             ret.appendChild(element);
             ret.appendChild(document.createTextNode(' '));
         }
@@ -142,9 +147,10 @@ class SummaryFrame extends Frame {
     }
 
     // Creates "Ideas for dealing with [emotion]" Buttons
+    // @param self - this will be passed in, in case the 'this' context is lost
     // @param item - object with fields:
     //     emotion - name of emotion
-    create_ideas_button(item) {
+    create_ideas_button(self, item) {
         let ideas_button = document.createElement('button');
         $(ideas_button).attr('type', 'button');
         $(ideas_button).text('ideas for dealing with ' + item.emotion);
@@ -158,9 +164,10 @@ class SummaryFrame extends Frame {
     }
 
     // Creates "More info on [emotion]" Buttons
+    // @param self - this will be passed in, in case the 'this' context is lost
     // @param item - object with fields:
     //     emotion - name of emotion
-    create_emotion_button(item) {
+    create_emotion_button(self, item) {
         let emotion_button = document.createElement('button');
         $(emotion_button).attr('type', 'button');
         $(emotion_button).text('more info on ' + item.emotion);
@@ -212,17 +219,53 @@ class SummaryFrameCount extends SummaryFrame {
 
     // Creates "See which ones" Buttons to display the list of responses
     //     matching the given emotion.
+    // @param self - this will be passed in, in case the 'this' context is lost
     // @param item - object with fields:
     //     emotion - name of emotion
     //     responses - list of user responses matching this emotion
-    create_responses_button(item) {
+    // @return - a div containing the button and a hidden div that appears when
+    //           the button is clicked and shows responses
+    create_responses_button(self, item) {
+        let emotion = item.emotion;
+
+        let responses_container = document.createElement('div');
+        $(responses_container).attr('class', 'summary_responses_container');
+
+        // button to make popup appear
         let responses_button = document.createElement('button');
         $(responses_button).attr('type', 'button');
         $(responses_button).text('see which ones');
+        let responses_popup_id = `responses_popup_${emotion}`;
         $(responses_button).click(function() {
-            alert('placeholder for navigating to responses for ' + item.emotion);
+            $('.summary_responses_popup').css('display', 'none');
+            $(`#${responses_popup_id}`).css('display', 'block');
         });
-        return responses_button;
+
+        // Popup is a hidden floating div with the list of responses
+        let responses_popup = document.createElement('div');
+        $(responses_popup).attr('class', 'summary_responses_popup');
+        $(responses_popup).attr('id', responses_popup_id);
+        let description = self.build_match_string(item);
+        responses_popup.appendChild(document.createTextNode(description));
+        let response_list = document.createElement('ul');
+        for (let response of item.responses) {
+            let list_item = document.createElement('li');
+            list_item.appendChild(document.createTextNode(response));
+            response_list.appendChild(list_item);
+        }
+        responses_popup.appendChild(response_list);
+
+        // close button to make popup disappear
+        let responses_popup_close = document.createElement('button');
+        responses_popup_close.appendChild(document.createTextNode('close'));
+        $(responses_popup_close).click(function() {
+            $(`#${responses_popup_id}`).css('display', 'none');
+        });
+        responses_popup.appendChild(responses_popup_close);
+
+        responses_container.appendChild(responses_button);
+        responses_container.appendChild(responses_popup);
+        return responses_container;
     }
 }
 
