@@ -153,11 +153,10 @@ class SummaryFrame extends Frame {
     create_ideas_button(self, item) {
         let ideas_button = document.createElement('button');
         $(ideas_button).attr('type', 'button');
-        $(ideas_button).text('ideas for dealing with ' + item.emotion);
+        $(ideas_button).text(`ideas for dealing with ${item.emotion}`);
         $(ideas_button).click(function() {
             alert(
-                'placeholder for navigating to "ideas for dealing with ' 
-                    + item.emotion + '".'
+                `placeholder for navigating to "ideas for dealing with ${item.emotion}"`
             );
         });
         return ideas_button;
@@ -170,9 +169,9 @@ class SummaryFrame extends Frame {
     create_emotion_button(self, item) {
         let emotion_button = document.createElement('button');
         $(emotion_button).attr('type', 'button');
-        $(emotion_button).text('more info on ' + item.emotion);
+        $(emotion_button).text(`more info on ${item.emotion}`);
         $(emotion_button).click(function() {
-            alert('placeholder for navigating to emotion info page for ' + item.emotion);
+            alert(`placeholder for navigating to emotion info page for ${item.emotion}`);
         });
         return emotion_button;
     }
@@ -208,12 +207,11 @@ class SummaryFrameCount extends SummaryFrame {
         let emotion = item.emotion
         let ret = '';
         if (count === 1) {
-            ret = '1 of your responses corresponds with ';
+            ret = `1 of your responses corresponds with ${emotion}`;
         }
         else {
-            ret = count + ' of your responses correspond with ';
+            ret = `${count} of your responses correspond with ${emotion}`;
         }
-        ret = ret + emotion;
         return ret;
     }
 
@@ -295,7 +293,7 @@ class SummaryFrameQualifier extends SummaryFrame {
     // helper method to construct match string using qualifier
     build_match_string(item) {
         let qualifier = item.qualifier;
-        let ret = 'A ' + qualifier + ' match with ' + item.emotion;
+        let ret = `A ${qualifier} match with ${item.emotion}`;
         return ret;
     }
 }
