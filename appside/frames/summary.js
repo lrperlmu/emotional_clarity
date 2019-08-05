@@ -75,7 +75,7 @@ class SummaryFrame extends Frame {
         frame.appendChild(title);
 
         let flex_div = document.createElement('div');
-        $(flex_div).attr('class', 'flex');
+        $(flex_div).attr('class', 'summary_flex');
         frame.appendChild(flex_div);
 
         // if there is a graphic, make a two-column layout and put the graphic on the left. 
