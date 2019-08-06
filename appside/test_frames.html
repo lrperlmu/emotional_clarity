@@ -28,7 +28,6 @@
     .summary_match_list_item {
       margin: 5px 0;
     }
-
     .summary_responses_popup {
       position: absolute;
       display: none;
@@ -38,7 +37,26 @@
       z-index: 2;
       background: #aaa;
       padding: 10px;
+    }
 
+    .selection_rect {
+      border-style: outset;
+      border-width: 6px;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 10px;
+      font-size: 150%;
+    }
+
+    .selection_rect.selected {
+      border-style:inset;
+      background: #aaa;
+    }
+
+    .selection_flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
     }
 
   </style>
@@ -61,6 +79,7 @@
   <script src="frames/frame.js"></script>
   <script src="frames/body.js"></script>
   <script src="frames/summary.js"></script>
+  <script src="frames/emotion_selection.js"></script>
   <script src="debug/tools.js"></script>
 
 </body>
