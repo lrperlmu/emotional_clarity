@@ -38,7 +38,7 @@ var SAMPLE_APP = {
             'template': 'bodymap_statements',
             'title': 'Body map example slide',
             'question': 'What is your favorite body part?',
-            // app needs to specify the graphic.
+            'graphic': 'neutral.png',
             'statements': [
                 'Head',
                 'Shoulders',
@@ -48,8 +48,8 @@ var SAMPLE_APP = {
         },
         2: {
             'template': 'bodymap_color',
-            'title': 'Bodymap coloring activity',
-            'question': 'Color in the parts that you have exercised most recently',
+            'title': 'Body map coloring activity',
+            'question': 'How much does this apply to you?',
             // graphic is built in
         },
         3: {

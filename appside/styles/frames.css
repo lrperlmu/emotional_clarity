@@ -1,5 +1,16 @@
 * {
+  font-family: Helvetica;
+  color: #222;
+  font-size: 14px;
+  margin: 0px;
   box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  background: #FEFEFE;
 }
 
 .summary_flex {
