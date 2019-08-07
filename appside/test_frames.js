@@ -13,6 +13,7 @@ $(document).ready(function() {
         'summary_count': summary_count_frame_main,
         'summary_qual': summary_qualifier_frame_main,
         'selection': selection_frame_main,
+        'body_map': body_map_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -77,6 +78,14 @@ function statements_frame_main() {
 
 function selection_frame_main() {
     let frame = new EmotionSelectionFrame();
+    frame.render();
+}
+
+function body_map_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.body[1];
+
+    let frame = new BodyMapFrame(frame_data);
     frame.render();
 }
 

@@ -23,7 +23,7 @@ class ListBodyFrame extends Frame {
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
-        super(frame_data);
+        super();
 
         // check validity (todo)
         // has title with length > 1
@@ -134,4 +134,100 @@ class WordsBodyFrame extends ListBodyFrame {
         this.items = frame_data.words;
     }
 }
+
+class BodyMapFrame extends Frame {
+
+     /**
+     * Construct a body map frame
+
+     * @param frame_data -- Object containing the frame's data. Expected fields:
+     *      frame_data.title (string)
+     *      frame_data.question (string) -- text before checkboxes
+     *      frame_data.statements (list of string) -- checkbox statements
+     * Behavior undefined if frame doe snot have these properties.
+     **/
+    constructor(frame_data) {
+        super();
+
+        this.title = frame_data.title;
+        this.question = frame_data.question;
+        this.statements = frame_data.statements;
+    }
+
+    /**
+     * Render a frame for the body maps template.
+     *
+     * @require -- DOM must have a div whose ID is 'frame'
+     *
+     * @effects -- Does not preserve former content of <div id="frame">.
+     *      Renders the data from the argument into that div,
+     *      including graphic for body map.
+     *
+     **/
+     
+    render() {
+        // make a new empty div with id frame, not yet in the dom
+        let frame = document.createElement('div');
+        $(frame).attr('id', 'frame');
+
+        let title = document.createElement('h2');
+        $(title).text(this.title);
+        frame.appendChild(title);
+
+        let left = document.createElement('div');
+        left.style.backgroundColor = "lightpink";
+        left.style.width = "300px";
+        left.style.left = '0px';
+        left.style.height = '100%';
+        left.style.position = 'absolute';
+
+        let right = document.createElement('div');
+        right.style.backgroundColor = "lightblue";
+        right.style.left = '300px';
+        right.style.height = '100%';
+        right.style.position = 'absolute';
+
+
+        // body maps graphic column
+        var graphic = document.createElement('img');
+        graphic.setAttribute("src", "bodymaps/neutral.png");
+        graphic.setAttribute("width", "150px");
+        left.appendChild(graphic);
+
+
+        // statement column
+        $(right).attr('text-align', 'left');
+
+        let question = document.createElement('h4');
+        $(question).text(this.question);
+        right.appendChild(question);
+
+        // checkboxes
+        let i = 0;
+        for (let stmt of this.statements) {
+            let name = 'label' + i;
+            i++;
+
+            let check = document.createElement('input');
+            $(check).attr('type', 'checkbox');
+            $(check).attr('id', name);
+            right.appendChild(check);
+
+            let label = document.createElement('label');
+            $(label).text(stmt);
+            right.appendChild(label);
+
+            right.appendChild(document.createElement('br'));
+        }
+
+
+        // append both columns to frame
+        frame.appendChild(right);
+        frame.appendChild(left);
+
+        let old_frame = $('#frame')[0];
+        old_frame.replaceWith(frame);
+    }
+}
+
 
