@@ -50,15 +50,15 @@ class ListBodyFrame extends Frame {
         $(frame).attr('id', 'frame');
         
         // insert a h2 node for the title
-        let title = document.createElement('h4');
+        let title = document.createElement('h5');
         $(title).text(this.title);
-        $(title).attr('class', 'text-info');
+        $(title).attr('class', 'text-info text-uppercase mb-2');
         frame.appendChild(title);
 
         // insert a p node for the question
         let question = document.createElement('h2');
         $(question).text(this.question);
-        $(question).attr('class', 'font-weight-light');
+        $(question).attr('class', 'font-weight-light mb-4');
         frame.appendChild(question);
         
         // insert a checkbox list for the statements

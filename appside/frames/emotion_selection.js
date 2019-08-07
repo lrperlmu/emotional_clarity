@@ -35,15 +35,15 @@ class EmotionSelectionFrame extends Frame {
         $(frame).attr('id', 'frame');
 
         // insert a h2 node for the title
-        let title = document.createElement('h4');
+        let title = document.createElement('h5');
         $(title).text(title_text);
-        $(title).attr('class', 'text-info');
+        $(title).attr('class', 'text-info text-uppercase mb-2');
         frame.appendChild(title);
 
         // insert a p node for the description
         let description = document.createElement('h2');
         $(description).text(description_text);
-        $(description).attr('class', 'font-weight-light');
+        $(description).attr('class', 'font-weight-light mb-4');
         frame.appendChild(description);
 
         let flex_div = document.createElement('div');
