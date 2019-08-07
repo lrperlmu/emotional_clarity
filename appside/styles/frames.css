@@ -10,7 +10,7 @@ html,
 body {
   height: 100%;
   width: 100%;
-  background: #FEFEFE;
+  background: #F8F8F8;
 }
 
 .summary_flex {
@@ -60,7 +60,19 @@ body {
 }
 
 .selection_flex {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-auto-rows: minmax(auto, auto);
+  justify-content: flex-start;
+  align-items: center;
+  grid-gap: 5px;
+/*  display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
+*/}
+
+.container-fixed {
+  width: 800px;
+  height: auto;
+  background: #FFF;
 }

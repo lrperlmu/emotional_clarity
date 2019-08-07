@@ -50,17 +50,21 @@ class ListBodyFrame extends Frame {
         $(frame).attr('id', 'frame');
         
         // insert a h2 node for the title
-        let title = document.createElement('h2');
+        let title = document.createElement('h4');
         $(title).text(this.title);
+        $(title).attr('class', 'text-info');
         frame.appendChild(title);
 
         // insert a p node for the question
-        let question = document.createElement('p');
+        let question = document.createElement('h2');
         $(question).text(this.question);
+        $(question).attr('class', 'font-weight-light');
         frame.appendChild(question);
         
         // insert a checkbox list for the statements
         let statements = document.createElement('div');
+        $(statements).attr('class', 'form-check');
+
         let i = 0;
         for (let statement of this.items) {
             let name = 'stmt' + i;
@@ -68,6 +72,7 @@ class ListBodyFrame extends Frame {
 
             // the actual checkbox
             let input = document.createElement('input');
+            $(input).attr('class', "form-check-input");
             $(input).attr('type', 'checkbox');
             $(input).attr('name', name);
             $(input).attr('id', name);
@@ -75,6 +80,7 @@ class ListBodyFrame extends Frame {
 
             // label that can also be clicked to select the checkbox
             let label = document.createElement('label');
+            $(label).attr('class', "form-check-label");
             $(label).attr('for', name);
             $(label).text(statement);
             statements.appendChild(label);

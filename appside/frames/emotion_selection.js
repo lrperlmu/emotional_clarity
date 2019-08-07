@@ -35,13 +35,15 @@ class EmotionSelectionFrame extends Frame {
         $(frame).attr('id', 'frame');
 
         // insert a h2 node for the title
-        let title = document.createElement('h2');
+        let title = document.createElement('h4');
         $(title).text(title_text);
+        $(title).attr('class', 'text-info');
         frame.appendChild(title);
 
         // insert a p node for the description
-        let description = document.createElement('p');
+        let description = document.createElement('h2');
         $(description).text(description_text);
+        $(description).attr('class', 'font-weight-light');
         frame.appendChild(description);
 
         let flex_div = document.createElement('div');
@@ -51,12 +53,14 @@ class EmotionSelectionFrame extends Frame {
         // Make a rectangle for each emotion
         // clicking in the rectangle toggles its border from light to bold
         for (let emotion of emotions) {
-            let rect = document.createElement('span');
+            let rect = document.createElement('button');
             $(rect).attr('id', `selection_rect_${emotion}`);
-            $(rect).attr('class', 'selection_rect');
+            $(rect).attr('type', 'button');
+            $(rect).attr('class', 'btn btn-outline-info');
             $(rect).text(emotion);
             $(rect).click(function() {
-                rect.classList.toggle('selected');
+                rect.classList.toggle('btn-outline-info');
+                rect.classList.toggle('btn-info');
             });
             flex_div.appendChild(rect);
         }
