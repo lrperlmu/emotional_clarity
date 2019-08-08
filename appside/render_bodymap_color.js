@@ -1,6 +1,7 @@
 'use strict';
-let emotions = ['anger', 'disgust', 'envy', 'fear', 'happiness', 'love', 'sadness', 'shame'];
-
+let emotions = ['Anger', 'Disgust', 'Envy', 'Fear', 'Happiness', 'Love', 'Sadness', 'Shame'];
+let qualifiers = ['Very much', 'Neutral', 'Not at all', 'I don\'t know'];
+let bodyparts = ['Head', 'Neck', 'Chest', 'Arms', 'Belly', 'Legs'];
 
 $(document).ready(function() {
     main();
@@ -9,24 +10,6 @@ $(document).ready(function() {
 function main() {
     let sample_app = SAMPLE_APP;
     let frame = sample_app.body[2]; // template: bodymap_statements
-
-    let end = $('#end');
-
-        for (let emotion of emotions) {
-            // create a link for that emotion
-            let emotion_link = $('<a>', {
-                'href': '#' + emotion,
-                'class': 'emotion_link',
-                'text': emotion,
-                'click': function() {
-                    render_bodymap_color(frame, emotion);
-                },
-            });
-
-            end.append(emotion_link);
-            end.append(document.createTextNode('\xa0\xa0\xa0'));
-        }
-
     render_bodymap_color(frame, 'neutral');
 }
 
@@ -61,101 +44,123 @@ function render_bodymap_color(frame_data, emotion) {
     $(title).text(frame_data.title);
     frame.appendChild(title);
 
-    let left = document.createElement('div');
-    left.style.backgroundColor = 'lightblue';
-    left.style.width = '300px';
-    left.style.left = '0px';
-    left.style.height = '100%';
-    left.style.position = 'absolute';
+    // create links to each emotion
+    for (let curr of emotions) {
+        let emotion_link = document.createElement('label');
+        emotion_link.style.textDecoration = 'underline';
+        $(emotion_link).attr('class', 'emotion_link');
+        $(emotion_link).attr('id', curr);
+        $(emotion_link).text(curr);
+        emotion_link.onclick = function() {
+        	render_bodymap_color(frame_data, curr, '')};
 
-    let right = document.createElement('div');
-    right.style.backgroundColor = 'lightblue';
-    right.style.left = '300px';
-    right.style.height = '100%';
-    right.style.position = 'absolute';
-
-    const bodymap = document.createElement('img');
-    bodymap.setAttribute('src', 'bodymaps/' + emotion + '.png');
-    bodymap.setAttribute('width', '120px');
-    left.appendChild(bodymap);
-
-    const scale = document.createElement('img');
-    scale.setAttribute('src', 'bodymaps/scaleL.png');
-    scale.setAttribute('width', '140px');
-    scale.style.left = '150px';
-    left.appendChild(scale);
-
-    let question = document.createElement('h4');
-    $(question).text(frame_data.question);
-    right.appendChild(question);
-
-    let rate = document.createElement('input');
-    $(rate).attr('type', 'range');
-    $(rate).attr('min', '1');
-    $(rate).attr('max', '100');
-    $(rate).attr('value', '50');
-    rate.style.width = '250px';
-
-    rate.oninput = function() {
-        if (rate.value > 66) {
-            text.innerHTML = "Very much";
-        } else if (rate.value < 33) {
-            text.innerHTML = "Not so much";
-        } else {
-            text.innerHTML = "Neutral";
-        }
+        frame.append(emotion_link);
+        frame.append(document.createTextNode('\xa0\xa0\xa0'));
     }
 
-    let text = document.createElement('p');
-    $(text).text("Neutral");
+    frame.left = document.createElement('div');
+    frame.left.style.width = '300px';
+    frame.left.style.left = '0px';
+    frame.left.style.height = '100%';
+    frame.left.style.position = 'absolute';
 
-    right.appendChild(rate);
-    right.appendChild(text);
-    right.append(document.createElement('br'));
-    right.append(document.createElement('br'));
+    frame.right = document.createElement('div');
+    frame.right.style.left = '300px';
+    frame.right.style.height = '100%';
+    frame.right.style.position = 'absolute';
 
+    render_left_col(frame, frame_data, emotion, '');
+    render_right_col(frame, frame_data, emotion, '');
 
-    let checkbox = document.createElement('input');
-    $(checkbox).attr('type', 'checkbox');
-    $(checkbox).attr('id', 'idk');
-    right.appendChild(checkbox);
-
-    let label = document.createElement('label');
-    $(label).attr('for', 'idk');
-    $(label).text('I don\'t know');
-    right.appendChild(label);
-
-    frame.appendChild(left);
-    frame.appendChild(right);
+    frame.appendChild(frame.left);
+    frame.appendChild(frame.right);
 
     let old_frame = $('#frame')[0];
     old_frame.replaceWith(frame);
 }
 
-function bodypart(body_part) {
+function render_left_col(frame, frame_data, emotion, bodypart) {
+
+	const bodymap = document.createElement('img');
+    bodymap.setAttribute('src', 'bodymaps/' + emotion + '.png');
+    bodymap.setAttribute('width', '120px');
+    bodymap.style.left = '0px';
+    bodymap.style.zIndex = '2';		// in front of bg_image
+    bodymap.style.position = 'absolute';
+
+    if (bodypart.length > 0) {		// clipping picture when specified body part
+    	if (bodypart === bodyparts[0]) {			// head
+   		bodymap.style.clipPath = 'inset(0% 0 85% 0%)';
+	    } else if (bodypart === bodyparts[1]) {		// neck
+	    	bodymap.style.clipPath = 'inset(14% 0 83% 0)';
+		} else if (bodypart === bodyparts[2]) {		// chest
+	    	bodymap.style.clipPath = 'inset(15% 22% 62% 22%)';
+		} else if (bodypart === bodyparts[3]) {		// arms
+			bodymap.style.clipPath =
+			'polygon(0% 0%, 0% 100%, 20% 100%, 22% 0, 80% 0, 79% 100%, 23% 100%, 23% 100%, 100% 100%, 100% 0%)';
+		} else if (bodypart === bodyparts[4]) {		// belly
+			bodymap.style.clipPath = 'inset(37% 20% 40% 20%)';
+		} else {									// legs
+			bodymap.style.clipPath = 'inset(58% 20% 0% 20%)';
+		}
+    }
+    frame.left.appendChild(bodymap);    
+
+    const bg_image = document.createElement('img');
+    bg_image.setAttribute('src', 'bodymaps/neutral.png');
+    bg_image.setAttribute('width', '120px');
+    bg_image.style.left = '0px';
+    bg_image.style.position = 'absolute';
+    bg_image.style.zIndex = '1';		// behind bodymap
+    frame.left.appendChild(bg_image);
+
+    const scale = document.createElement('img');
+    scale.setAttribute('src', 'bodymaps/scale.png');
+    scale.setAttribute('width', '140px');
+    scale.style.position = 'absolute';
+    scale.style.left = '140px';
+    scale.style.top = '90px'
+    frame.left.appendChild(scale);
 
 }
-/*
 
-Using: https://www.image-map.net/
+function render_right_col(frame, frame_data, emotion, bodypart) {
 
-Head:
-    <area target="" alt="" title="" href="" coords="137,95,152,67,150,32,133,7,126,6,107,6,100,10,89,25,85,33,83,61,87,71,97,94" shape="poly">
+	if (emotion === 'neutral') {
+    	let header = document.createElement('h4');
+    	$(header).text('Welcome! Please pick an emotion.');
+    	frame.right.appendChild(header);
+    } else if (bodypart.length === 0) {		// body part not selected
+	    for (let bodypart of bodyparts) {
+	    	let body_link = document.createElement('p');
+	    	body_link.style.textDecoration = 'underline';
+	    	body_link.style.color = 'blue';
+	    	$(body_link).text(bodypart);
+	    	body_link.onclick = function () {	// clicked on body part
+	    		frame.left.innerHTML = '';
+	    		frame.right.innerHTML = '';
+	    		render_left_col(frame, frame_data, emotion, bodypart);
+			    render_right_col(frame, frame_data, emotion, bodypart);
+	    	}
+	    	frame.right.appendChild(body_link);
+	    }
+    } else {	// body part is selected
+		let question = document.createElement('h4');
+		$(question).text(frame_data.question);
+	    frame.right.appendChild(question);
 
-Neck:
-    <area target="" alt="" title="" href="" coords="161,115,139,100,137,94,97,93,99,101,76,115" shape="poly">
+	    for (let choice of qualifiers) {
+	    	let radio = document.createElement('input');
+	    	$(radio).attr('type', 'radio');
+	    	$(radio).attr('name', 'emotion');
+	    	$(radio).attr('id', choice);
 
-Chest:
-    <area target="" alt="" title="" href="" coords="167,237,172,215,171,119,158,115,75,113,63,120,63,215,67,236" shape="poly">
-
-Arms:
-    <area target="" alt="" title="" href="" coords="65,119,50,130,42,148,39,163,36,203,25,252,26,286,29,301,31,311,30,344,27,357,35,370,42,376,58,373,60,365,58,356,58,341,52,324,52,305,56,284,57,264,56,242,64,216" shape="poly">
-    <area target="" alt="" title="" href="" coords="173,365,178,359,177,342,183,326,179,281,179,265,179,242,170,215,170,118,184,128,193,148,197,174,199,204,210,250,208,287,208,297,203,310,205,342,208,350,207,358,196,373,189,375,179,373" shape="poly">
-
-Belly:
-    <area target="" alt="" title="" href="" coords="68,234,167,235,172,288,173,307,173,324,172,363,61,364,61,326,63,290" shape="poly">
-
-Legs:
-    <area target="" alt="" title="" href="" coords="62,364,173,364,165,412,162,427,161,442,158,478,160,490,159,512,158,532,151,551,147,570,143,593,146,602,145,613,154,630,149,640,127,641,118,633,109,642,86,640,80,632,89,612,89,603,92,592,83,548,76,530,76,492,76,478,74,422,69,409" shape="poly">
-
-*/
+	    	let label = document.createElement('label');
+	    	$(label).attr('for', choice);
+	    	$(label).text(choice);
+	    	frame.right.appendChild(radio);
+	    	frame.right.appendChild(label);
+	    	frame.right.appendChild(document.createElement('br'));
+	    }
+    }
+}
