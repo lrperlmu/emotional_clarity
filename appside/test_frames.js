@@ -14,6 +14,7 @@ $(document).ready(function() {
         'summary_qual': summary_qualifier_frame_main,
         'selection': selection_frame_main,
         'body_map': body_map_main,
+        'intro': intro_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -86,6 +87,14 @@ function body_map_main() {
     let frame_data = sample_app.body[1];
 
     let frame = new BodyMapFrame(frame_data);
+    frame.render();
+}
+
+function intro_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.intro[0];
+
+    let frame = new IntroFrame(frame_data);
     frame.render();
 }
 
