@@ -90,18 +90,22 @@ function render_left_col(frame, frame_data, emotion, bodypart) {
 
     if (bodypart.length > 0) {		// clipping picture when specified body part
     	if (bodypart === bodyparts[0]) {			// head
-   		bodymap.style.clipPath = 'inset(0% 0 85% 0%)';
+   			bodymap.style.clipPath = 'circle(12% at 50% 6%)';
 	    } else if (bodypart === bodyparts[1]) {		// neck
-	    	bodymap.style.clipPath = 'inset(14% 0 83% 0)';
+	    	bodymap.style.clipPath = 'polygon(25% 12%, 42% 15%, 58% 15%, 75% 12%, 75% 15%, 70% 16%, 60% 17%, 40% 17%, 30% 16%, 25% 15%)';
 		} else if (bodypart === bodyparts[2]) {		// chest
-	    	bodymap.style.clipPath = 'inset(15% 22% 62% 22%)';
+	    	// bodymap.style.clipPath = 'inset(15% 22% 62% 22%)';	// rect shape
+	    	bodymap.style.clipPath = 'ellipse(31% 12% at 50% 28%)';	// ellipse shape
 		} else if (bodypart === bodyparts[3]) {		// arms
 			bodymap.style.clipPath =
 			'polygon(0% 0%, 0% 100%, 20% 100%, 22% 0, 80% 0, 79% 100%, 23% 100%, 23% 100%, 100% 100%, 100% 0%)';
 		} else if (bodypart === bodyparts[4]) {		// belly
-			bodymap.style.clipPath = 'inset(37% 20% 40% 20%)';
+			// bodymap.style.clipPath =
+			//'polygon(22% 37%, 80% 37%, 85% 45%, 80% 58%, 21% 58%, 18% 45%)';	// rect shape
+			bodymap.style.clipPath = 'ellipse(33% 11% at 50% 48%)';	// ellipse shape
 		} else {									// legs
-			bodymap.style.clipPath = 'inset(58% 20% 0% 20%)';
+			bodymap.style.clipPath = 'polygon(20% 56%, 50% 61%, 80% 56%, 70% 100%, 25% 100%)';	// V shape
+			// bodymap.style.clipPath = 'inset(58% 20% 0% 20%)';	// rect shape
 		}
     }
     frame.left.appendChild(bodymap);    

@@ -50,8 +50,11 @@ function render_bodymap_color_forward() {
 
     // drawing board for increasing
 	var draw_inc = document.createElement('canvas');
-    draw_inc.style.width = '100%';
-    draw_inc.style.height = '100%';
+    draw_inc.style.width = '175px';
+    draw_inc.style.height = '597px';
+    draw_inc.style.left = '40px';
+    draw_inc.style.top = '50px';
+    draw_inc.style.position = 'absolute';
     draw_inc.setAttribute('id', 'canvasI');
     var contextI = draw_inc.getContext('2d');
     frame.left.appendChild(draw_inc);
@@ -60,7 +63,10 @@ function render_bodymap_color_forward() {
     var draw_dec = document.createElement('canvas');
     draw_dec.style.width = '100%';
     draw_dec.style.height = '100%';
+    draw_dec.style.zIndex = '2';
+    draw_dec.style.position = 'absolute';
     draw_dec.setAttribute('id', 'canvasD');
+    draw_dec.style.backgroundColor = 'red';
     var contextD = draw_dec.getContext('2d');
     frame.right.appendChild(draw_dec);
 
@@ -68,14 +74,28 @@ function render_bodymap_color_forward() {
     const img_inc = document.createElement('img');
     img_inc.setAttribute('src', 'bodymaps/neutral.png');
     img_inc.setAttribute('width', '175px');
-    img_inc.style.top = '50px';
     img_inc.style.left = '40px';
-    img_inc.style.zIndex = '0';		// behind drawing
+    img_inc.style.top = '50px';
     img_inc.style.position = 'absolute';
-    img_inc.onclick = function(e) {
-    	draw(e.clientX, (e.clientY - 140) / 4.2, contextI, 'red');
+    img_inc.onclick = function (e) {
+    	draw(img_inc, (e.clientX), (e.clientY - 50) / 4.3, contextI, 'red');
     }
     frame.left.appendChild(img_inc);
+    frame.left.appendChild(draw_inc);
+
+    // var img_inc = new Image();
+    // img_inc.style.width = '175px';
+    // img_inc.style.left = '40px';
+    // img_inc.style.position = 'absolute';
+    // img_inc.onload = function (e) {
+    // 	contextI.drawImage(img_inc, 0, 0, '175px', '500px');
+    // 	//contextI.fillStyle = 'red';
+    // 	//contextI.fillRect(40, 40, 100, 100);
+    // 	draw(img_inc, e.clientX * 1.7, (e.clientY - 30) / 4, contextI, 'red');
+    // };
+    // img_inc.src = 'bodymaps/neutral.png';
+    // frame.left.appendChild(img_inc);
+    // frame.left.appendChild(draw_inc);
 
     // graphic for decreasing
     const img_dec = document.createElement('img');
@@ -83,12 +103,13 @@ function render_bodymap_color_forward() {
     img_dec.setAttribute('width', '175px');
     img_dec.style.left = '40px';
     img_dec.style.top = '50px';
-    img_dec.style.zIndex = '0';		// behind drawing
+    img_dec.style.zIndex = '1';		// behind drawing
     img_dec.style.position = 'absolute';
     img_dec.onclick = function (e) {
-    	draw(e.clientX - 300, (e.clientY - 140) / 4.2, contextD, 'blue');
+    	draw(img_dec, e.clientX - 300, (e.clientY - 50) / 4.3, contextD, 'blue');
     }
     frame.right.appendChild(img_dec);
+    frame.right.appendChild(draw_dec);
 
     frame.appendChild(frame.left);
     frame.appendChild(frame.right);
@@ -98,11 +119,11 @@ function render_bodymap_color_forward() {
 }
 
 
-function draw(x, y, draw, color) {
+function draw(img, x, y, draw, color) {
 	draw.beginPath();
+	// draw.globalCompositeOperation = "destination-over";
 	draw.fillStyle = color;
-	draw.rect(x, y, 10, 2);
-	draw.fill();
+	draw.fillRect(x, y, 10, 2);
 	console.log('x: ' + x + ', y: ' + y);
 }
 
