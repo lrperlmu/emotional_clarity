@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    .summary_flex {
+      display: flex;
+    }
+
+    .summary_graphic {
+      float:left;
+      flex: 1;
+      padding: 10px;
+    }
+    .summary_body {
+      float:left;
+      flex: 2;
+      padding: 10px;
+    }
+    .summary_img {
+      width: 100%;
+      height: auto;
+    }
+    .summary_match_list_item {
+      margin: 5px 0;
+    }
+    .summary_responses_popup {
+      position: absolute;
+      display: none;
+      top: 50px;
+      left: 50%;
+      width: 350px;
+      z-index: 2;
+      background: #aaa;
+      padding: 10px;
+    }
+
+    .selection_rect {
+      border-style: outset;
+      border-width: 6px;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 10px;
+      font-size: 150%;
+    }
+
+    .selection_rect.selected {
+      border-style:inset;
+      background: #aaa;
+    }
+
+    .selection_flex {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+    }
+
+  </style>
+
+  <title>Test Frames</title>
+</head>
+
+<body>
+  <div id="frame"></div>
+
+  <link rel="stylesheet" href="jquery/jquery-ui.min.css">
+  <script src="jquery/external/jquery/jquery.js"></script>
+  <script src="jquery/jquery-ui.min.js"></script>
+
+  <!-- data files -->
+  <script src="data/knowledgebase.js"></script>
+  <script src="data/sample_app.js"></script>
+
+  <script src="test_frames.js"></script>
+  <script src="frames/frame.js"></script>
+  <script src="frames/body.js"></script>
+  <script src="frames/summary.js"></script>
+  <script src="frames/emotion_selection.js"></script>
+  <script src="debug/tools.js"></script>
+
+</body>
+
+</html>
+
