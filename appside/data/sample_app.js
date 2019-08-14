@@ -38,7 +38,6 @@ var SAMPLE_APP = {
             'template': 'bodymap_statements',
             'title': 'Body map example slide',
             'question': 'What is your favorite body part?',
-            'graphic': 'neutral.png',
             'statements': [
                 'Head',
                 'Shoulders',

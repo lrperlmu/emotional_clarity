@@ -190,7 +190,7 @@ class BodyMapFrame extends Frame {
 
         // body maps graphic column
         var graphic = document.createElement('img');
-        graphic.setAttribute("src", "bodymaps/neutral.png");
+        graphic.setAttribute("src", "bodymaps/Neutral.png");
         graphic.setAttribute("width", "150px");
         left.appendChild(graphic);
 
@@ -289,4 +289,303 @@ class IntroFrame extends Frame {
     }
 }
 
+class BodyMapColorFrame extends Frame {
+    /**
+     *
+     *
+     **/
 
+    constructor(frame_data) {
+        super();
+
+        this.title = frame_data.title;
+        this.question = frame_data.question;
+        this.emotions = ['Anger', 'Disgust', 'Envy', 'Fear', 'Happiness', 'Love', 'Sadness', 'Shame'];
+    }
+
+    /**
+     *
+     *
+     **/
+    render() {
+
+        // make a new empty div with id frame, not yet in the dom
+        let frame = document.createElement('div');
+        $(frame).attr('id', 'frame');
+
+        let title = document.createElement('h2');
+        $(title).text(this.title);
+        frame.appendChild(title);
+
+        let question = this.question;
+
+        // create links to each emotion
+        for (let curr of this.emotions) {
+            let emotion_link = document.createElement('label');
+            emotion_link.style.textDecoration = 'underline';
+            $(emotion_link).attr('class', 'emotion_link');
+            $(emotion_link).attr('id', curr);
+            $(emotion_link).text(curr);
+            emotion_link.onclick = function() {
+                return (render_left_col(frame, curr, '') & render_right_col(frame, question, curr, ''));
+            };
+            frame.append(emotion_link);
+            frame.append(document.createTextNode('\xa0\xa0\xa0'));
+        }
+
+        frame.left = document.createElement('div');
+        frame.left.style.width = '300px';
+        frame.left.style.left = '0px';
+        frame.left.style.height = '100%';
+        frame.left.style.position = 'absolute';
+
+        frame.right = document.createElement('div');
+        frame.right.style.left = '300px';
+        frame.right.style.height = '100%';
+        frame.right.style.position = 'absolute';
+
+        let greeting = document.createElement('h4');
+        $(greeting).text("Please select an emotion.");
+        frame.left.appendChild(greeting);
+
+        frame.appendChild(frame.left);
+        frame.appendChild(frame.right);
+
+        let old_frame = $('#frame')[0];
+        old_frame.replaceWith(frame);
+    }
+}
+
+/** 
+ * Private helper method for bodymap_color
+ * Renders frame.left
+ *
+ * @param frame -- div frame must contain frame.left
+ * @param emotion -- String from one of emotions array or 'Neutral'
+ * @param bodypart -- String from one of bodyparts array or is empty
+ *
+ * @effects -- does not preserve any content from frame.left
+ *      Renders specified emotion graphic, cropped to specified bodypart,
+ *      and displays scale.png
+ **/
+function render_left_col(frame, emotion, bodypart) {
+    frame.left.innerHTML = '';
+    const bodymap = document.createElement('img');
+    bodymap.setAttribute('src', 'bodymaps/' + emotion + '.png');
+    bodymap.setAttribute('width', '120px');
+    bodymap.style.left = '0px';
+    bodymap.style.zIndex = '2';     // in front of bg_image
+    bodymap.style.position = 'absolute';
+
+    if (bodypart.length > 0) {      // clipping picture when specified body part
+        if (bodypart === 'Head') {            // head
+            bodymap.style.clipPath = 'circle(12% at 50% 6%)';
+        } else if (bodypart === 'Neck') {     // neck
+            bodymap.style.clipPath =
+            'polygon(25% 12%, 42% 15%, 58% 15%, 75% 12%, 75% 15%, 70% 16%, 60% 17%, 40% 17%, 30% 16%, 25% 15%)';
+        } else if (bodypart === 'Chest') {     // chest
+            // bodymap.style.clipPath = 'inset(15% 22% 62% 22%)';   // rect shape
+            bodymap.style.clipPath = 'ellipse(31% 12% at 50% 28%)'; // ellipse shape
+        } else if (bodypart === 'Arms') {     // arms
+            bodymap.style.clipPath =
+            'polygon(0% 0%, 0% 100%, 20% 100%, 22% 0, 80% 0, 79% 100%, 23% 100%, 23% 100%, 100% 100%, 100% 0%)';
+        } else if (bodypart === 'Belly') {     // belly
+            // bodymap.style.clipPath =
+            //'polygon(22% 37%, 80% 37%, 85% 45%, 80% 58%, 21% 58%, 18% 45%)';  // rect shape
+            bodymap.style.clipPath = 'ellipse(33% 11% at 50% 48%)'; // ellipse shape
+        } else {                                    // legs
+            bodymap.style.clipPath = 'polygon(20% 56%, 50% 61%, 80% 56%, 70% 100%, 25% 100%)';  // V shape
+            // bodymap.style.clipPath = 'inset(58% 20% 0% 20%)';    // rect shape
+        }
+    }
+    frame.left.appendChild(bodymap);    
+
+    const bg_image = document.createElement('img');
+    bg_image.setAttribute('src', 'bodymaps/neutral.png');
+    bg_image.setAttribute('width', '120px');
+    bg_image.style.left = '0px';
+    bg_image.style.position = 'absolute';
+    bg_image.style.zIndex = '1';        // behind bodymap
+    frame.left.appendChild(bg_image);
+
+    const scale = document.createElement('img');
+    scale.setAttribute('src', 'bodymaps/scale.png');
+    scale.setAttribute('width', '140px');
+    scale.style.position = 'absolute';
+    scale.style.left = '140px';
+    scale.style.top = '90px'
+    frame.left.appendChild(scale);
+}
+
+/**
+ * Private helper method for bodymap_color
+ * Renders frame.right
+ *
+ * @param frame -- div frame must contain frame.right
+ * @param quest -- String comes from sample_app.body[2].question
+ * @param emotion -- String from one of emotions array or 'Neutral'
+ * @param bodypart -- String from one of bodyparts array or is empty
+ *
+ * @effects -- does not preserve any content from frame.right
+ *      If no specified bodypart, renders links to each bodypart
+ *      If specified body part, renders questionnaire
+ **/
+function render_right_col(frame, quest, emotion, bodypart) {
+    let bodyparts = ['Head', 'Neck', 'Chest', 'Arms', 'Belly', 'Legs'];
+    let qualifiers = ['Very much', 'Neutral', 'Not at all', 'I don\'t know'];
+
+    frame.right.innerHTML = '';
+    if (emotion === 'Neutral') {
+        let header = document.createElement('h4');
+        $(header).text('Welcome! Please pick an emotion.');
+        frame.right.appendChild(header);
+    } else if (bodypart.length === 0) {     // body part not selected
+        for (let bodypart of bodyparts) {
+            let body_link = document.createElement('p');
+            body_link.style.textDecoration = 'underline';
+            body_link.style.color = 'blue';
+            $(body_link).text(bodypart);
+            body_link.onclick = function () {   // clicked on body part
+                render_left_col(frame, emotion, bodypart);
+                render_right_col(frame, quest, emotion, bodypart);
+            }
+            frame.right.appendChild(body_link);
+        }
+    } else {    // body part is selected
+        let question = document.createElement('h4');
+        $(question).text(quest);
+        frame.right.appendChild(question);
+
+        for (let choice of qualifiers) {
+            let radio = document.createElement('input');
+            $(radio).attr('type', 'radio');
+            $(radio).attr('name', 'emotion');
+            $(radio).attr('id', choice);
+
+            let label = document.createElement('label');
+            $(label).attr('for', choice);
+            $(label).text(choice);
+            frame.right.appendChild(radio);
+            frame.right.appendChild(label);
+            frame.right.appendChild(document.createElement('br'));
+        }
+    }
+}
+
+
+class BodyMapColorFwdFrame extends Frame {
+
+    render() {
+        let frame = document.createElement('div');
+        $(frame).attr('id', 'frame');
+
+        let title = document.createElement('h2');
+        $(title).text('Body Map Color -- Forward');
+        frame.appendChild(title);
+
+        frame.left = document.createElement('div');
+        frame.left.style.width = '300px';
+        frame.left.style.left = '0px';
+        frame.left.style.height = '100%';
+        frame.left.style.position = 'absolute';
+
+        frame.right = document.createElement('div');
+        frame.right.style.width = '300px';
+        frame.right.style.left = '300px';
+        frame.right.style.height = '100%';
+        frame.right.style.position = 'absolute';
+
+        let textL = document.createElement('h4');
+        $(textL).text('Draw on this body where bodily sensations are increased.');
+        frame.left.appendChild(textL);
+
+        let textR = document.createElement('h4');
+        $(textR).text('Draw on this body where bodily sensations are decreased.');
+        frame.right.appendChild(textR);
+
+        // graphic for increasing
+        const img_inc = document.createElement('img');
+        img_inc.src = 'bodymaps/Neutral.png';
+        img_inc.style.width = '175px';
+        img_inc.style.height = '597px';
+        img_inc.style.top = '70px';
+        img_inc.style.left = '40px';
+        img_inc.style.position = 'absolute';
+        img_inc.style.zIndex = '1';     // behind canvas
+
+        // graphic for decreasing
+        const img_dec = document.createElement('img');
+        img_dec.src = 'bodymaps/Neutral.png';
+        img_dec.style.width = '175px';
+        img_dec.style.height = '597px';
+        img_dec.style.top = '70px';
+        img_dec.style.left = '40px';
+        img_dec.style.position = 'absolute';
+        img_dec.style.zIndex = '1';     // behind canvas
+
+        // canvas board for increasing
+        var draw_inc = document.createElement('canvas');
+        draw_inc.style.width = img_inc.style.width;
+        draw_inc.style.height = img_inc.style.height;
+        draw_inc.style.top = '70px';
+        draw_inc.style.left = '40px';
+        draw_inc.style.position = 'absolute';
+        draw_inc.style.zIndex = '2';
+        draw_inc.setAttribute('id', 'canvasI');
+        var contextI = draw_inc.getContext('2d');
+
+        // canvas board for decreasing
+        var draw_dec = document.createElement('canvas');
+        draw_dec.style.width = img_dec.style.width;
+        draw_dec.style.height = img_dec.style.height;
+        draw_dec.style.top = '70px';
+        draw_dec.style.left = '40px';
+        draw_dec.style.position = 'absolute';
+        draw_dec.style.zIndex = '2';
+        draw_dec.setAttribute('id', 'canvasD');
+        var contextD = draw_dec.getContext('2d');
+        
+        // when drawing event listener
+        draw_inc.onclick = function (e) {
+            return draw(img_inc, (e.clientX - 40) * 1.7, (e.clientY - 70) / 4, contextI, 'red');
+        }
+        draw_dec.onclick = function (e) {
+            return draw(img_dec, (e.clientX - 340) * 1.7, (e.clientY - 70) / 4, contextD, 'blue');
+        }
+        frame.left.appendChild(img_inc);
+        frame.left.appendChild(draw_inc);
+
+        frame.right.appendChild(img_dec);
+        frame.right.appendChild(draw_dec);
+
+        frame.appendChild(frame.left);
+        frame.appendChild(frame.right);
+
+        let old_frame = $('#frame')[0];
+        old_frame.replaceWith(frame);
+    }
+}
+
+/**
+ * Private helper method for bodymap_color_fwd,
+ * Draws circle over clicked area on canvas
+ * 
+ * @param img -- graphic must be 175x597
+ * @param x -- integer of x coordinate of clicked point
+ * @param y -- integer of y coordinate of clicked point
+ * @param draw -- canvas.getContext; method draws on this
+ * @param color -- canvas uses this String as the drawing color
+ *
+ * @require -- screen must be scrolled to bottom to yield correct results
+ *
+ * @effects -- draws circle at specified area on specified canvas
+**/
+
+function draw(img, x, y, draw, color) {
+    draw.beginPath();
+    draw.fillStyle = color;
+    draw.ellipse(x, y, 13, 2, 0, 0, 2 * Math.PI);
+    // used ellipse over circle to offset y
+    draw.fill();
+    console.log('x: ' + x + ', y: ' + y);
+}

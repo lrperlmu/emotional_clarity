@@ -13,8 +13,10 @@ $(document).ready(function() {
         'summary_count': summary_count_frame_main,
         'summary_qual': summary_qualifier_frame_main,
         'selection': selection_frame_main,
-        'body_map': body_map_main,
+        'bodymap': bodymap_main,
         'intro': intro_main,
+        'bodymap_color': bodymap_color_main,
+        'bodymap_color_fwd': bodymap_color_fwd_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -82,7 +84,7 @@ function selection_frame_main() {
     frame.render();
 }
 
-function body_map_main() {
+function bodymap_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.body[1];
 
@@ -98,4 +100,15 @@ function intro_main() {
     frame.render();
 }
 
+function bodymap_color_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.body[2];
 
+    let frame = new BodyMapColorFrame(frame_data);
+    frame.render();
+}
+
+function bodymap_color_fwd_main() {
+    let frame = new BodyMapColorFwdFrame();
+    frame.render();
+}
