@@ -49,6 +49,17 @@ var SAMPLE_APP = {
             'template': 'bodymap_color',
             'title': 'Body map coloring activity',
             'question': 'How much does this apply to you?',
+            'emotions': [
+                'anger', 'disgust', 'envy', 'fear', 'happiness', 'love', 'sadness', 'shame',
+            ],
+            'bodyparts': [
+                'head', 'neck', 'chest', 'arms', 'belly', 'legs',
+            ],
+            'qualifiers': [
+            'Very much', 'Neutral', 'Not at all', 'I don\'t know',
+            ],
+            'emotion': 'neutral',
+            'bodypart': '',
             // graphic is built in
         },
         3: {

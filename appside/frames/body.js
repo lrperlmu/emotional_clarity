@@ -233,10 +233,10 @@ class BodyMapFrame extends Frame {
 class IntroFrame extends Frame {
 
     /** Constructs Intro frame template
-     * @param frame -- Object containing the frame's data. Expected fields:
-     *      frame.title (string)
-     *      frame.text (string) -- content of each page on introduction
-     *      frame.graphic (string) -- URL link to graphic
+     * @param frame_data -- Object containing the frame's data. Expected fields:
+     *      frame_data.title (string)
+     *      frame_data.text (string) -- content of each page on introduction
+     *      frame_data.graphic (string) -- URL link to graphic
      * Behavior undefined if frame does not have these properties.
      **/
 
@@ -290,9 +290,20 @@ class IntroFrame extends Frame {
 }
 
 class BodyMapColorFrame extends Frame {
-    /**
-     *
-     *
+    
+    /** Constructs Body Map Color frame template
+     * @param frame_data -- Object containing the frame's data. Expected fields:
+     *      frame_data.title (string)
+     *      frame_data.question (string) -- question users answer
+     *      frame_data.emotions (array of strings)
+     *          -- lists all emotions used excluding neutral
+     *      frame_data.bodyparts (array of string)
+     *          -- lists all body parts used
+     *      frame_data.qualifiers (array of strings)
+     *          -- lists all answer choices used in questionnaire
+     *      frame_data.emotion (string) -- "neutral", placeholder for emotion type
+     *      frame_data.bodypart (string) -- "", placeholder for body part
+     * Behavior undefined if frame does not have these properties.
      **/
 
     constructor(frame_data) {
@@ -301,14 +312,18 @@ class BodyMapColorFrame extends Frame {
         this.title = frame_data.title;
         this.question = frame_data.question;
         this.emotions = frame_data.emotions;    // array of emotions
-        this.bodyparts = frame_data.bodyparts;  // array of emotions
+        this.bodyparts = frame_data.bodyparts;  // array of body parts
         this.qualifiers = frame_data.qualifiers;
         this.emotion = frame_data.emotion;      // default: neutral
         this.bodypart = frame_data.bodypart;    // default: ''
     }
 
     /**
+     * Renders Body Map Color frame
+     * @require -- DOM must have a div whose ID is 'frame'
      *
+     * @effects -- Does not preserve former content of <div id='frame'>.
+     *      Renders the data from the argument into that div.
      *
      **/
     render() {
@@ -359,121 +374,136 @@ class BodyMapColorFrame extends Frame {
         old_frame.replaceWith(frame);
     }
 
+    /** 
+     * Private helper method for bodymap_color
+     * Renders frame.left
+     *
+     * @param frame -- div that holds content of template
+     *          frame.left (div) -- holds content from this function
+     * 
+     * @requires
+     *          this.emotion (String) exists
+     *          this.bodyparts (array of String) contains the 6 body parts
+     *
+     * @effects -- does not preserve any content from frame.left
+     *      Renders specified emotion graphic, cropped to specified bodypart,
+     *      and displays scale.png
+     **/
+    render_left_col(frame) {
+        frame.left.innerHTML = '';
+        const bodymap = document.createElement('img');
+        bodymap.setAttribute('src', 'bodymaps/' + this.emotion + '.png');
+        bodymap.setAttribute('width', '120px');
+        bodymap.style.left = '0px';
+        bodymap.style.zIndex = '2';     // in front of bg_image
+        bodymap.style.position = 'absolute';
 
-/** 
- * Private helper method for bodymap_color
- * Renders frame.left
- *
- * @param frame -- div frame must contain frame.left
- * @param emotion -- String from one of emotions array or 'Neutral'
- * @param bodypart -- String from one of bodyparts array or is empty
- *
- * @effects -- does not preserve any content from frame.left
- *      Renders specified emotion graphic, cropped to specified bodypart,
- *      and displays scale.png
- **/
-render_left_col(frame) {
-    frame.left.innerHTML = '';
-    const bodymap = document.createElement('img');
-    bodymap.setAttribute('src', 'bodymaps/' + this.emotion + '.png');
-    bodymap.setAttribute('width', '120px');
-    bodymap.style.left = '0px';
-    bodymap.style.zIndex = '2';     // in front of bg_image
-    bodymap.style.position = 'absolute';
+        if (this.bodypart.length > 0) {      // clipping picture when specified body part
+            if (this.bodypart === this.bodyparts[0]) { // head
+                bodymap.style.clipPath = 'circle(12% at 50% 6%)';
+            } else if (this.bodypart === this.bodyparts[1]) { // neck
+                bodymap.style.clipPath =
+                'polygon(25% 12%, 42% 15%, 58% 15%, 75% 12%, 75% 15%, 70% 16%, 60% 17%, 40% 17%, 30% 16%, 25% 15%)';
+            } else if (this.bodypart === this.bodyparts[2]) {     // chest
+                // bodymap.style.clipPath = 'inset(15% 22% 62% 22%)';   // rect shape
+                bodymap.style.clipPath = 'ellipse(31% 12% at 50% 28%)'; // ellipse shape
+            } else if (this.bodypart === this.bodyparts[3]) { // arms
+                bodymap.style.clipPath =
+                'polygon(0% 0%, 0% 100%, 20% 100%, 22% 0, 80% 0, 79% 100%, 23% 100%, 23% 100%, 100% 100%, 100% 0%)';
+            } else if (this.bodypart === this.bodyparts[4]) { // belly
+                // bodymap.style.clipPath =
+                //'polygon(22% 37%, 80% 37%, 85% 45%, 80% 58%, 21% 58%, 18% 45%)';  // rect shape
+                bodymap.style.clipPath = 'ellipse(33% 11% at 50% 48%)'; // ellipse shape
+            } else { // legs
+                bodymap.style.clipPath = 'polygon(20% 56%, 50% 61%, 80% 56%, 70% 100%, 25% 100%)';  // V shape
+                // bodymap.style.clipPath = 'inset(58% 20% 0% 20%)';    // rect shape
+            }
+        }
+        frame.left.appendChild(bodymap);    
 
-    if (this.bodypart.length > 0) {      // clipping picture when specified body part
-        if (this.bodypart === this.bodyparts[0]) { // head
-            bodymap.style.clipPath = 'circle(12% at 50% 6%)';
-        } else if (this.bodypart === this.bodyparts[1]) { // neck
-            bodymap.style.clipPath =
-            'polygon(25% 12%, 42% 15%, 58% 15%, 75% 12%, 75% 15%, 70% 16%, 60% 17%, 40% 17%, 30% 16%, 25% 15%)';
-        } else if (this.bodypart === this.bodyparts[2]) {     // chest
-            // bodymap.style.clipPath = 'inset(15% 22% 62% 22%)';   // rect shape
-            bodymap.style.clipPath = 'ellipse(31% 12% at 50% 28%)'; // ellipse shape
-        } else if (this.bodypart === this.bodyparts[3]) { // arms
-            bodymap.style.clipPath =
-            'polygon(0% 0%, 0% 100%, 20% 100%, 22% 0, 80% 0, 79% 100%, 23% 100%, 23% 100%, 100% 100%, 100% 0%)';
-        } else if (this.bodypart === this.bodyparts[4]) { // belly
-            // bodymap.style.clipPath =
-            //'polygon(22% 37%, 80% 37%, 85% 45%, 80% 58%, 21% 58%, 18% 45%)';  // rect shape
-            bodymap.style.clipPath = 'ellipse(33% 11% at 50% 48%)'; // ellipse shape
-        } else { // legs
-            bodymap.style.clipPath = 'polygon(20% 56%, 50% 61%, 80% 56%, 70% 100%, 25% 100%)';  // V shape
-            // bodymap.style.clipPath = 'inset(58% 20% 0% 20%)';    // rect shape
+        const bg_image = document.createElement('img');
+        bg_image.setAttribute('src', 'bodymaps/neutral.png');
+        bg_image.setAttribute('width', '120px');
+        bg_image.style.left = '0px';
+        bg_image.style.position = 'absolute';
+        bg_image.style.zIndex = '1';        // behind bodymap
+        frame.left.appendChild(bg_image);
+
+        const scale = document.createElement('img');
+        scale.setAttribute('src', 'bodymaps/scale.png');
+        scale.setAttribute('width', '140px');
+        scale.style.position = 'absolute';
+        scale.style.left = '140px';
+        scale.style.top = '90px'
+        frame.left.appendChild(scale);
+    }
+
+    /**
+     * Private helper method for bodymap_color
+     * Renders frame.right
+     *
+     * @param frame -- div frame must contain frame.right
+     *          frame.right (div) -- holds content from this function
+     * 
+     * @requires
+     *          this.bodypart (String) exists
+     *          this.bodyparts (array of String) contains types of emotions
+     *          this.question (String) exists
+     *          this.qualifiers (array of String) contains answer choices
+     *
+     * @effects -- does not preserve any content from frame.right
+     *      If no specified bodypart, renders links to each bodypart
+     *      If specified body part, renders questionnaire
+     **/
+    render_right_col(frame) {
+        frame.right.innerHTML = '';
+        if (this.bodypart.length === 0) {     // body part not selected
+            for (let part of this.bodyparts) {
+                let body_link = document.createElement('p');
+                body_link.style.textDecoration = 'underline';
+                body_link.style.color = 'blue';
+                $(body_link).text(part.charAt(0).toUpperCase() + part.slice(1));
+                body_link.onclick = function () {   // clicked on body part
+                    this.bodypart = part;
+                    this.render_left_col(frame);
+                    this.render_right_col(frame);
+                }.bind(this);
+                frame.right.appendChild(body_link);
+            }
+        } else {    // body part is selected
+            let question = document.createElement('h4');
+            $(question).text(this.question);
+            frame.right.appendChild(question);
+
+            for (let choice of this.qualifiers) {
+                let radio = document.createElement('input');
+                $(radio).attr('type', 'radio');
+                $(radio).attr('name', 'emotion');
+                $(radio).attr('id', choice);
+
+                let label = document.createElement('label');
+                $(label).attr('for', choice);
+                $(label).text(choice);
+                frame.right.appendChild(radio);
+                frame.right.appendChild(label);
+                frame.right.appendChild(document.createElement('br'));
+            }
         }
     }
-    frame.left.appendChild(bodymap);    
-
-    const bg_image = document.createElement('img');
-    bg_image.setAttribute('src', 'bodymaps/neutral.png');
-    bg_image.setAttribute('width', '120px');
-    bg_image.style.left = '0px';
-    bg_image.style.position = 'absolute';
-    bg_image.style.zIndex = '1';        // behind bodymap
-    frame.left.appendChild(bg_image);
-
-    const scale = document.createElement('img');
-    scale.setAttribute('src', 'bodymaps/scale.png');
-    scale.setAttribute('width', '140px');
-    scale.style.position = 'absolute';
-    scale.style.left = '140px';
-    scale.style.top = '90px'
-    frame.left.appendChild(scale);
-}
-
-/**
- * Private helper method for bodymap_color
- * Renders frame.right
- *
- * @param frame -- div frame must contain frame.right
- * @param quest -- String comes from sample_app.body[2].question
- * @param emotion -- String from one of emotions array or 'Neutral'
- * @param bodypart -- String from one of bodyparts array or is empty
- *
- * @effects -- does not preserve any content from frame.right
- *      If no specified bodypart, renders links to each bodypart
- *      If specified body part, renders questionnaire
- **/
-render_right_col(frame) {
-    frame.right.innerHTML = '';
-    if (this.bodypart.length === 0) {     // body part not selected
-        for (let part of this.bodyparts) {
-            let body_link = document.createElement('p');
-            body_link.style.textDecoration = 'underline';
-            body_link.style.color = 'blue';
-            $(body_link).text(part.charAt(0).toUpperCase() + part.slice(1));
-            body_link.onclick = function () {   // clicked on body part
-                this.bodypart = part;
-                this.render_left_col(frame);
-                this.render_right_col(frame);
-            }.bind(this);
-            frame.right.appendChild(body_link);
-        }
-    } else {    // body part is selected
-        let question = document.createElement('h4');
-        $(question).text(this.question);
-        frame.right.appendChild(question);
-
-        for (let choice of this.qualifiers) {
-            let radio = document.createElement('input');
-            $(radio).attr('type', 'radio');
-            $(radio).attr('name', 'emotion');
-            $(radio).attr('id', choice);
-
-            let label = document.createElement('label');
-            $(label).attr('for', choice);
-            $(label).text(choice);
-            frame.right.appendChild(radio);
-            frame.right.appendChild(label);
-            frame.right.appendChild(document.createElement('br'));
-        }
-    }
-}
 }
 
 
 class BodyMapColorFwdFrame extends Frame {
 
+    /**
+     * Renders Body Map Color Forward frame
+     * @require -- DOM must have a div whose ID is 'frame'
+     *
+     * @effects -- Does not preserve former content of <div id='frame'>.
+     *      Renders the data from the argument into that div.
+     *
+     **/
+     
     render() {
         let frame = document.createElement('div');
         $(frame).attr('id', 'frame');
@@ -506,7 +536,7 @@ class BodyMapColorFwdFrame extends Frame {
         const img_inc = document.createElement('img');
         img_inc.src = 'bodymaps/Neutral.png';
         img_inc.style.width = '175px';
-        img_inc.style.height = 'auto';
+        img_inc.style.height = '597px';
         img_inc.style.top = '70px';
         img_inc.style.left = '40px';
         img_inc.style.position = 'absolute';
@@ -526,8 +556,6 @@ class BodyMapColorFwdFrame extends Frame {
         var draw_inc = document.createElement('canvas');
         $(draw_inc).attr('width', img_inc.style.width);
         $(draw_inc).attr('height', img_inc.style.height);
-        // draw_inc.style.width = img_inc.style.width;
-        // draw_inc.style.height = img_inc.style.height;
         draw_inc.style.top = '70px';
         draw_inc.style.left = '40px';
         draw_inc.style.position = 'absolute';
@@ -537,8 +565,8 @@ class BodyMapColorFwdFrame extends Frame {
 
         // canvas board for decreasing
         var draw_dec = document.createElement('canvas');
-        draw_dec.style.width = img_dec.style.width;
-        draw_dec.style.height = img_dec.style.height;
+        $(draw_dec).attr('width', img_dec.style.width);
+        $(draw_dec).attr('height', img_dec.style.height);
         draw_dec.style.top = '70px';
         draw_dec.style.left = '40px';
         draw_dec.style.position = 'absolute';
@@ -552,7 +580,7 @@ class BodyMapColorFwdFrame extends Frame {
             this.draw(img_inc, e.clientX - 40, e.clientY - 70, contextI, 'red');
         }.bind(this);
         draw_dec.onclick = function (e) {
-            this.draw(img_dec, (e.clientX - 340) * 1.7, (e.clientY - 70) / 4, contextD, 'blue');
+            this.draw(img_dec, (e.clientX - 340), (e.clientY - 70), contextD, 'blue');
         }.bind(this);
         frame.left.appendChild(img_inc);
         frame.left.appendChild(draw_inc);
@@ -567,28 +595,24 @@ class BodyMapColorFwdFrame extends Frame {
         old_frame.replaceWith(frame);
     }
 
-/**
- * Private helper method for bodymap_color_fwd,
- * Draws circle over clicked area on canvas
- * 
- * @param img -- graphic must be 175x597
- * @param x -- integer of x coordinate of clicked point
- * @param y -- integer of y coordinate of clicked point
- * @param draw -- canvas.getContext; method draws on this
- * @param color -- canvas uses this String as the drawing color
- *
- * @require -- screen must be scrolled to bottom to yield correct results
- *
- * @effects -- draws circle at specified area on specified canvas
-**/
+    /**
+     * Private helper method for bodymap_color_fwd,
+     * Draws circle over clicked area on canvas
+     * 
+     * @param img -- graphic must be 175x597
+     * @param x -- integer of x coordinate of clicked point
+     * @param y -- integer of y coordinate of clicked point
+     * @param draw -- canvas.getContext; method draws on this
+     * @param color -- canvas uses this String as the drawing color
+     *
+     * @effects -- draws circle at specified area on specified canvas
+    **/
 
-draw(img, x, y, draw, color) {
-    draw.beginPath();
-    draw.fillStyle = color;
-    draw.arc(x, y, 5, 0, 2 * Math.PI);
-    // draw.ellipse(x, y, 13, 2, 0, 0, 2 * Math.PI);
-    // used ellipse over circle to offset y
-    draw.fill();
-    console.log('x: ' + x + ', y: ' + y);
-}
+    draw(img, x, y, draw, color) {
+        draw.beginPath();
+        draw.fillStyle = color;
+        draw.arc(x, y, 5, 0, 2 * Math.PI);
+        draw.fill();
+        console.log('x: ' + x + ', y: ' + y);
+    }
 }
