@@ -190,7 +190,7 @@ class BodyMapFrame extends Frame {
 
         // body maps graphic column
         var graphic = document.createElement('img');
-        graphic.setAttribute("src", "bodymaps/Neutral.png");
+        graphic.setAttribute("src", "bodymaps/neutral.png");
         graphic.setAttribute("width", "150px");
         left.appendChild(graphic);
 
@@ -503,8 +503,21 @@ class BodyMapColorFwdFrame extends Frame {
      *      Renders the data from the argument into that div.
      *
      **/
-     
+
     render() {
+        this.image = new Image();
+        this.image.src = 'bodymaps/blank.png';
+        // increasing
+        this.incX = new Array();
+        this.incY = new Array();
+        this.incDrag = new Array();
+        var incPaint;
+        // decreasing
+        this.decX = new Array();
+        this.decY = new Array();
+        this.decDrag = new Array();
+        var decPaint;
+
         let frame = document.createElement('div');
         $(frame).attr('id', 'frame');
 
@@ -525,69 +538,110 @@ class BodyMapColorFwdFrame extends Frame {
         frame.right.style.position = 'absolute';
 
         let textL = document.createElement('h4');
-        $(textL).text('Draw on this body where bodily sensations are increased.');
+        $(textL).text('Draw on this body where bodily sensations are increased. Click below to start.');
         frame.left.appendChild(textL);
 
         let textR = document.createElement('h4');
-        $(textR).text('Draw on this body where bodily sensations are decreased.');
+        $(textR).text('Draw on this body where bodily sensations are decreased. Click below to start.');
         frame.right.appendChild(textR);
-
-        // graphic for increasing
-        const img_inc = document.createElement('img');
-        img_inc.src = 'bodymaps/Neutral.png';
-        img_inc.style.width = '175px';
-        img_inc.style.height = '597px';
-        img_inc.style.top = '70px';
-        img_inc.style.left = '40px';
-        img_inc.style.position = 'absolute';
-        img_inc.style.zIndex = '1';     // behind canvas
-
-        // graphic for decreasing
-        const img_dec = document.createElement('img');
-        img_dec.src = 'bodymaps/Neutral.png';
-        img_dec.style.width = '175px';
-        img_dec.style.height = '597px';
-        img_dec.style.top = '70px';
-        img_dec.style.left = '40px';
-        img_dec.style.position = 'absolute';
-        img_dec.style.zIndex = '1';     // behind canvas
 
         // canvas board for increasing
         var draw_inc = document.createElement('canvas');
-        $(draw_inc).attr('width', img_inc.style.width);
-        $(draw_inc).attr('height', img_inc.style.height);
-        draw_inc.style.top = '70px';
-        draw_inc.style.left = '40px';
-        draw_inc.style.position = 'absolute';
-        draw_inc.style.zIndex = '2';
-        draw_inc.setAttribute('id', 'canvasI');
+        $(draw_inc).attr('width', 175);
+        $(draw_inc).attr('height', 597);
+        $(draw_inc).attr('id', 'canvasI');
+        if(typeof G_vmlCanvasManager != 'undefined') {
+            draw_inc = G_vmlCanvasManager.initElement(draw_inc);
+        }
+        $(draw_inc).attr('style',
+            'top: 70px; left: 40px; position: absolute; z-index: 2;');
         var contextI = draw_inc.getContext('2d');
 
         // canvas board for decreasing
         var draw_dec = document.createElement('canvas');
-        $(draw_dec).attr('width', img_dec.style.width);
-        $(draw_dec).attr('height', img_dec.style.height);
-        draw_dec.style.top = '70px';
-        draw_dec.style.left = '40px';
-        draw_dec.style.position = 'absolute';
-        draw_dec.style.zIndex = '2';
-        draw_dec.setAttribute('id', 'canvasD');
+        $(draw_dec).attr('width', 175);
+        $(draw_dec).attr('height', 597);
+        $(draw_dec).attr('id', 'canvasD');
+        if(typeof G_vmlCanvasManager != 'undefined') {
+            draw_dec = G_vmlCanvasManager.initElement(draw_dec);
+        }
+        $(draw_dec).attr('style',
+            'top: 70px; left: 40px; position: absolute; z-index: 2;');
         var contextD = draw_dec.getContext('2d');
         
         // when drawing event listener
-        draw_inc.onclick = function (e) {
-            //return draw(img_inc, (e.clientX - 40) * 1.7, (e.clientY - 70) / 4, contextI, 'red');
-            this.draw(img_inc, e.clientX - 40, e.clientY - 70, contextI, 'red');
-        }.bind(this);
-        draw_dec.onclick = function (e) {
-            this.draw(img_dec, (e.clientX - 340), (e.clientY - 70), contextD, 'blue');
-        }.bind(this);
-        frame.left.appendChild(img_inc);
+        $(draw_inc).mousedown(function(e) {
+            this.incPaint = true;
+            this.incX.push(e.clientX - 40);
+            this.incY.push(e.clientY - 70);
+            this.incDrag.push(false);
+            this.redraw(contextI, 'red');
+        }.bind(this));
+
+        $(draw_inc).mousemove(function(e) {
+            if (this.incPaint) {
+                this.incX.push(e.clientX - 40);
+                this.incY.push(e.clientY - 70);
+                this.incDrag.push(true);
+                this.redraw(contextI, 'red');
+            }
+        }.bind(this));
+
+        $(draw_inc).mouseup(function(e) {
+            this.incPaint = false;
+        }.bind(this));
+
+        $(draw_inc).mouseleave(function(e) {
+            this.incPaint = false;
+        }.bind(this));
+
+        $(draw_dec).mousedown(function(e) {
+            this.decPaint = true;
+            this.decX.push(e.clientX - 340);
+            this.decY.push(e.clientY - 70);
+            this.decDrag.push(false);
+            this.redraw(contextD, 'blue');
+        }.bind(this));
+
+        $(draw_dec).mousemove(function(e) {
+            if (this.decPaint) {
+                this.decX.push(e.clientX - 340);
+                this.decY.push(e.clientY - 70);
+                this.decDrag.push(true);
+                this.redraw(contextD, 'blue');
+            }
+        }.bind(this));
+
+        $(draw_dec).mouseup(function(e) {
+            this.decPaint = false;
+        }.bind(this));
+
+        $(draw_dec).mouseleave(function(e) {
+            this.decPaint = false;
+        }.bind(this));
+
+        let clearLeft = document.createElement('button');
+        $(clearLeft).text('Clear');
+        $(clearLeft).click(function() {
+            contextI.clearRect(0, 0, 175, 597);
+            this.incX = [];
+            this.incY = [];
+            this.incDrag = [];
+        }.bind(this));
+
+        let clearRight = document.createElement('button');
+        $(clearRight).text('Clear');
+        $(clearRight).click(function() {
+            contextD.clearRect(0, 0, 175, 597);
+            this.decX = [];
+            this.decY = [];
+            this.decDrag = [];
+        }.bind(this));
+
         frame.left.appendChild(draw_inc);
-
-        frame.right.appendChild(img_dec);
         frame.right.appendChild(draw_dec);
-
+        frame.left.appendChild(clearLeft);
+        frame.right.appendChild(clearRight);
         frame.appendChild(frame.left);
         frame.appendChild(frame.right);
 
@@ -597,22 +651,51 @@ class BodyMapColorFwdFrame extends Frame {
 
     /**
      * Private helper method for bodymap_color_fwd,
-     * Draws circle over clicked area on canvas
+     * Draws over clicked area on canvas
      * 
-     * @param img -- graphic must be 175x597
-     * @param x -- integer of x coordinate of clicked point
-     * @param y -- integer of y coordinate of clicked point
-     * @param draw -- canvas.getContext; method draws on this
-     * @param color -- canvas uses this String as the drawing color
+     * @param context -- canvas must be 175x597
+     * @param color -- (String) either 'red' or 'blue',
+     *          also used to differentiate canvases
      *
-     * @effects -- draws circle at specified area on specified canvas
+     * @effects -- draws at specified area the specified color
     **/
 
-    draw(img, x, y, draw, color) {
-        draw.beginPath();
-        draw.fillStyle = color;
-        draw.arc(x, y, 5, 0, 2 * Math.PI);
-        draw.fill();
-        console.log('x: ' + x + ', y: ' + y);
+    redraw(context, color) {
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        context.beginPath();
+        context.lineWidth = 7;
+        context.lineCap = 'round';
+        context.strokeStyle = color;
+        if (color === 'red') {  // increasing
+            context.moveTo(this.incX[0], this.incY[0]);
+            context.lineTo(this.incX[0], this.incY[0]);
+
+            for (var i = 0; i < this.incX.length; i++) {
+                if (this.incDrag[i]) {
+                    context.lineTo(this.incX[i], this.incY[i]);
+                } else {
+                    context.stroke();
+                    context.beginPath();
+                    context.moveTo(this.incX[i], this.incY[i]);
+                    context.lineTo(this.incX[i], this.incY[i]);
+                }
+            }
+        } else {
+            context.moveTo(this.decX[0], this.decY[0]);
+            context.lineTo(this.decX[0], this.decY[0]);
+
+            for (var i = 0; i < this.decX.length; i++) {
+                if (this.decDrag[i]) {
+                    context.lineTo(this.decX[i], this.decY[i]);
+                } else {
+                    context.stroke();
+                    context.beginPath();
+                    context.moveTo(this.decX[i], this.decY[i]);
+                    context.lineTo(this.decX[i], this.decY[i]);
+                }
+            }
+        }
+        context.stroke();
+        context.drawImage(this.image, 0, 0, 175, 597);
     }
 }
