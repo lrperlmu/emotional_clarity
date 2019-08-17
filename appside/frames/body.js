@@ -353,15 +353,10 @@ class BodyMapColorFrame extends Frame {
         }
 
         frame.left = document.createElement('div');
-        frame.left.style.width = '300px';
-        frame.left.style.left = '0px';
-        frame.left.style.height = '100%';
-        frame.left.style.position = 'absolute';
+        $(frame.left).attr('class', 'bodymap_color_frameLeft');
 
         frame.right = document.createElement('div');
-        frame.right.style.left = '300px';
-        frame.right.style.height = '100%';
-        frame.right.style.position = 'absolute';
+        $(frame.right).attr('class', 'bodymap_color_frameRight');
 
         let greeting = document.createElement('h4');
         $(greeting).text("Please select an emotion.");
@@ -392,11 +387,8 @@ class BodyMapColorFrame extends Frame {
     render_left_col(frame) {
         frame.left.innerHTML = '';
         const bodymap = document.createElement('img');
-        bodymap.setAttribute('src', 'bodymaps/' + this.emotion + '.png');
-        bodymap.setAttribute('width', '120px');
-        bodymap.style.left = '0px';
-        bodymap.style.zIndex = '2';     // in front of bg_image
-        bodymap.style.position = 'absolute';
+        $(bodymap).attr('class', 'bodymap_color_img');
+        $(bodymap).attr('src', 'bodymaps/' + this.emotion + '.png');
 
         if (this.bodypart.length > 0) {      // clipping picture when specified body part
             if (this.bodypart === this.bodyparts[0]) { // head
@@ -422,19 +414,13 @@ class BodyMapColorFrame extends Frame {
         frame.left.appendChild(bodymap);    
 
         const bg_image = document.createElement('img');
-        bg_image.setAttribute('src', 'bodymaps/neutral.png');
-        bg_image.setAttribute('width', '120px');
-        bg_image.style.left = '0px';
-        bg_image.style.position = 'absolute';
-        bg_image.style.zIndex = '1';        // behind bodymap
+        $(bg_image).attr('src', 'bodymaps/neutral.png');
+        $(bg_image).attr('class', 'bodymap_color_bgImg');
         frame.left.appendChild(bg_image);
 
         const scale = document.createElement('img');
-        scale.setAttribute('src', 'bodymaps/scale.png');
-        scale.setAttribute('width', '140px');
-        scale.style.position = 'absolute';
-        scale.style.left = '140px';
-        scale.style.top = '90px'
+        $(scale).attr('src', 'bodymaps/scale.png');
+        $(scale).attr('class', 'bodymap_color_scaleImg');
         frame.left.appendChild(scale);
     }
 
@@ -460,8 +446,7 @@ class BodyMapColorFrame extends Frame {
         if (this.bodypart.length === 0) {     // body part not selected
             for (let part of this.bodyparts) {
                 let body_link = document.createElement('p');
-                body_link.style.textDecoration = 'underline';
-                body_link.style.color = 'blue';
+                $(body_link).attr('class', 'bodymap_color_bodyLink');
                 $(body_link).text(part.charAt(0).toUpperCase() + part.slice(1));
                 body_link.onclick = function () {   // clicked on body part
                     this.bodypart = part;
