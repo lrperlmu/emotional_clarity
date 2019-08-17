@@ -6,11 +6,9 @@
     * {
       box-sizing: border-box;
     }
-
     .summary_flex {
       display: flex;
     }
-
     .summary_graphic {
       float:left;
       flex: 1;
@@ -52,13 +50,32 @@
       border-style:inset;
       background: #aaa;
     }
-
     .selection_flex {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-evenly;
     }
-
+    .bodymap_color_fwd_frameLeft, .bodymap_color_fwd_frameRight {
+      position: absolute;
+      width: 300px;
+      height: 100%;
+      top: 40px;
+    }
+    .bodymap_color_fwd_frameLeft {
+      left: 0px;
+    }
+    .bodymap_color_fwd_frameRight {
+      left: 300px;
+    }
+    .bodymap_color_fwd_canvasI, .bodymap_color_fwd_canvasD {
+      position: absolute;
+      width: 175px;
+      height: 597px;
+      top: 70px;
+      left: 40px;
+      z-index: 2;
+    }
+  }
   </style>
 
   <title>Test Frames</title>

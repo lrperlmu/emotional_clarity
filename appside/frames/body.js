@@ -526,16 +526,10 @@ class BodyMapColorFwdFrame extends Frame {
         frame.appendChild(title);
 
         frame.left = document.createElement('div');
-        frame.left.style.width = '300px';
-        frame.left.style.left = '0px';
-        frame.left.style.height = '100%';
-        frame.left.style.position = 'absolute';
+        $(frame.left).attr('class', 'bodymap_color_fwd_frameLeft');
 
         frame.right = document.createElement('div');
-        frame.right.style.width = '300px';
-        frame.right.style.left = '300px';
-        frame.right.style.height = '100%';
-        frame.right.style.position = 'absolute';
+        $(frame.right).attr('class', 'bodymap_color_fwd_frameRight');
 
         let textL = document.createElement('h4');
         $(textL).text('Draw on this body where bodily sensations are increased. Click below to start.');
@@ -547,29 +541,25 @@ class BodyMapColorFwdFrame extends Frame {
 
         // canvas board for increasing
         var draw_inc = document.createElement('canvas');
-        $(draw_inc).attr('width', 175);
-        $(draw_inc).attr('height', 597);
-        $(draw_inc).attr('id', 'canvasI');
+        $(draw_inc).attr('class', 'bodymap_color_fwd_canvasI');
+        $(draw_inc).attr('width', 175);     // css styling cannot override inline style
+        $(draw_inc).attr('height', 597);    // css styling cannot override inline style
         if(typeof G_vmlCanvasManager != 'undefined') {
             draw_inc = G_vmlCanvasManager.initElement(draw_inc);
         }
-        $(draw_inc).attr('style',
-            'top: 70px; left: 40px; position: absolute; z-index: 2;');
         var contextI = draw_inc.getContext('2d');
 
         // canvas board for decreasing
         var draw_dec = document.createElement('canvas');
-        $(draw_dec).attr('width', 175);
-        $(draw_dec).attr('height', 597);
-        $(draw_dec).attr('id', 'canvasD');
+        $(draw_dec).attr('width', 175); // css styling cannot override inline style
+        $(draw_dec).attr('height', 597); // css styling cannot override inline style
+        $(draw_dec).attr('class', 'bodymap_color_fwd_canvasD');
         if(typeof G_vmlCanvasManager != 'undefined') {
             draw_dec = G_vmlCanvasManager.initElement(draw_dec);
         }
-        $(draw_dec).attr('style',
-            'top: 70px; left: 40px; position: absolute; z-index: 2;');
         var contextD = draw_dec.getContext('2d');
         
-        // when drawing event listener
+        // Event Listeners for increasing
         $(draw_inc).mousedown(function(e) {
             this.incPaint = true;
             this.incX.push(e.clientX - 40);
@@ -595,6 +585,7 @@ class BodyMapColorFwdFrame extends Frame {
             this.incPaint = false;
         }.bind(this));
 
+        // Event Listeners for decreasing
         $(draw_dec).mousedown(function(e) {
             this.decPaint = true;
             this.decX.push(e.clientX - 340);
@@ -661,7 +652,7 @@ class BodyMapColorFwdFrame extends Frame {
     **/
 
     redraw(context, color) {
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height); // clears canvas
         context.beginPath();
         context.lineWidth = 7;
         context.lineCap = 'round';
@@ -671,31 +662,31 @@ class BodyMapColorFwdFrame extends Frame {
             context.lineTo(this.incX[0], this.incY[0]);
 
             for (var i = 0; i < this.incX.length; i++) {
-                if (this.incDrag[i]) {
+                if (this.incDrag[i]) {      // if dragging, continue line
                     context.lineTo(this.incX[i], this.incY[i]);
                 } else {
-                    context.stroke();
-                    context.beginPath();
+                    context.stroke();   // closes line
+                    context.beginPath();    // creates new line
                     context.moveTo(this.incX[i], this.incY[i]);
                     context.lineTo(this.incX[i], this.incY[i]);
                 }
             }
-        } else {
+        } else {        // decreasing
             context.moveTo(this.decX[0], this.decY[0]);
             context.lineTo(this.decX[0], this.decY[0]);
 
             for (var i = 0; i < this.decX.length; i++) {
-                if (this.decDrag[i]) {
+                if (this.decDrag[i]) {      // if dragging, continue line
                     context.lineTo(this.decX[i], this.decY[i]);
                 } else {
-                    context.stroke();
-                    context.beginPath();
+                    context.stroke();   // closes line
+                    context.beginPath();    // creates new line
                     context.moveTo(this.decX[i], this.decY[i]);
                     context.lineTo(this.decX[i], this.decY[i]);
                 }
             }
         }
-        context.stroke();
-        context.drawImage(this.image, 0, 0, 175, 597);
+        context.stroke();   // closes line
+        context.drawImage(this.image, 0, 0, 175, 597); // sets image on top
     }
 }
