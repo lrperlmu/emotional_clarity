@@ -544,8 +544,32 @@ class BodyMapColorFwdFrame extends Frame {
         }
         var contextD = draw_dec.getContext('2d');
         
+        // Buttons (initializes and clears drawing)
+        let clearLeft = document.createElement('button');
+        $(clearLeft).text('Start');
+        $(clearLeft).click(function() {
+            $(clearLeft).text('Clear');
+            contextI.clearRect(0, 0, 175, 597);
+            contextI.drawImage(this.image, 0, 0, 175, 597);
+            this.incX = [];
+            this.incY = [];
+            this.incDrag = [];
+        }.bind(this));
+
+        let clearRight = document.createElement('button');
+        $(clearRight).text('Start');
+        $(clearRight).click(function() {
+            $(clearRight).text('Clear');
+            contextD.clearRect(0, 0, 175, 597);
+            contextD.drawImage(this.image, 0, 0, 175, 597);
+            this.decX = [];
+            this.decY = [];
+            this.decDrag = [];
+        }.bind(this));
+
         // Event Listeners for increasing
         $(draw_inc).mousedown(function(e) {
+            $(clearLeft).text('Clear');
             this.incPaint = true;
             this.incX.push(e.clientX - 40);
             this.incY.push(e.clientY - 70);
@@ -572,6 +596,7 @@ class BodyMapColorFwdFrame extends Frame {
 
         // Event Listeners for decreasing
         $(draw_dec).mousedown(function(e) {
+            $(clearRight).text('Clear');
             this.decPaint = true;
             this.decX.push(e.clientX - 340);
             this.decY.push(e.clientY - 70);
@@ -594,24 +619,6 @@ class BodyMapColorFwdFrame extends Frame {
 
         $(draw_dec).mouseleave(function(e) {
             this.decPaint = false;
-        }.bind(this));
-
-        let clearLeft = document.createElement('button');
-        $(clearLeft).text('Clear');
-        $(clearLeft).click(function() {
-            contextI.clearRect(0, 0, 175, 597);
-            this.incX = [];
-            this.incY = [];
-            this.incDrag = [];
-        }.bind(this));
-
-        let clearRight = document.createElement('button');
-        $(clearRight).text('Clear');
-        $(clearRight).click(function() {
-            contextD.clearRect(0, 0, 175, 597);
-            this.decX = [];
-            this.decY = [];
-            this.decDrag = [];
         }.bind(this));
 
         frame.left.appendChild(draw_inc);
