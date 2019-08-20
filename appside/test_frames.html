@@ -2,74 +2,30 @@
 <html>
 
 <head>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    .summary_flex {
-      display: flex;
-    }
-
-    .summary_graphic {
-      float:left;
-      flex: 1;
-      padding: 10px;
-    }
-    .summary_body {
-      float:left;
-      flex: 2;
-      padding: 10px;
-    }
-    .summary_img {
-      width: 100%;
-      height: auto;
-    }
-    .summary_match_list_item {
-      margin: 5px 0;
-    }
-    .summary_responses_popup {
-      position: absolute;
-      display: none;
-      top: 50px;
-      left: 50%;
-      width: 350px;
-      z-index: 2;
-      background: #aaa;
-      padding: 10px;
-    }
-
-    .selection_rect {
-      border-style: outset;
-      border-width: 6px;
-      border-radius: 10px;
-      padding: 10px;
-      margin: 10px;
-      font-size: 150%;
-    }
-
-    .selection_rect.selected {
-      border-style:inset;
-      background: #aaa;
-    }
-
-    .selection_flex {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-evenly;
-    }
-
-  </style>
-
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles/frames.css">
   <title>Test Frames</title>
 </head>
 
 <body>
-  <div id="frame"></div>
+  <div class="container-fluid d-flex h-100 align-items-center justify-content-center">
+    <div class="container-fixed border border-light rounded-lg">
+      <div class="row mx-5 mb-5 mt-5">
+        <div class="col-sm">
+          <div class="card" id="frame"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <link rel="stylesheet" href="jquery/jquery-ui.min.css">
   <script src="jquery/external/jquery/jquery.js"></script>
   <script src="jquery/jquery-ui.min.js"></script>
+
+  <!-- Bootstrap related scripts -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
   <!-- data files -->
   <script src="data/knowledgebase.js"></script>
