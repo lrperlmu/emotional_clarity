@@ -28,6 +28,7 @@ class EmotionSelectionFrame extends Frame {
         let description_text = 'Which emotions do you think you might be feeling now?';
         let emotions = [
             'Anger', 'Disgust', 'Envy', 'Fear', 'Guilt', 'Jealousy', 'Sadness', 'Shame',
+            'Not Sure',
         ];
 
         // make a new empty div with id frame, not yet in the dom
