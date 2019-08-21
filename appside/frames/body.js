@@ -549,6 +549,7 @@ class BodyMapColorFwdFrame extends Frame {
         $(clearLeft).text('Start');
         $(clearLeft).click(function() {
             $(clearLeft).text('Clear');
+            console.log(data);
             contextI.clearRect(0, 0, 175, 597);
             contextI.drawImage(this.image, 0, 0, 175, 597);
             this.incX = [];
@@ -566,6 +567,17 @@ class BodyMapColorFwdFrame extends Frame {
             this.decY = [];
             this.decDrag = [];
         }.bind(this));
+
+        let submit = document.createElement('button');
+        $(submit).text('Submit All');
+        $(submit).click(function() {
+            var data = new Array();
+            for (let i = 0; i < this.incX.length; i++) {
+                data.push('(' + this.incX[i] + ', ' + this.incY[i] + ')');
+            }
+            alert(data);
+        }.bind(this));
+        frame.right.appendChild(submit);
 
         // Event Listeners for increasing
         $(draw_inc).mousedown(function(e) {
