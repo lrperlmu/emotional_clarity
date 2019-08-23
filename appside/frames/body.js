@@ -190,7 +190,7 @@ class BodyMapFrame extends Frame {
 
         // body maps graphic column
         var graphic = document.createElement('img');
-        graphic.setAttribute("src", "bodymaps/neutral.png");
+        graphic.setAttribute("src", "images/neutral.png");
         graphic.setAttribute("width", "150px");
         left.appendChild(graphic);
 
@@ -388,7 +388,7 @@ class BodyMapColorFrame extends Frame {
         frame.left.innerHTML = '';
         const bodymap = document.createElement('img');
         $(bodymap).attr('class', 'bodymap_color_img');
-        $(bodymap).attr('src', 'bodymaps/' + this.emotion + '.png');
+        $(bodymap).attr('src', 'images/' + this.emotion + '.png');
 
         if (this.bodypart.length > 0) {      // clipping picture when specified body part
             if (this.bodypart === this.bodyparts[0]) { // head
@@ -397,29 +397,25 @@ class BodyMapColorFrame extends Frame {
                 bodymap.style.clipPath =
                 'polygon(25% 12%, 42% 15%, 58% 15%, 75% 12%, 75% 15%, 70% 16%, 60% 17%, 40% 17%, 30% 16%, 25% 15%)';
             } else if (this.bodypart === this.bodyparts[2]) {     // chest
-                // bodymap.style.clipPath = 'inset(15% 22% 62% 22%)';   // rect shape
-                bodymap.style.clipPath = 'ellipse(31% 12% at 50% 28%)'; // ellipse shape
+                bodymap.style.clipPath = 'polygon(16% 18%, 40% 15%, 60% 15%, 84% 18%, 77% 36%, 25% 36%)';
             } else if (this.bodypart === this.bodyparts[3]) { // arms
                 bodymap.style.clipPath =
                 'polygon(0% 0%, 0% 100%, 20% 100%, 22% 0, 80% 0, 79% 100%, 23% 100%, 23% 100%, 100% 100%, 100% 0%)';
             } else if (this.bodypart === this.bodyparts[4]) { // belly
-                // bodymap.style.clipPath =
-                //'polygon(22% 37%, 80% 37%, 85% 45%, 80% 58%, 21% 58%, 18% 45%)';  // rect shape
-                bodymap.style.clipPath = 'ellipse(33% 11% at 50% 48%)'; // ellipse shape
+                bodymap.style.clipPath = 'ellipse(33% 9% at 50% 43%)'; // ellipse
             } else { // legs
-                bodymap.style.clipPath = 'polygon(20% 56%, 50% 61%, 80% 56%, 70% 100%, 25% 100%)';  // V shape
-                // bodymap.style.clipPath = 'inset(58% 20% 0% 20%)';    // rect shape
+                bodymap.style.clipPath = 'polygon(20% 45%, 50% 51%, 83% 44%, 73% 100%, 25% 100%)';  // V shape
             }
         }
         frame.left.appendChild(bodymap);    
 
         const bg_image = document.createElement('img');
-        $(bg_image).attr('src', 'bodymaps/neutral.png');
+        $(bg_image).attr('src', 'images/outline.png');
         $(bg_image).attr('class', 'bodymap_color_bgImg');
         frame.left.appendChild(bg_image);
 
         const scale = document.createElement('img');
-        $(scale).attr('src', 'bodymaps/scale.png');
+        $(scale).attr('src', 'images/scale.png');
         $(scale).attr('class', 'bodymap_color_scaleImg');
         frame.left.appendChild(scale);
     }
@@ -477,9 +473,15 @@ class BodyMapColorFrame extends Frame {
     }
 }
 
-
 class BodyMapColorFwdFrame extends Frame {
 
+    constructor(frame_data) {
+        super();
+        this.title = frame_data.title;
+        this.colors = frame_data.colors;
+        this.texts = frame_data.texts;
+        this.qualifiers = frame_data.qualifiers;
+    }
     /**
      * Renders Body Map Color Forward frame
      * @require -- DOM must have a div whose ID is 'frame'
@@ -491,23 +493,13 @@ class BodyMapColorFwdFrame extends Frame {
 
     render() {
         this.image = new Image();
-        this.image.src = 'bodymaps/blank.png';
-        // increasing
-        this.incX = new Array();
-        this.incY = new Array();
-        this.incDrag = new Array();
-        var incPaint;
-        // decreasing
-        this.decX = new Array();
-        this.decY = new Array();
-        this.decDrag = new Array();
-        var decPaint;
+        this.image.src = 'images/outline.png';
 
         let frame = document.createElement('div');
         $(frame).attr('id', 'frame');
 
         let title = document.createElement('h2');
-        $(title).text('Body Map Color -- Forward');
+        $(title).text(this.title);
         frame.appendChild(title);
 
         frame.left = document.createElement('div');
@@ -516,181 +508,87 @@ class BodyMapColorFwdFrame extends Frame {
         frame.right = document.createElement('div');
         $(frame.right).attr('class', 'bodymap_color_fwd_frameRight');
 
-        let textL = document.createElement('h4');
-        $(textL).text('Draw on this body where bodily sensations are increased. Click below to start.');
-        frame.left.appendChild(textL);
+        let inc = new BodyMapCanvas(frame.left, this.colors[0], this.texts[0], this.qualifiers[0]);
+        let dec = new BodyMapCanvas(frame.right, this.colors[1], this.texts[1], this.qualifiers[0]);
+        inc.render();
+        dec.render();
 
-        let textR = document.createElement('h4');
-        $(textR).text('Draw on this body where bodily sensations are decreased. Click below to start.');
-        frame.right.appendChild(textR);
-
-        // canvas board for increasing
-        var draw_inc = document.createElement('canvas');
-        $(draw_inc).attr('class', 'bodymap_color_fwd_canvasI');
-        $(draw_inc).attr('width', 175);     // css styling cannot override inline style
-        $(draw_inc).attr('height', 597);    // css styling cannot override inline style
-        if(typeof G_vmlCanvasManager != 'undefined') {
-            draw_inc = G_vmlCanvasManager.initElement(draw_inc);
-        }
-        var contextI = draw_inc.getContext('2d');
-
-        // canvas board for decreasing
-        var draw_dec = document.createElement('canvas');
-        $(draw_dec).attr('width', 175); // css styling cannot override inline style
-        $(draw_dec).attr('height', 597); // css styling cannot override inline style
-        $(draw_dec).attr('class', 'bodymap_color_fwd_canvasD');
-        if(typeof G_vmlCanvasManager != 'undefined') {
-            draw_dec = G_vmlCanvasManager.initElement(draw_dec);
-        }
-        var contextD = draw_dec.getContext('2d');
-        
-        // Buttons (initializes and clears drawing)
-        let clearLeft = document.createElement('button');
-        $(clearLeft).text('Start');
-        $(clearLeft).click(function() {
-            $(clearLeft).text('Clear');
-            console.log(data);
-            contextI.clearRect(0, 0, 175, 597);
-            contextI.drawImage(this.image, 0, 0, 175, 597);
-            this.incX = [];
-            this.incY = [];
-            this.incDrag = [];
-        }.bind(this));
-
-        let clearRight = document.createElement('button');
-        $(clearRight).text('Start');
-        $(clearRight).click(function() {
-            $(clearRight).text('Clear');
-            contextD.clearRect(0, 0, 175, 597);
-            contextD.drawImage(this.image, 0, 0, 175, 597);
-            this.decX = [];
-            this.decY = [];
-            this.decDrag = [];
-        }.bind(this));
-
-        let submit = document.createElement('button');
-        $(submit).text('Submit All');
-        $(submit).click(function() {
-            var data = new Array();
-            for (let i = 0; i < this.incX.length; i++) {
-                data.push('(' + this.incX[i] + ', ' + this.incY[i] + ')');
-            }
-            alert(data);
-        }.bind(this));
-        frame.right.appendChild(submit);
-
-        // Event Listeners for increasing
-        $(draw_inc).mousedown(function(e) {
-            $(clearLeft).text('Clear');
-            this.incPaint = true;
-            this.incX.push(e.clientX - 40);
-            this.incY.push(e.clientY - 70);
-            this.incDrag.push(false);
-            this.redraw(contextI, 'red');
-        }.bind(this));
-
-        $(draw_inc).mousemove(function(e) {
-            if (this.incPaint) {
-                this.incX.push(e.clientX - 40);
-                this.incY.push(e.clientY - 70);
-                this.incDrag.push(true);
-                this.redraw(contextI, 'red');
-            }
-        }.bind(this));
-
-        $(draw_inc).mouseup(function(e) {
-            this.incPaint = false;
-        }.bind(this));
-
-        $(draw_inc).mouseleave(function(e) {
-            this.incPaint = false;
-        }.bind(this));
-
-        // Event Listeners for decreasing
-        $(draw_dec).mousedown(function(e) {
-            $(clearRight).text('Clear');
-            this.decPaint = true;
-            this.decX.push(e.clientX - 340);
-            this.decY.push(e.clientY - 70);
-            this.decDrag.push(false);
-            this.redraw(contextD, 'blue');
-        }.bind(this));
-
-        $(draw_dec).mousemove(function(e) {
-            if (this.decPaint) {
-                this.decX.push(e.clientX - 340);
-                this.decY.push(e.clientY - 70);
-                this.decDrag.push(true);
-                this.redraw(contextD, 'blue');
-            }
-        }.bind(this));
-
-        $(draw_dec).mouseup(function(e) {
-            this.decPaint = false;
-        }.bind(this));
-
-        $(draw_dec).mouseleave(function(e) {
-            this.decPaint = false;
-        }.bind(this));
-
-        frame.left.appendChild(draw_inc);
-        frame.right.appendChild(draw_dec);
-        frame.left.appendChild(clearLeft);
-        frame.right.appendChild(clearRight);
         frame.appendChild(frame.left);
         frame.appendChild(frame.right);
 
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
     }
+}
+
+/** 
+ * Render body map image with pre-designed selection area
+ **/
+class BodyMapCanvas {
 
     /**
-     * Private helper method for bodymap_color_fwd,
-     * Draws over clicked area on canvas
-     * 
-     * @param context -- canvas must be 175x597
-     * @param color -- (String) either 'red' or 'blue',
-     *          also used to differentiate canvases
+     * Constructs necessary fields for body map image
      *
-     * @effects -- draws at specified area the specified color
-    **/
+     * @param frame, array of colors (3), instructional text
+     *
+     **/
+    constructor(frame, color, text, qualifiers) {
+        this.frame = frame;
+        this.color = color;
+        this.text = text;
+        this.qualifiers = qualifiers;
+        this.draw;
+    }
 
-    redraw(context, color) {
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height); // clears canvas
-        context.beginPath();
-        context.lineWidth = 7;
-        context.lineCap = 'round';
-        context.strokeStyle = color;
-        if (color === 'red') {  // increasing
-            context.moveTo(this.incX[0], this.incY[0]);
-            context.lineTo(this.incX[0], this.incY[0]);
-
-            for (var i = 0; i < this.incX.length; i++) {
-                if (this.incDrag[i]) {      // if dragging, continue line
-                    context.lineTo(this.incX[i], this.incY[i]);
-                } else {
-                    context.stroke();   // closes line
-                    context.beginPath();    // creates new line
-                    context.moveTo(this.incX[i], this.incY[i]);
-                    context.lineTo(this.incX[i], this.incY[i]);
-                }
-            }
-        } else {        // decreasing
-            context.moveTo(this.decX[0], this.decY[0]);
-            context.lineTo(this.decX[0], this.decY[0]);
-
-            for (var i = 0; i < this.decX.length; i++) {
-                if (this.decDrag[i]) {      // if dragging, continue line
-                    context.lineTo(this.decX[i], this.decY[i]);
-                } else {
-                    context.stroke();   // closes line
-                    context.beginPath();    // creates new line
-                    context.moveTo(this.decX[i], this.decY[i]);
-                    context.lineTo(this.decX[i], this.decY[i]);
-                }
-            }
+    /**
+     * Renders image with clickable parts
+     * .............. MORE DETAILS TBD
+     **/
+    render() {
+        this.draw = document.createElement('canvas');
+        $(this.draw).attr('class', 'bodymap_color_fwd_canvas');
+        $(this.draw).attr('width', 175);     // css styling cannot override inline style
+        $(this.draw).attr('height', 597);    // css styling cannot override inline style
+        if(typeof G_vmlCanvasManager != 'undefined') {
+            this.draw = G_vmlCanvasManager.initElement(this.draw);
         }
-        context.stroke();   // closes line
-        context.drawImage(this.image, 0, 0, 175, 597); // sets image on top
+        var context = this.draw.getContext('2d');
+
+        $(this.draw).click(function(e) {
+            context.beginPath();
+            context.strokeStyle = this.color;
+            context.moveTo(e.clientX - 40, e.clientY - 70);
+            context.lineTo(e.clientX, e.clientY);
+            context.stroke();
+        }.bind(this));
+        
+        // Instructional text
+        let text = document.createElement('h4');
+        $(text).text(this.text);
+        this.frame.appendChild(text);
+
+        let qualifiers = document.createElement('p');
+        $(qualifiers).text(this.qualifiers);
+        this.frame.appendChild(qualifiers);
+
+        let img = new Image();
+        img.src = 'images/outline.png';
+
+        // Buttons (initializes and clears drawing)
+        let clear = document.createElement('button');
+        $(clear).text('Start');
+        $(clear).click(function() {
+            $(clear).text('Clear');
+            context.clearRect(0, 0, 175, 597);
+            context.drawImage(img, 0, 0, 175, 597);
+        });
+        let next = document.createElement('button');
+        $(next).text('Next');
+        $(next).click(function() {
+            alert('Placeholder for "NEXT" button');
+        });
+        this.frame.appendChild(clear);
+        this.frame.appendChild(next);
+        this.frame.appendChild(this.draw);
     }
 }

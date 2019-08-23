@@ -72,9 +72,23 @@ var SAMPLE_APP = {
                 'kittens',
                 'puppies',
             ],
-
         },
-       
+        4: {
+            'template': 'bodymap_color_fwd',
+            'title': 'Body map color forward',
+            'texts': [
+                'Select the body part where you feel increased sensation.',
+                'Select the body part where you feel decreased sensation.',
+            ],
+            'qualifiers': [
+                ['yellow = moderate increase, red = strong increase'],
+                ['blue = moderate decrease, cyan = strong increase'],
+            ],
+            'colors': [
+                ['black', 'yellow', 'red'],
+                ['black', 'blue', 'cyan'],
+            ],
+        }
     },
 
     'summary_count': {

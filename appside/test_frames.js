@@ -109,6 +109,9 @@ function bodymap_color_main() {
 }
 
 function bodymap_color_fwd_main() {
-    let frame = new BodyMapColorFwdFrame();
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.body[4];
+
+    let frame = new BodyMapColorFwdFrame(frame_data);
     frame.render();
 }
