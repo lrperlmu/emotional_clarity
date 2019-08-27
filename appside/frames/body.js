@@ -509,7 +509,7 @@ class BodyMapColorFwdFrame extends Frame {
         $(frame.right).attr('class', 'bodymap_color_fwd_frameRight');
 
         let inc = new BodyMapCanvas(frame.left, this.colors[0], this.texts[0], this.qualifiers[0]);
-        let dec = new BodyMapCanvas(frame.right, this.colors[1], this.texts[1], this.qualifiers[0]);
+        let dec = new BodyMapCanvas(frame.right, this.colors[1], this.texts[1], this.qualifiers[1]);
         inc.render();
         dec.render();
 
@@ -532,12 +532,11 @@ class BodyMapCanvas {
      * @param frame, array of colors (3), instructional text
      *
      **/
-    constructor(frame, color, text, qualifiers) {
+    constructor(frame, colors, text, qualifiers) {
         this.frame = frame;
-        this.color = color;
+        this.colors = colors;
         this.text = text;
         this.qualifiers = qualifiers;
-        this.draw;
     }
 
     /**
@@ -545,23 +544,7 @@ class BodyMapCanvas {
      * .............. MORE DETAILS TBD
      **/
     render() {
-        this.draw = document.createElement('canvas');
-        $(this.draw).attr('class', 'bodymap_color_fwd_canvas');
-        $(this.draw).attr('width', 175);     // css styling cannot override inline style
-        $(this.draw).attr('height', 597);    // css styling cannot override inline style
-        if(typeof G_vmlCanvasManager != 'undefined') {
-            this.draw = G_vmlCanvasManager.initElement(this.draw);
-        }
-        var context = this.draw.getContext('2d');
 
-        $(this.draw).click(function(e) {
-            context.beginPath();
-            context.strokeStyle = this.color;
-            context.moveTo(e.clientX - 40, e.clientY - 70);
-            context.lineTo(e.clientX, e.clientY);
-            context.stroke();
-        }.bind(this));
-        
         // Instructional text
         let text = document.createElement('h4');
         $(text).text(this.text);
@@ -571,24 +554,113 @@ class BodyMapCanvas {
         $(qualifiers).text(this.qualifiers);
         this.frame.appendChild(qualifiers);
 
-        let img = new Image();
-        img.src = 'images/outline.png';
+        let url = 'http://www.w3.org/2000/svg';
+        let bg = document.createElementNS(url, 'svg');
+        $(bg).attr('width', '175');
+        $(bg).attr('height', '600');
+
+        let img = document.createElementNS(url, 'image');
+        $(img).attr('href', 'images/outline.png');
+        $(img).attr('width', '175');
+        $(img).attr('height', '597');
+        bg.appendChild(img);
+
+        // Body Part Click Sections
+        let head = document.createElementNS(url, 'rect');
+        $(head).attr('class', 'bodymap_canvas_head');
+        $(head).attr('x', '57');
+        $(head).attr('y', '3');
+        $(head).attr('width', '62');
+        $(head).attr('height', '80');
+        $(head).attr('rx', '22');
+        $(head).attr('ry', '40');
+
+        let neck = document.createElementNS(url, 'rect');
+        $(neck).attr('class', 'bodymap_canvas_neck');
+        $(neck).attr('x', '70');
+        $(neck).attr('y', '75');
+        $(neck).attr('width', '35');
+        $(neck).attr('height', '23');
+        $(neck).attr('rx', '15');
+        $(neck).attr('ry', '7');
+
+        let arm_left = document.createElementNS(url, 'polygon'); // left from client view
+        $(arm_left).attr('class', 'bodymap_canvas_arm_left');
+        $(arm_left).attr('points', '28,110 50,105 35,200 27,220 27,260 23,290 23,300 7,300 5,280 3,270 3,230 15,170 15,140');
+
+        let arm_right = document.createElementNS(url, 'polygon')    // right from client view
+        $(arm_right).attr('class', 'bodymap_canvas_arm_right');
+        $(arm_right).attr('points', '120,100 150,115 160,150 160,170 172,230 172,250 170,300 150,300 150,295 146,260 145,218 140,200');
+
+        let hand_left = document.createElementNS(url, 'polygon');   // left from client view
+        $(hand_left).attr('class', 'bodymap_canvas_hand_left');
+        $(hand_left).attr('points', '23,300 28,320 28,331 32,340 30,344 15,344 5,330 7,300');
+
+        let hand_right = document.createElementNS(url, 'polygon');  // right from client view
+        $(hand_right).attr('class', 'bodymap_canvas_hand_right');
+        $(hand_right).attr('points', '170,300 170,310 172,330 163,345 147,345 142,340 145,335 145,320 150,300');
+
+        let chest = document.createElementNS(url, 'polygon');
+        $(chest).attr('class', 'bodymap_canvas_chest');
+        $(chest).attr('points', '50,105 70,93 105,93 120,100 138,195 132,220 135,270 40,270 43,220 37,195');
+
+        let belly = document.createElementNS(url, 'rect');
+        $(belly).attr('class', 'bodymap_canvas_belly');
+        $(belly).attr('x', '38');
+        $(belly).attr('y', '225');
+        $(belly).attr('width', '100');
+        $(belly).attr('height', '85');
+        $(belly).attr('rx', '45');
+        $(belly).attr('ry', '40');
+
+        let legs = document.createElementNS(url, 'polygon');
+        $(legs).attr('class', 'bodymap_canvas_legs');
+        $(legs).attr('points', '40,250 137,255 140,340 130,385 125,440 125,490 110,555 87,555 93,525 88,480 90,450 90,400 87,370 83,410 83,450 84,490 82,520 87,555 63,555 50,490 48,400 36,335 37,260');
+
+        let feet = document.createElementNS(url, 'polygon');
+        $(feet).attr('class', 'bodymap_canvas_feet');
+        $(feet).attr('points', '87,555 110,555 120,590 110,595 95,595 87,585 87,555 87,585 80,595 60,595 55,585 63,570 63,555');
+
+        bg.appendChild(neck);
+        bg.appendChild(head);
+        bg.appendChild(arm_left);
+        bg.appendChild(arm_right);
+        bg.appendChild(hand_left);
+        bg.appendChild(hand_right);
+        bg.appendChild(chest);
+        bg.appendChild(legs);
+        bg.appendChild(belly);
+        bg.appendChild(feet);
+
+        $(bg).children().attr('fill', 'black');
+        $(bg).children().attr('stroke-width', '2');
+        $(bg).children().attr('stroke', 'gray');
+        $(bg).children().attr('data-clicked', '0');
+
+        $(bg).children().click(function(e) {
+            e.target.dataset.clicked = (e.target.dataset.clicked + 1) % 3;
+            $(e.target).attr('fill', this.colors[e.target.dataset.clicked]);
+        }.bind(this));
 
         // Buttons (initializes and clears drawing)
         let clear = document.createElement('button');
-        $(clear).text('Start');
+        $(clear).text('Clear');
         $(clear).click(function() {
-            $(clear).text('Clear');
-            context.clearRect(0, 0, 175, 597);
-            context.drawImage(img, 0, 0, 175, 597);
+            $(bg).children().attr('fill', 'black');
         });
         let next = document.createElement('button');
         $(next).text('Next');
         $(next).click(function() {
-            alert('Placeholder for "NEXT" button');
-        });
+            let result = 'Results:';
+            for (let bodypart of $(bg).children()) {
+                result += ' ' + $(bodypart).attr('class') + ': ';
+                result += this.colors[bodypart.dataset.clicked] + '\n';
+            }
+            alert(result);
+        }.bind(this));
+
+        this.frame.appendChild(bg);
         this.frame.appendChild(clear);
         this.frame.appendChild(next);
-        this.frame.appendChild(this.draw);
     }
 }
