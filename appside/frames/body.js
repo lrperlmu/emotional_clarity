@@ -135,11 +135,15 @@ class WordsBodyFrame extends ListBodyFrame {
     }
 }
 
+/**
+ * Frame consists of a list of statements relating to body sensations
+ * and a body map image.
+ */
 class BodyMapFrame extends Frame {
 
      /**
      * Construct a body map frame
-
+     *
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *      frame_data.title (string)
      *      frame_data.question (string) -- text before checkboxes
@@ -230,6 +234,9 @@ class BodyMapFrame extends Frame {
     }
 }
 
+/**
+ * Frame gives introduction and portrays an image.
+ */
 class IntroFrame extends Frame {
 
     /** Constructs Intro frame template
@@ -289,6 +296,10 @@ class IntroFrame extends Frame {
     }
 }
 
+/**
+ * Frame displays body map for each emotion and body part, then asks
+ * how much it applies to user.
+ */
 class BodyMapColorFrame extends Frame {
     
     /** Constructs Body Map Color frame template
@@ -305,7 +316,6 @@ class BodyMapColorFrame extends Frame {
      *      frame_data.bodypart (string) -- "", placeholder for body part
      * Behavior undefined if frame does not have these properties.
      **/
-
     constructor(frame_data) {
         super();
 
@@ -473,8 +483,21 @@ class BodyMapColorFrame extends Frame {
     }
 }
 
+/**
+ * Frame shows two body map images and asks user to color body parts
+ * corresponding to level of increased or decreased sensation.
+ */
 class BodyMapColorFwdFrame extends Frame {
 
+    /**
+     * Constructs Body Map Color Forward template
+     *
+     * @param frame_data -- contains frame data including
+     *      frame_data.title (String) -- title of frame
+     *      frame_data.colors (arrays of String) -- 2 arrays of color names
+     *      frame_data.texts (arrays of String) -- 2 arrays of instruction text
+     *      frame_data.qualifiers (arrays of String) -- 2 arrays of label names
+     **/
     constructor(frame_data) {
         super();
         this.title = frame_data.title;
@@ -509,7 +532,9 @@ class BodyMapColorFwdFrame extends Frame {
         $(frame.right).attr('class', 'bodymap_color_fwd_frameRight');
 
         let inc = new BodyMapCanvas(frame.left, this.colors[0], this.texts[0], this.qualifiers[0]);
+        $(inc).attr('class', 'bodymap_color_fwd_canvas_inc');
         let dec = new BodyMapCanvas(frame.right, this.colors[1], this.texts[1], this.qualifiers[1]);
+        $(dec).attr('class', 'bodymap_color_fwd_canvas_dec');
         inc.render();
         dec.render();
 
@@ -521,15 +546,18 @@ class BodyMapColorFwdFrame extends Frame {
     }
 }
 
-/** 
- * Render body map image with pre-designed selection area
- **/
+/**
+ * Renders body map image with clickable/color-changing body parts
+ */
 class BodyMapCanvas {
 
     /**
      * Constructs necessary fields for body map image
      *
-     * @param frame, array of colors (3), instructional text
+     * @param frame (div)-- must be an empty div
+     * @param colors (array of String)-- contains 3 color names
+     * @param text (String) -- instructional text
+     * @param qualifiers (String) -- color label description
      *
      **/
     constructor(frame, colors, text, qualifiers) {
@@ -540,8 +568,11 @@ class BodyMapCanvas {
     }
 
     /**
-     * Renders image with clickable parts
-     * .............. MORE DETAILS TBD
+     * Renders body map with clickable body parts
+     *
+     * @effects renders content of bodyMapCanvas including
+     *      header, instruction texts, clear and next buttons,
+     *      and clickable/color-changing body parts
      **/
     render() {
 
@@ -554,35 +585,24 @@ class BodyMapCanvas {
         $(qualifiers).text(this.qualifiers);
         this.frame.appendChild(qualifiers);
 
+        // SVG
         let url = 'http://www.w3.org/2000/svg';
         let bg = document.createElementNS(url, 'svg');
-        $(bg).attr('width', '175');
-        $(bg).attr('height', '600');
+        $(bg).attr('class', 'bodymap_canvas_bg');
 
         let img = document.createElementNS(url, 'image');
+        $(img).attr('class', 'bodymap_canvas_img');
         $(img).attr('href', 'images/outline.png');
-        $(img).attr('width', '175');
-        $(img).attr('height', '597');
         bg.appendChild(img);
 
         // Body Part Click Sections
+        // "polygon points can only be specified as element attribute, not CSS"
+        // - tinyurl.com/svgPolygon
         let head = document.createElementNS(url, 'rect');
         $(head).attr('class', 'bodymap_canvas_head');
-        $(head).attr('x', '57');
-        $(head).attr('y', '3');
-        $(head).attr('width', '62');
-        $(head).attr('height', '80');
-        $(head).attr('rx', '22');
-        $(head).attr('ry', '40');
 
         let neck = document.createElementNS(url, 'rect');
         $(neck).attr('class', 'bodymap_canvas_neck');
-        $(neck).attr('x', '70');
-        $(neck).attr('y', '75');
-        $(neck).attr('width', '35');
-        $(neck).attr('height', '23');
-        $(neck).attr('rx', '15');
-        $(neck).attr('ry', '7');
 
         let arm_left = document.createElementNS(url, 'polygon'); // left from client view
         $(arm_left).attr('class', 'bodymap_canvas_arm_left');
@@ -606,12 +626,6 @@ class BodyMapCanvas {
 
         let belly = document.createElementNS(url, 'rect');
         $(belly).attr('class', 'bodymap_canvas_belly');
-        $(belly).attr('x', '38');
-        $(belly).attr('y', '225');
-        $(belly).attr('width', '100');
-        $(belly).attr('height', '85');
-        $(belly).attr('rx', '45');
-        $(belly).attr('ry', '40');
 
         let legs = document.createElementNS(url, 'polygon');
         $(legs).attr('class', 'bodymap_canvas_legs');
@@ -632,28 +646,26 @@ class BodyMapCanvas {
         bg.appendChild(belly);
         bg.appendChild(feet);
 
-        $(bg).children().attr('fill', 'black');
-        $(bg).children().attr('stroke-width', '2');
-        $(bg).children().attr('stroke', 'gray');
+        $(bg).children().attr('fill', 'black'); // temporarily black, not set in CSS
         $(bg).children().attr('data-clicked', '0');
-
-        $(bg).children().click(function(e) {
+        $(bg).children().click(function(e) {    // changes fill color of body part
             e.target.dataset.clicked = (e.target.dataset.clicked + 1) % 3;
             $(e.target).attr('fill', this.colors[e.target.dataset.clicked]);
         }.bind(this));
 
-        // Buttons (initializes and clears drawing)
+        // Buttons
         let clear = document.createElement('button');
         $(clear).text('Clear');
         $(clear).click(function() {
+            $(bg).children().attr('data-clicked', '0');
             $(bg).children().attr('fill', 'black');
         });
         let next = document.createElement('button');
         $(next).text('Next');
         $(next).click(function() {
-            let result = 'Results:';
+            let result = 'Results: \n';
             for (let bodypart of $(bg).children()) {
-                result += ' ' + $(bodypart).attr('class') + ': ';
+                result += $(bodypart).attr('class') + ': ';
                 result += this.colors[bodypart.dataset.clicked] + '\n';
             }
             alert(result);

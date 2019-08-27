@@ -94,13 +94,37 @@
       text-decoration: underline;
       color: blue;
     }
-    .bodymap_color_fwd_canvasI, .bodymap_color_fwd_canvasD {
-      position: absolute;
+    .bodymap_canvas_bg, .bodymap_canvas_img {
       width: 175px;
       height: 597px;
-      top: 70px;
-      left: 40px;
-      z-index: 2;
+    }
+    .bodymap_canvas_head {
+      width: 62px;
+      height: 80px;
+      x: 57px;
+      y: 3px;
+      rx: 22px;
+      ry: 40px;
+    }
+    .bodymap_canvas_neck {
+      width: 35px;
+      height: 23px;
+      x: 70px;
+      y: 75px;
+      rx: 15px;
+      ry: 7px;
+    }
+    .bodymap_color_fwd_frameLeft polygon, .bodymap_color_fwd_frameRight polygon, .bodymap_color_fwd_frameLeft rect, .bodymap_color_fwd_frameRight rect {
+      stroke-width: 2;
+      stroke: gray;
+    }
+    .bodymap_canvas_belly {
+      width: 100px;
+      height: 85px;
+      x: 38px;
+      y: 225px;
+      rx: 45px;
+      ry: 40px;
     }
   }
   </style>
