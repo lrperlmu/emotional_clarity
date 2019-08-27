@@ -1,0 +1,161 @@
+* {
+  font-family: Helvetica;
+  color: #444;
+  font-size: 16px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  background: #F8F8F8;
+}
+
+.summary_flex {
+  display: flex;
+}
+
+.summary_graphic {
+  float:left;
+  flex: 1;
+  padding: 10px;
+}
+.summary_body {
+  float:left;
+  flex: 2;
+  padding: 10px;
+}
+.summary_img {
+  width: 100%;
+  height: auto;
+}
+.summary_match_list_item {
+  margin: 5px 0;
+}
+.summary_responses_popup {
+  position: absolute;
+  display: none;
+  top: 50px;
+  left: 50%;
+  width: 350px;
+  z-index: 2;
+  background: #aaa;
+  padding: 10px;
+}
+
+.selection_rect {
+  border-style: outset;
+  border-width: 6px;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px;
+  font-size: 150%;
+}
+
+.selection_rect.selected {
+  border-style:inset;
+  background: #aaa;
+}
+
+.selection_flex {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-auto-rows: minmax(auto, auto);
+  justify-content: flex-start;
+  align-items: center;
+  grid-gap: 5px;
+/*  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+*/}
+
+.container-fixed {
+  width: 800px;
+  height: auto;
+  background: #FFF;
+}
+
+.bodymap_color_fwd_frame_left, .bodymap_color_fwd_frame_right {
+  position: absolute;
+  width: 300px;
+  height: 100%;
+  top: 40px;
+}
+
+.bodymap_color_frame_left, .bodymap_color_frame_right {
+  position: absolute;
+  width: 300px;
+  height: 100%;
+}
+
+.bodymap_color_frame_left, .bodymap_color_fwd_frame_left {
+  left: 0px;
+}
+
+.bodymap_color_frame_right, .bodymap_color_fwd_frame_right {
+  left: 300px;
+}
+
+.bodymap_color_img {
+  position: absolute;
+  left: 0px;
+  width: 120px;
+  z-index: 2;
+}
+
+.bodymap_color_bg_img {
+  position: absolute;
+  left: 0px;
+  width: 120px;
+  z-index: 1;
+}
+
+.bodymap_color_scale_img {
+  position: absolute;
+  width: 110px;
+  left: 130px;
+  top: 30px;
+}
+
+.bodymap_color_body_link {
+  text-decoration: underline;
+  color: blue;
+}
+
+.bodymap_canvas_bg, .bodymap_canvas_img {
+  width: 175px;
+  height: 597px;
+}
+
+.bodymap_canvas_head {
+  width: 62px;
+  height: 80px;
+  x: 57px;
+  y: 3px;
+  rx: 22px;
+  ry: 40px;
+}
+
+.bodymap_canvas_neck {
+  width: 35px;
+  height: 23px;
+  x: 70px;
+  y: 75px;
+  rx: 15px;
+  ry: 7px;
+}
+.bodymap_color_fwd_frame_left polygon, .bodymap_color_fwd_frame_right polygon, .bodymap_color_fwd_frame_left rect, .bodymap_color_fwd_frame_right rect {
+  stroke-width: 2;
+  stroke: gray;
+}
+
+.bodymap_canvas_belly {
+  width: 100px;
+  height: 85px;
+  x: 38px;
+  y: 225px;
+  rx: 45px;
+  ry: 40px;
+}
