@@ -301,10 +301,10 @@ class BodyMapColorFrame extends Frame {
         }
 
         frame.left = document.createElement('div');
-        $(frame.left).attr('class', 'bodymap_color_frameLeft');
+        $(frame.left).attr('class', 'bodymap_color_frame_left');
 
         frame.right = document.createElement('div');
-        $(frame.right).attr('class', 'bodymap_color_frameRight');
+        $(frame.right).attr('class', 'bodymap_color_frame_right');
 
         let greeting = document.createElement('h4');
         $(greeting).text("Please select an emotion.");
@@ -359,12 +359,12 @@ class BodyMapColorFrame extends Frame {
 
         const bg_image = document.createElement('img');
         $(bg_image).attr('src', 'images/outline.png');
-        $(bg_image).attr('class', 'bodymap_color_bgImg');
+        $(bg_image).attr('class', 'bodymap_color_bg_img');
         frame.left.appendChild(bg_image);
 
         const scale = document.createElement('img');
         $(scale).attr('src', 'images/scale.png');
-        $(scale).attr('class', 'bodymap_color_scaleImg');
+        $(scale).attr('class', 'bodymap_color_scale_img');
         frame.left.appendChild(scale);
     }
 
@@ -390,7 +390,7 @@ class BodyMapColorFrame extends Frame {
         if (this.bodypart.length === 0) {     // body part not selected
             for (let part of this.bodyparts) {
                 let body_link = document.createElement('p');
-                $(body_link).attr('class', 'bodymap_color_bodyLink');
+                $(body_link).attr('class', 'bodymap_color_body_link');
                 $(body_link).text(part.charAt(0).toUpperCase() + part.slice(1));
                 body_link.onclick = function () {   // clicked on body part
                     this.bodypart = part;
@@ -464,10 +464,10 @@ class BodyMapColorFwdFrame extends Frame {
         frame.appendChild(title);
 
         frame.left = document.createElement('div');
-        $(frame.left).attr('class', 'bodymap_color_fwd_frameLeft');
+        $(frame.left).attr('class', 'bodymap_color_fwd_frame_left');
 
         frame.right = document.createElement('div');
-        $(frame.right).attr('class', 'bodymap_color_fwd_frameRight');
+        $(frame.right).attr('class', 'bodymap_color_fwd_frame_right');
 
         let inc = new BodyMapCanvas(frame.left, this.colors[0], this.texts[0], this.qualifiers[0]);
         $(inc).attr('class', 'bodymap_color_fwd_canvas_inc');
