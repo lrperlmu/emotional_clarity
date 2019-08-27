@@ -185,28 +185,16 @@ class BodyMapFrame extends Frame {
         frame.appendChild(title);
 
         let left = document.createElement('div');
-        left.style.backgroundColor = "lightpink";
-        left.style.width = "300px";
-        left.style.left = '0px';
-        left.style.height = '100%';
-        left.style.position = 'absolute';
+        $(left).attr('class', 'bodymap_frame_left');
 
         let right = document.createElement('div');
-        right.style.backgroundColor = "lightblue";
-        right.style.left = '300px';
-        right.style.height = '100%';
-        right.style.position = 'absolute';
-
+        $(right).attr('class', 'bodymap_frame_right');
 
         // body maps graphic column
         var graphic = document.createElement('img');
-        graphic.setAttribute("src", "images/neutral.png");
-        graphic.setAttribute("width", "150px");
+        $(graphic).attr('src', 'images/neutral.png');
+        $(graphic).attr('class', 'bodymap_img');
         left.appendChild(graphic);
-
-
-        // statement column
-        $(right).attr('text-align', 'left');
 
         let question = document.createElement('h4');
         $(question).text(this.question);
@@ -226,10 +214,8 @@ class BodyMapFrame extends Frame {
             let label = document.createElement('label');
             $(label).text(stmt);
             right.appendChild(label);
-
             right.appendChild(document.createElement('br'));
         }
-
 
         // append both columns to frame
         frame.appendChild(right);
@@ -289,6 +275,7 @@ class BodyMapColorFrame extends Frame {
         let title = document.createElement('h2');
         $(title).text(this.title);
         frame.appendChild(title);
+
         // create links to each emotion
         for (let curr of this.emotions) {
             let emotion_link = document.createElement('label');

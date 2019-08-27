@@ -77,6 +77,25 @@ body {
   background: #FFF;
 }
 
+.bodymap_frame_left, .bodymap_frame_right {
+  width: 300px;
+  height: 100%;
+  position: absolute;
+}
+
+.bodymap_frame_left {
+  left: 0px;
+}
+
+.bodymap_frame_right {
+  left: 300px;
+  text-align: left;
+}
+
+.bodymap_img {
+  width: 150px;
+}
+
 .bodymap_color_fwd_frame_left, .bodymap_color_fwd_frame_right {
   position: absolute;
   width: 300px;
