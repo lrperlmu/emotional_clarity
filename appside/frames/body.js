@@ -406,8 +406,9 @@ class BodyMapColorFrame extends Frame {
                 frame.right.appendChild(body_link);
             }
         } else {    // body part is selected
-            let question = document.createElement('h4');
-            $(question).text(this.question);
+            let question = document.createElement('p');
+            var string = this.bodypart + ' in ' + this.emotion;
+            $(question).text(this.question.replace('{}', string));
             frame.right.appendChild(question);
 
             for (let choice of this.qualifiers) {

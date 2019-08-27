@@ -48,7 +48,7 @@ var SAMPLE_APP = {
         2: {
             'template': 'bodymap_color',
             'title': 'Body map coloring activity',
-            'question': 'How much does this apply to you?',
+            'question': 'Research shows this is how sensation levels change for {}. How similar is this to your current state?',
             'emotions': [
                 'anger', 'disgust', 'envy', 'fear', 'happiness', 'love', 'sadness', 'shame',
             ],
