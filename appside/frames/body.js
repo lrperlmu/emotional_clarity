@@ -333,7 +333,7 @@ class BodyMapColorFrame extends Frame {
      *      and displays scale.png
      **/
     render_left_col(frame) {
-        frame.left.innerHTML = '';
+        frame.left.innerHTML = null;
         const bodymap = document.createElement('img');
         $(bodymap).attr('class', 'bodymap_color_img');
         $(bodymap).attr('src', 'images/' + this.emotion + '.png');
@@ -386,7 +386,7 @@ class BodyMapColorFrame extends Frame {
      *      If specified body part, renders questionnaire
      **/
     render_right_col(frame) {
-        frame.right.innerHTML = '';
+        frame.right.innerHTML = null;
         if (this.bodypart.length === 0) {     // body part not selected
             for (let part of this.bodyparts) {
                 let body_link = document.createElement('p');
