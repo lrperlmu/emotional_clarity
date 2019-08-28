@@ -344,7 +344,7 @@ class BodyMapColorFrame extends Frame {
         $(bodymap).attr('class', 'bodymap_color_img');
         $(bodymap).attr('src', 'images/' + this.emotion + '.png');
 
-        if (this.bodypart != 0) {      // clipping picture when specified body part
+        if (this.bodypart != null) {      // clipping picture when specified body part
             $(bodymap).attr('class', `bodymap_color_img bodymap_color_${this.bodypart}`);
         }
         frame.left.appendChild(bodymap);    
