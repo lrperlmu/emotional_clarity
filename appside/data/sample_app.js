@@ -38,7 +38,6 @@ var SAMPLE_APP = {
             'template': 'bodymap_statements',
             'title': 'Body map example slide',
             'question': 'What is your favorite body part?',
-            'graphic': 'neutral.png',
             'statements': [
                 'Head',
                 'Shoulders',
@@ -50,6 +49,17 @@ var SAMPLE_APP = {
             'template': 'bodymap_color',
             'title': 'Body map coloring activity',
             'question': 'How much does this apply to you?',
+            'emotions': [
+                'anger', 'disgust', 'envy', 'fear', 'happiness', 'love', 'sadness', 'shame',
+            ],
+            'bodyparts': [
+                'head', 'neck', 'chest', 'arms', 'belly', 'legs',
+            ],
+            'qualifiers': [
+            'Very much', 'Neutral', 'Not at all', 'I don\'t know',
+            ],
+            'emotion': 'neutral',
+            'bodypart': '',
             // graphic is built in
         },
         3: {
@@ -62,9 +72,23 @@ var SAMPLE_APP = {
                 'kittens',
                 'puppies',
             ],
-
         },
-       
+        4: {
+            'template': 'bodymap_color_fwd',
+            'title': 'Body map color forward',
+            'texts': [
+                'Select the body part where you feel increased sensation.',
+                'Select the body part where you feel decreased sensation.',
+            ],
+            'qualifiers': [
+                ['yellow = moderate increase, red = strong increase'],
+                ['blue = moderate decrease, cyan = strong increase'],
+            ],
+            'colors': [
+                ['black', 'yellow', 'red'],
+                ['black', 'blue', 'cyan'],
+            ],
+        }
     },
 
     'summary_count': {
