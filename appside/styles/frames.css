@@ -105,6 +105,30 @@ body {
   z-index: 2;
 }
 
+.bodymap_color_head {
+  clip-path: circle(12% at 50% 6%);
+}
+
+.bodymap_color_neck {
+  clip-path: polygon(25% 12%, 42% 15%, 58% 15%, 75% 12%, 75% 15%, 70% 16%, 60% 17%, 40% 17%, 30% 16%, 25% 15%);
+}
+
+.bodymap_color_chest {
+  clip-path: polygon(16% 18%, 40% 15%, 60% 15%, 84% 18%, 77% 36%, 25% 36%);
+}
+
+.bodymap_color_arms {
+  clip-path: polygon(0% 0%, 0% 100%, 20% 100%, 22% 0, 80% 0, 79% 100%, 23% 100%, 23% 100%, 100% 100%, 100% 0%);
+}
+
+.bodymap_color_belly {
+  clip-path: ellipse(33% 9% at 50% 43%);
+}
+
+.bodymap_color_legs {
+  clip-path: polygon(20% 45%, 50% 51%, 83% 44%, 73% 100%, 25% 100%);
+}
+
 .bodymap_color_bg_img {
   position: absolute;
   left: 0px;
