@@ -77,8 +77,8 @@ var SAMPLE_APP = {
             'template': 'bodymap_color_fwd',
             'title': 'Body map color forward',
             'texts': [
-                'Select the body part where you feel increased sensation.',
-                'Select the body part where you feel decreased sensation.',
+                'Select the body parts where you feel increased sensation.',
+                'Select the body parts where you feel decreased sensation.',
             ],
             'qualifiers': [
                 ['yellow = moderate increase, red = strong increase'],
