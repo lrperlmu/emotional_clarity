@@ -269,7 +269,7 @@ class BodyMapColorFrame extends Frame {
         this.bodyparts = frame_data.bodyparts;  // array of body parts
         this.qualifiers = frame_data.qualifiers;
         this.emotion = frame_data.emotion;      // default: neutral
-        this.bodypart = frame_data.bodypart;    // default: ''
+        this.bodypart = null;    // default: ''
     }
 
     /**
@@ -298,7 +298,7 @@ class BodyMapColorFrame extends Frame {
             $(emotion_link).text(curr.charAt(0).toUpperCase() + curr.slice(1));
             emotion_link.onclick = function() {
                 this.emotion = curr;
-                this.bodypart = '';
+                this.bodypart = null;
                 this.render_left_col(frame);
                 this.render_right_col(frame);
             }.bind(this);
@@ -344,7 +344,7 @@ class BodyMapColorFrame extends Frame {
         $(bodymap).attr('class', 'bodymap_color_img');
         $(bodymap).attr('src', 'images/' + this.emotion + '.png');
 
-        if (this.bodypart.length > 0) {      // clipping picture when specified body part
+        if (this.bodypart != 0) {      // clipping picture when specified body part
             $(bodymap).attr('class', `bodymap_color_img bodymap_color_${this.bodypart}`);
         }
         frame.left.appendChild(bodymap);    
@@ -379,7 +379,7 @@ class BodyMapColorFrame extends Frame {
      **/
     render_right_col(frame) {
         frame.right.innerHTML = null;
-        if (this.bodypart.length === 0) {     // body part not selected
+        if (this.bodypart == null) {     // body part not selected
             for (let part of this.bodyparts) {
                 let body_link = document.createElement('p');
                 $(body_link).attr('class', 'bodymap_color_body_link');
