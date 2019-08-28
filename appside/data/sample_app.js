@@ -85,7 +85,7 @@ var SAMPLE_APP = {
                 ['blue = moderate decrease, cyan = strong increase'],
             ],
             'colors': [
-                ['black', 'yellow', 'red'],
+                ['black', 'red', 'yellow'],
                 ['black', 'blue', 'cyan'],
             ],
         }
