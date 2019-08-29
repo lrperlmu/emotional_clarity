@@ -427,14 +427,12 @@ class BodyMapColorFwdFrame extends Frame {
      *      frame_data.title (String) -- title of frame
      *      frame_data.colors (arrays of String) -- 2 arrays of color names
      *      frame_data.texts (arrays of String) -- 2 arrays of instruction text
-     *      frame_data.qualifiers (arrays of String) -- 2 arrays of label names
      **/
     constructor(frame_data) {
         super();
         this.title = frame_data.title;
         this.colors = frame_data.colors;
         this.texts = frame_data.texts;
-        this.qualifiers = frame_data.qualifiers;
     }
     /**
      * Renders Body Map Color Forward frame
@@ -454,22 +452,32 @@ class BodyMapColorFwdFrame extends Frame {
 
         let title = document.createElement('h2');
         $(title).text(this.title);
+        $(title).attr('class', 'bodymap_color_fwd_title');
         frame.appendChild(title);
 
         frame.left = document.createElement('div');
         $(frame.left).attr('class', 'bodymap_color_fwd_frame_left');
 
+        frame.center = document.createElement('div');
+        $(frame.center).attr('class', 'bodymap_color_fwd_frame_center');
+
+        let scale = document.createElement('img');
+        $(scale).attr('src', 'images/scale.png');
+        $(scale).attr('class', 'bodymap_color_fwd_scale');
+        frame.center.appendChild(scale);
+
         frame.right = document.createElement('div');
         $(frame.right).attr('class', 'bodymap_color_fwd_frame_right');
 
-        let inc = new BodyMapCanvas(frame.left, this.colors[0], this.texts[0], this.qualifiers[0]);
+        let inc = new BodyMapCanvas(frame.left, this.colors[0], this.texts[0]);
         $(inc).attr('class', 'bodymap_color_fwd_canvas_inc');
-        let dec = new BodyMapCanvas(frame.right, this.colors[1], this.texts[1], this.qualifiers[1]);
+        let dec = new BodyMapCanvas(frame.right, this.colors[1], this.texts[1]);
         $(dec).attr('class', 'bodymap_color_fwd_canvas_dec');
         inc.render();
         dec.render();
 
         frame.appendChild(frame.left);
+        frame.appendChild(frame.center);
         frame.appendChild(frame.right);
 
         let old_frame = $('#frame')[0];
@@ -488,21 +496,19 @@ class BodyMapCanvas {
      * @param frame (div)-- must be an empty div
      * @param colors (array of String)-- contains 3 color names
      * @param text (String) -- instructional text
-     * @param qualifiers (String) -- color label description
      *
      **/
     constructor(frame, colors, text, qualifiers) {
         this.frame = frame;
         this.colors = colors;
         this.text = text;
-        this.qualifiers = qualifiers;
     }
 
     /**
      * Renders body map with clickable body parts
      *
      * @effects renders content of bodyMapCanvas including
-     *      header, instruction texts, clear and next buttons,
+     *      header, scale, clear and next buttons,
      *      and clickable/color-changing body parts
      **/
     render() {
@@ -511,10 +517,6 @@ class BodyMapCanvas {
         let text = document.createElement('h4');
         $(text).text(this.text);
         this.frame.appendChild(text);
-
-        let qualifiers = document.createElement('p');
-        $(qualifiers).text(this.qualifiers);
-        this.frame.appendChild(qualifiers);
 
         // SVG
         let url = 'http://www.w3.org/2000/svg';
@@ -543,13 +545,9 @@ class BodyMapCanvas {
         $(arm_right).attr('class', 'bodymap_canvas_arm_right');
         $(arm_right).attr('points', '120,100 150,115 160,150 160,170 172,230 172,250 170,300 150,300 150,295 146,260 145,218 140,200');
 
-        let hand_left = document.createElementNS(url, 'polygon');   // left from client view
-        $(hand_left).attr('class', 'bodymap_canvas_hand_left');
-        $(hand_left).attr('points', '23,300 28,320 28,331 32,340 30,344 15,344 5,330 7,300');
-
-        let hand_right = document.createElementNS(url, 'polygon');  // right from client view
-        $(hand_right).attr('class', 'bodymap_canvas_hand_right');
-        $(hand_right).attr('points', '170,300 170,310 172,330 163,345 147,345 142,340 145,335 145,320 150,300');
+        let hands = document.createElementNS(url, 'polygon');
+        $(hands).attr('class', 'bodymap_canvas_hands');
+        $(hands).attr('points', '23,300 28,320 28,331 32,340 30,344 15,344 5,330 7,300 170,300 170,310 172,330 163,345 147,345 142,340 145,335 145,320 150,300');
 
         let chest = document.createElementNS(url, 'polygon');
         $(chest).attr('class', 'bodymap_canvas_chest');
@@ -570,8 +568,7 @@ class BodyMapCanvas {
         bg.appendChild(head);
         bg.appendChild(arm_left);
         bg.appendChild(arm_right);
-        bg.appendChild(hand_left);
-        bg.appendChild(hand_right);
+        bg.appendChild(hands);
         bg.appendChild(chest);
         bg.appendChild(legs);
         bg.appendChild(belly);

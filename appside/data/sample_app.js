@@ -80,10 +80,6 @@ var SAMPLE_APP = {
                 'Select the body parts where you feel increased sensation.',
                 'Select the body parts where you feel decreased sensation.',
             ],
-            'qualifiers': [
-                ['yellow = moderate increase, red = strong increase'],
-                ['blue = moderate decrease, cyan = strong increase'],
-            ],
             'colors': [
                 ['black', 'red', 'yellow'],
                 ['black', 'blue', 'cyan'],
