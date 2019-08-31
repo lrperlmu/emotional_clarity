@@ -7,7 +7,9 @@ let knowledgebase = KNOWLEDGEBASE_DATA;
 // TODO: capitalization of object property names and map keys (should be lowercase I think)
 // TODO: check al for loops for correct use of "of" vs "in"
 // TODO: decide which features should be in Model superclass
-
+// TODO: implement back()
+// TODO: back() and next_frame() both invoked by catch-all method get_frame(slug)
+//       slug can be 'back', 'next', or something unique
 
 // TODO: move does-it-run test to a different file
 $(document).ready(function() {
@@ -160,19 +162,12 @@ class DbtWorksheetModelFwd extends Model {
 
     /**
      * Get next frame from the model
-     * @return an object containing data for the next frame, based on
+     * @return an object containing data for the next frame. based on
      *     the model's internal structure, and input passed in so far
      */
     next_frame() {
-        let ret = {};
         this.frame_idx += 1;
-        ret = this.frames[this.frame_idx];
-        // TODO compute summary here or on every input?
-        // if(ret.template === 'count') { // the summary
-        //     this.compute_summary();
-        // }
-
-        return ret;
+        return this.frames[this.frame_idx];
     }
 
     /**
@@ -186,8 +181,6 @@ class DbtWorksheetModelFwd extends Model {
             let response = pair[1];
             this.user_data.get(key).response = response;
         }
-        // TODO: decide whether to do this here (every update) or in next frame
-        //   lazily, but with an extra conditional check
         this.compute_summary();
     }
 
@@ -195,18 +188,13 @@ class DbtWorksheetModelFwd extends Model {
      * Transfer data from user_data to the summary frame
      */
     compute_summary() {
-        let summary_frame = this.model_data.summary[0];
-
         // filter user data for "true" responses
-        let entries_it = this.user_data.entries();
-        let entries = Array.from(entries_it);
+        let entries = Array.from(this.user_data.entries());
         let true_responses = entries.filter(
             entry => entry[1].response === true
         );
 
-        // sort by emotion, and count number for each emotion
-        // update summary_frame.matched_emotions with
-        //    emotion name, number, responses
+        // store true responses in this.summary (for internal manipulation)
         for(let response of true_responses) {
             let res_emotion = response[1].emotion;
             let res_stmt = response[0];
@@ -216,6 +204,7 @@ class DbtWorksheetModelFwd extends Model {
             this.summary.get(res_emotion).push(res_stmt);
         }
 
+        // spit summary out into the frame (for sending to the user)
         let matched_emotions = this.model_data.summary[0].matched_emotions;
         matched_emotions.length = 0;
         for(let item of this.summary) {
