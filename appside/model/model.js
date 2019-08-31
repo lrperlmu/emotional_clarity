@@ -3,13 +3,15 @@
 let model_data = DBT_WORKSHEET_FWD_PROMPTING_EVENTS;
 let knowledgebase = KNOWLEDGEBASE_DATA;
 
-// TODO use maps instead of objects for collections (use objects for struct-like uses)
 // TODO: capitalization of object property names and map keys (should be lowercase I think)
-// TODO: check al for loops for correct use of "of" vs "in"
+// TODO: check all for loops for correct use of "of" vs "in"
 // TODO: decide which features should be in Model superclass
 // TODO: implement back()
 // TODO: back() and next_frame() both invoked by catch-all method get_frame(slug)
 //       slug can be 'back', 'next', or something unique
+// TODO: file with all the model configs (one for each app)
+// TODO: dispatcher that takes in a slug, chooses the right config,
+//       and uses the config to determine what kind of model to instantiate
 
 // TODO: move does-it-run test to a different file
 $(document).ready(function() {
