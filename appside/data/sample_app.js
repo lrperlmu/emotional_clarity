@@ -48,7 +48,7 @@ var SAMPLE_APP = {
         2: {
             'template': 'bodymap_color',
             'title': 'Body map coloring activity',
-            'question': 'How much does this apply to you?',
+            'question': 'Research shows this is how sensation levels change for {}. How similar is this to your current state?',
             'emotions': [
                 'anger', 'disgust', 'envy', 'fear', 'happiness', 'love', 'sadness', 'shame',
             ],
@@ -77,15 +77,11 @@ var SAMPLE_APP = {
             'template': 'bodymap_color_fwd',
             'title': 'Body map color forward',
             'texts': [
-                'Select the body part where you feel increased sensation.',
-                'Select the body part where you feel decreased sensation.',
-            ],
-            'qualifiers': [
-                ['yellow = moderate increase, red = strong increase'],
-                ['blue = moderate decrease, cyan = strong increase'],
+                'Select the body parts where you feel increased sensation.',
+                'Select the body parts where you feel decreased sensation.',
             ],
             'colors': [
-                ['black', 'yellow', 'red'],
+                ['black', 'red', 'yellow'],
                 ['black', 'blue', 'cyan'],
             ],
         }
