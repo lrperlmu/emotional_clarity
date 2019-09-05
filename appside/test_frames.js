@@ -13,10 +13,10 @@ $(document).ready(function() {
         'summary_count': summary_count_frame_main,
         'summary_qual': summary_qualifier_frame_main,
         'selection': selection_frame_main,
-        'bodymap': bodymap_main,
         'intro': intro_main,
-        'bodymap_color': bodymap_color_main,
         'bodymap_color_fwd': bodymap_color_fwd_main,
+        'bodymap_color': bodymap_color_main,
+        'bodymap': bodymap_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -26,7 +26,19 @@ $(document).ready(function() {
     let query_string = location.search;
     if (query_string.length > 0) {
         let query = query_string.substring(1, query_string.length);
-        if (page_types.includes(query)) {
+        // if (page_types.includes(query)) {
+        //     page_to_show = query;
+        // }
+
+        // checks if substring of query matches an element in page_types
+        // this allows flexibility and additional string in query (esp for bm_color)
+        var contains = function(element) {
+            if (query.includes(element)) {
+                query = element;
+                return true;
+            } // stops searching each element if true or no more elements to search
+        };
+        if (page_types.some(contains)) {
             page_to_show = query;
         }
     }
