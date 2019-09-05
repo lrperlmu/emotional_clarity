@@ -236,26 +236,17 @@ class BodyMapColorFrame extends Frame {
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *      frame_data.title (string)
      *      frame_data.question (string) -- question users answer
-     *      frame_data.emotions (array of strings)
-     *          -- lists all emotions used excluding neutral
-     *      frame_data.bodyparts (array of string)
-     *          -- lists all body parts used
      *      frame_data.qualifiers (array of strings)
      *          -- lists all answer choices used in questionnaire
-     *      frame_data.emotion (string) -- "neutral", placeholder for emotion type
-     *      frame_data.bodypart (string) -- "", placeholder for body part
      * Behavior undefined if frame does not have these properties.
      **/
     constructor(frame_data) {
         super();
-
         this.title = frame_data.title;
         this.question = frame_data.question;
-        this.emotions = frame_data.emotions;    // array of emotions
-        this.bodyparts = frame_data.bodyparts;  // array of body parts
         this.qualifiers = frame_data.qualifiers;
-        this.emotion = frame_data.emotion;      // default: neutral
-        this.bodypart = null;    // default: ''
+        this.emotion;
+        this.bodypart;
     }
 
     /**
@@ -267,7 +258,8 @@ class BodyMapColorFrame extends Frame {
      *
      **/
     render() {
-
+        let emotions = ['anger', 'disgust', 'envy', 'fear', 'guilt', 'happiness', 'love', 'sadness', 'shame'];
+        let bodyparts = ['head', 'neck', 'arms', 'chest', 'belly', 'legs'];
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div');
         $(frame).attr('id', 'frame');
@@ -275,24 +267,7 @@ class BodyMapColorFrame extends Frame {
         let title = document.createElement('h2');
         $(title).text(this.title);
         frame.appendChild(title);
-
-        // create links to each emotion
-        for (let curr of this.emotions) {
-            let emotion_link = document.createElement('label');
-            emotion_link.style.textDecoration = 'underline';
-            $(emotion_link).attr('class', 'emotion_link');
-            $(emotion_link).attr('id', curr);
-            $(emotion_link).text(curr.charAt(0).toUpperCase() + curr.slice(1));
-            emotion_link.onclick = function() {
-                this.emotion = curr;
-                this.bodypart = null;
-                this.render_left_col(frame);
-                this.render_right_col(frame);
-            }.bind(this);
-            frame.append(emotion_link);
-            frame.append(document.createTextNode('\xa0\xa0\xa0'));
-        }
-
+        
         frame.left = document.createElement('div');
         $(frame.left).attr('class', 'bodymap_color_frame_left');
 
@@ -300,8 +275,18 @@ class BodyMapColorFrame extends Frame {
         $(frame.right).attr('class', 'bodymap_color_frame_right');
 
         let greeting = document.createElement('h4');
-        $(greeting).text("Please select an emotion.");
+        $(greeting).text('Please select an emotion.');
         frame.left.appendChild(greeting);
+
+        let query = location.search.substring(14);
+        if (query.includes('/') && query.includes('_')) {
+            this.emotion = query.substring(1, query.indexOf('_'));
+            this.bodypart = query.substring(query.indexOf('_') + 1); // query after _
+            if (emotions.includes(this.emotion) && bodyparts.includes(this.bodypart)) {
+                this.render_left_col(frame);
+                this.render_right_col(frame);
+            }
+        }
 
         frame.appendChild(frame.left);
         frame.appendChild(frame.right);
@@ -326,7 +311,7 @@ class BodyMapColorFrame extends Frame {
      *      and displays scale.png
      **/
     render_left_col(frame) {
-        frame.left.innerHTML = null;
+        frame.left.innerHTML = '';
         const bodymap = document.createElement('img');
         $(bodymap).attr('class', 'bodymap_color_img');
         $(bodymap).attr('src', 'images/' + this.emotion + '.png');
@@ -355,8 +340,7 @@ class BodyMapColorFrame extends Frame {
      *          frame.right (div) -- holds content from this function
      * 
      * @requires
-     *          this.bodypart (String) exists
-     *          this.bodyparts (array of String) contains types of emotions
+     *          this.bodypart (String) be an element in bodyparts
      *          this.question (String) exists
      *          this.qualifiers (array of String) contains answer choices
      *
@@ -365,38 +349,24 @@ class BodyMapColorFrame extends Frame {
      *      If specified body part, renders questionnaire
      **/
     render_right_col(frame) {
-        frame.right.innerHTML = null;
-        if (this.bodypart == null) {     // body part not selected
-            for (let part of this.bodyparts) {
-                let body_link = document.createElement('p');
-                $(body_link).attr('class', 'bodymap_color_body_link');
-                $(body_link).text(part.charAt(0).toUpperCase() + part.slice(1));
-                body_link.onclick = function () {   // clicked on body part
-                    this.bodypart = part;
-                    this.render_left_col(frame);
-                    this.render_right_col(frame);
-                }.bind(this);
-                frame.right.appendChild(body_link);
-            }
-        } else {    // body part is selected
-            let question = document.createElement('p');
-            var string = this.bodypart + ' in ' + this.emotion;
-            $(question).text(this.question.replace('{}', string));
-            frame.right.appendChild(question);
+        frame.right.innerHTML = '';
+        let question = document.createElement('p');
+        var string = this.bodypart + ' in ' + this.emotion;
+        $(question).text(this.question.replace('{}', string));
+        frame.right.appendChild(question);
 
-            for (let choice of this.qualifiers) {
-                let radio = document.createElement('input');
-                $(radio).attr('type', 'radio');
-                $(radio).attr('name', 'emotion');
-                $(radio).attr('id', choice);
+        for (let choice of this.qualifiers) {
+            let radio = document.createElement('input');
+            $(radio).attr('type', 'radio');
+            $(radio).attr('name', 'emotion');
+            $(radio).attr('id', choice);
 
-                let label = document.createElement('label');
-                $(label).attr('for', choice);
-                $(label).text(choice);
-                frame.right.appendChild(radio);
-                frame.right.appendChild(label);
-                frame.right.appendChild(document.createElement('br'));
-            }
+            let label = document.createElement('label');
+            $(label).attr('for', choice);
+            $(label).text(choice);
+            frame.right.appendChild(radio);
+            frame.right.appendChild(label);
+            frame.right.appendChild(document.createElement('br'));
         }
     }
 }
