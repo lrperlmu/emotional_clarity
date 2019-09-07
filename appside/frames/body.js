@@ -162,6 +162,7 @@ class BodyMapFrame extends Frame {
         this.title = frame_data.title;
         this.question = frame_data.question;
         this.statements = frame_data.statements;
+        this.user_input;
     }
 
     /**
@@ -200,6 +201,8 @@ class BodyMapFrame extends Frame {
         $(question).text(this.question);
         right.appendChild(question);
 
+        this.user_input = new Map();
+
         // checkboxes
         let i = 0;
         for (let stmt of this.statements) {
@@ -215,7 +218,23 @@ class BodyMapFrame extends Frame {
             $(label).text(stmt);
             right.appendChild(label);
             right.appendChild(document.createElement('br'));
+
+            this.user_input.set(name, 'false'); // all unchecked
         }
+
+        // next will be implemented in navigator?
+        let next = document.createElement('button');
+        $(next).attr('class', 'bodymap_button');
+        $(next).text('Next');
+        $(next).click(function() {
+            var choices = document.getElementsByTagName('input');
+            for (let each of choices) {
+                if (each.checked) {
+                    this.user_input.set(each.id, 'true');
+                }
+            }
+        }.bind(this));
+        right.appendChild(next);
 
         // append both columns to frame
         frame.appendChild(right);
@@ -223,6 +242,14 @@ class BodyMapFrame extends Frame {
 
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
+    }
+
+    /**
+     * Returns data of user input
+     * including each statement's id and whether it was checked
+     */
+    userInput() {
+        return this.user_input;
     }
 }
 
@@ -371,11 +398,12 @@ class BodyMapColorFrame extends Frame {
             frame.right.appendChild(document.createElement('br'));
         }
 
+        // next will be implemented in navigator?
         let next = document.createElement('button');
         $(next).attr('class', 'bodymap_color_button');
         $(next).text('Next');
         $(next).click(function() {
-            var choices = document.getElementsByName(this.emotion + '_' + this.bodypart);
+            var choices = document.getElementsByTagName('input');;
             for (let each of choices) {
                 if (each.checked) { this.answer = each.id; } // only one checked
             }
