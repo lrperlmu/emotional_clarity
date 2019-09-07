@@ -247,6 +247,8 @@ class BodyMapColorFrame extends Frame {
         this.qualifiers = frame_data.qualifiers;
         this.emotion;
         this.bodypart;
+        this.answer;
+        this.user_input;
     }
 
     /**
@@ -358,7 +360,7 @@ class BodyMapColorFrame extends Frame {
         for (let choice of this.qualifiers) {
             let radio = document.createElement('input');
             $(radio).attr('type', 'radio');
-            $(radio).attr('name', 'emotion');
+            $(radio).attr('name', this.emotion + '_' + this.bodypart);
             $(radio).attr('id', choice);
 
             let label = document.createElement('label');
@@ -368,6 +370,30 @@ class BodyMapColorFrame extends Frame {
             frame.right.appendChild(label);
             frame.right.appendChild(document.createElement('br'));
         }
+
+        let next = document.createElement('button');
+        $(next).attr('class', 'bodymap_color_button');
+        $(next).text('Next');
+        $(next).click(function() {
+            var choices = document.getElementsByName(this.emotion + '_' + this.bodypart);
+            for (let each of choices) {
+                if (each.checked) { this.answer = each.id; } // only one checked
+            }
+            this.user_input = new Map();
+            this.user_input.set('emotion', this.emotion);
+            this.user_input.set('bodypart', this.bodypart);
+            this.user_input.set('answer', this.answer);
+        }.bind(this));
+        frame.right.appendChild(next);
+
+    }
+
+    /**
+     * Returns data of user input
+     * including emotion, bodypart, and answer (qualifier)
+     */
+    userInput() {
+        return this.user_input;
     }
 }
 
