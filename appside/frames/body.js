@@ -67,7 +67,10 @@ class ListBodyFrame extends Frame {
         $(statements).attr('class', 'form-check');
 
         let i = 0;
-        for (let statement of this.items) {
+        for (let pair of this.items) {
+            let statement = pair[0];
+            let answer = pair[1];
+
             let name = 'stmt' + i;
             i += 1;
 
@@ -77,6 +80,7 @@ class ListBodyFrame extends Frame {
             $(input).attr('type', 'checkbox');
             $(input).attr('name', name);
             $(input).attr('id', name);
+            $(input).prop('checked', answer);
             input.dataset.text = statement;
             statements.appendChild(input);
 

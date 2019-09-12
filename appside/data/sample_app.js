@@ -27,11 +27,11 @@ var SAMPLE_APP = {
             // depending on what this is, there will be different parameters.
             'template': 'statements',
             'title': 'Kittens',
-            'question': 'Which is the best part of a kitten?',
+            'question': 'What makes a kitten adorable?',
             'statements': [
-                'its purr',
-                'its floof',
-                'its bark',
+                ['its purr', false],
+                ['its floof', true],
+                ['its bark', false],
             ],
         },
         1: {
@@ -56,7 +56,7 @@ var SAMPLE_APP = {
                 'head', 'neck', 'chest', 'arms', 'belly', 'legs',
             ],
             'qualifiers': [
-            'Very much', 'Neutral', 'Not at all', 'I don\'t know',
+                'Very much', 'Neutral', 'Not at all', 'I don\'t know',
             ],
             'emotion': 'neutral',
             'bodypart': '',
@@ -67,10 +67,10 @@ var SAMPLE_APP = {
             'title': 'Word selection example',
             'question': 'Which words are palindromes?',
             'words': [
-                'pop',
-                'purr',
-                'kittens',
-                'puppies',
+                ['pop', false],
+                ['radar', true],
+                ['kittens', false],
+                ['puppies', false],
             ],
         },
         4: {
