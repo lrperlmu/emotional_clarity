@@ -12,6 +12,8 @@ let knowledgebase = KNOWLEDGEBASE_DATA;
 // TODO: decide which features should be in Model superclass
 // TODO: consider making knowledgebase not a global variable?
 
+// TODO: doc comments (class and method)
+
 // TODO: move does-it-run test to a different file
 $(document).ready(function() {
 

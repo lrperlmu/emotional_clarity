@@ -1,38 +1,4 @@
 
-var MINIMAL_MODEL = {
-    'meta': {
-        'category': '1 DBT worksheets',
-        'direction': 'R', // read this to know whether to show the emotion selection frame
-        'subsection': 'None',
-    },
-    'intro': [
-       {
-            'title': 'Minimal Model',
-            'text': 'Please answer some questions. Tap NEXT to begin',
-            'graphic': 'https://cf.ltkcdn.net/dogs/images/std/238299-699x450-newborn-puppie.jpg',
-        },
-    ],
-    'body': [
-        {
-            'template': 'statements',
-            'question': 'Check the box for each emotion you feel now.',
-            'statements': [], // model fills these in based on user input
-        },
-    ],
-    'summary': [
-        {
-            'template': 'qualifier',
-            'title': 'Summary',
-            'description': 'Your input for this activity suggests:',
-            'matched_emotions': [],
-            'follow_text': 'Thank you for doing this activity',
-            'info_sheet_links': true,
-            'offer_ideas': true,
-        },
-    ],
-}
-
-
 // TODO: Restructure this
 // Make it into its own class DbtWorksheetModelConfig
 //     * one instance of that class for each variant of DbtWorksheetModel. 
@@ -80,3 +46,45 @@ var DBT_WORKSHEET_FWD_PROMPTING_EVENTS = {
         },
     ],
 }
+
+
+// Constants and magic strings
+
+// category
+var CATEGORY_DBT_WORKSHEET = 1;
+var CATEGORY_BODY_MAP = 2;
+
+// direction
+var DIRECTION_FWD = 'f';
+var DIRECTION_REVERSE = 'r';
+
+// section names (direct strings from knowledgebase)
+var SECTION_PROMPTING = 'Prompting events';
+var SECTION_INTERP = 'Interpretations of events';
+var SECTION_BIO = 'Biological changes and experiences';
+var SECTION_ACT = 'Expressions and actions';
+var SECTION_AFTER = 'Aftereffects';
+
+// Summary template types
+var SUMMARY_TEMPLATE_COUNT = 'count';
+var SUMMARY_TEMPLATE_QUAL = 'qual';
+
+// Body config (all DBT worksheet models)
+var BODY_STATEMENTS_PER_PAGE = 12;
+
+// Intro frame strings
+var INTRO_TITLE = {
+    SECTION_PROMPTING: 'Prompting Events fwd (variant 1af)',
+}
+var INTRO_TEXT = 'Please answer some questions. Tap NEXT to begin';
+
+// Body frame strings
+var BODY_QUESTION {
+    SECTION_PROMPTING: 'Check the box for each thing you have experienced recently.',
+}
+
+// Summary frame strings (all DBT worksheet models)
+var SUMMARY_TITLE = 'Summary';
+var SUMMARY_TEXT = 'Your input for this activity suggests:';
+var SUMMARY_FOLLOW_TEXT = 'Thank you for doing this activity';
+

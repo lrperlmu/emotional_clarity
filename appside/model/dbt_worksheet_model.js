@@ -223,3 +223,31 @@ class DbtWorksheetModelFwd extends Model {
         }
     }
 }
+
+/**
+ * Configuration for DBT worksheet models
+ */
+// TODO: This should provide all the information needed to construct frames
+//       in the form of minimal_model.js or sample_app.js.
+// In the end, none of the frame structs should be hard-coded.
+
+class DbtWorksheetModelConfig {
+
+    constructor(category, direction, section) {
+        this.category = category;
+        this.direction = direction;
+        this.section = section;
+        this.info_sheet_links = false;
+        this.offer_ideas = false;
+    }
+
+    info_sheet_links(value) {
+        this.info_sheet_links = value;
+        return this;
+    }
+
+    offer_ideas(value) {
+        this.offer_ideas = value;
+        return this;
+    }
+}
