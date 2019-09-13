@@ -3,9 +3,6 @@
 let model_data = DBT_WORKSHEET_FWD_PROMPTING_EVENTS;
 let knowledgebase = KNOWLEDGEBASE_DATA;
 
-// TODO: back() and next_frame() both invoked by catch-all method get_frame(slug)
-//       slug can be 'back', 'next', or something unique
-
 // TODO: file with all the model configs (one for each app)
 // TODO: dispatcher that takes in a slug, chooses the right config,
 //       and uses the config to determine what kind of model to instantiate
@@ -61,7 +58,6 @@ $(document).ready(function() {
     }
 
     console.log('first body frame', frame);
-
     let user_input3 = new Map();
     for(let pair of frame.statements) {
         let stmt = pair[0];
@@ -116,9 +112,6 @@ class Model {
 }
 
 
-
-
-
 class DbtWorksheetModelFwd extends Model {
 
     /**
@@ -133,8 +126,12 @@ class DbtWorksheetModelFwd extends Model {
 
         this.model_data = model_data;
 
-        // {emotion : list of matching responses}
+        // {emotion : list of matching statements}
         // starts empty and gets updated every time the user submits responses
+        // TODO: update view and sample app to follow this format
+        // TODO: I think this is a temporary representation used in compute_summary
+        //      it probably doesn't need to be a field.
+        //      The data gets stored in model_data as a frame.
         this.summary = new Map();
 
         // get all the statements for this category
@@ -301,58 +298,29 @@ class DbtWorksheetModelFwd extends Model {
      *            where keys are statements (strings) and values are true/false
      */
     update(input) {
-        console.log('\n\n\n');
-        console.log('input', input);
-        console.log('user data before update', this.user_data);
         for(let pair of input.entries()) {
             let key = pair[0];
             let response = pair[1];
-
-            console.log('key', key, 'response', response);
-            console.log('this.user_data.get(key).response', this.user_data.get(key).response);
-
-            // console.log('key', key);
-            // console.log('this.user_data.get(key)', this.user_data.get(key));
             this.user_data.get(key).response = response;
-
-            console.log('this.user_data.get(key).response', this.user_data.get(key).response);
-            // let tmp = this.user_data.get('Having an important goal blocked.');
-            // console.log('having a goal blocked', tmp);
-
         }
-
-        // why are the updates not showing up when this is printed to the console?!!???
-        // let tmp = this.user_data.get('Having an important goal blocked.');
-        // console.log('having a goal blocked', tmp);
-        console.log('user data after update', this.user_data);
-
         this.compute_summary();
-
-        //console.log('user data after compute summary', this.user_data);
-        console.log('\n\n\n');
     }
 
     /**
      * Transfer data from user_data to the summary frame
      */
     compute_summary() {
-        // filter user data for "true" responses
-
-        // console.log('this.summary before', this.summary);
-        // console.log('user data before compute summary', this.user_data);
-
-        // {statement: {emotion: ..., response: ...}}
+        // entries takes the form [statement, {emotion: string, response: boolean}, ...]
         let entries = Array.from(this.user_data.entries());
 
-        //console.log('entries', entries);
-
+        // filter user data for "true" responses
         let true_responses = entries.filter(
             entry => entry[1].response === true
         );
-        console.log('true_responses', true_responses);
-        console.log(true_responses[0][1].response);
 
         // store true responses in this.summary (for internal manipulation)
+        // {emotion : list of matching statements}
+        this.summary = new Map();
         for(let response of true_responses) {
             let res_emotion = response[1].emotion;
             let res_stmt = response[0];
@@ -362,12 +330,10 @@ class DbtWorksheetModelFwd extends Model {
             this.summary.get(res_emotion).push(res_stmt);
         }
 
-        //console.log('this.summary after', this.summary);
-
         // spit summary out into the frame (for sending to the user)
         let matched_emotions = this.model_data.summary[0].matched_emotions;
         matched_emotions.length = 0;
-        for(let item in this.summary.entries()) {
+        for(let item of this.summary.entries()) {
             console.log('item', item);
             let summary_obj = {};
             summary_obj.emotion = item[0];
