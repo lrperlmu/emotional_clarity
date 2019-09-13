@@ -67,16 +67,17 @@ class ListBodyFrame extends Frame {
         $(statements).attr('class', 'form-check');
 
         let i = 0;
-        for (let pair of this.items) {
-            let statement = pair[0];
-            let answer = pair[1];
+        for (let tuple of this.items) {
+            let statement = tuple[0];
+            let answer = tuple[1];
+            let note_text = tuple[2];
 
             let name = 'stmt' + i;
             i += 1;
 
             // the actual checkbox
             let input = document.createElement('input');
-            $(input).attr('class', "form-check-input");
+            $(input).attr('class', 'form-check-input');
             $(input).attr('type', 'checkbox');
             $(input).attr('name', name);
             $(input).attr('id', name);
@@ -86,11 +87,26 @@ class ListBodyFrame extends Frame {
 
             // label that can also be clicked to select the checkbox
             let label = document.createElement('label');
-            $(label).attr('class', "form-check-label");
+            $(label).attr('class', 'form-check-label');
             $(label).attr('for', name);
             $(label).text(statement);
             statements.appendChild(label);
             this.user_input.set(statement, 'false');
+
+            // label that appears when the checkbox is checked
+            let note = document.createElement('note');
+            $(note).text(` (${note_text})`);
+            statements.appendChild(note);
+            function show_hide_note() {
+                if($(input).prop('checked') === true) {
+                    $(note).attr('class', 'listbody-note-visible');
+                }
+                else {
+                    $(note).attr('class', 'listbody-note-hidden');
+                }
+            };
+            show_hide_note();
+            $(input).change(show_hide_note);
             
             statements.appendChild(document.createElement('br'));
         }

@@ -29,9 +29,9 @@ var SAMPLE_APP = {
             'title': 'Kittens',
             'question': 'What makes a kitten adorable?',
             'statements': [
-                ['its purr', false],
-                ['its floof', true],
-                ['its bark', false],
+                ['its purr', false, 'correct'],
+                ['its floof', true, 'correct'],
+                ['its bark', false, 'incorrect'],
             ],
         },
         1: {
@@ -67,10 +67,10 @@ var SAMPLE_APP = {
             'title': 'Word selection example',
             'question': 'Which words are palindromes?',
             'words': [
-                ['pop', false],
-                ['radar', true],
-                ['kittens', false],
-                ['puppies', false],
+                ['pop', false, 'palindrome'],
+                ['radar', true, 'palindrome'],
+                ['kittens', false, 'not a palindrome'],
+                ['puppies', false, 'not a palindrome'],
             ],
         },
         4: {

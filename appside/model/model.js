@@ -121,18 +121,7 @@ class DbtWorksheetModelFwd extends Model {
     constructor(model_data, knowledgebase) {
         super();
 
-        console.log('knowledgebase', knowledgebase);
-
-
         this.model_data = model_data;
-
-        // {emotion : list of matching statements}
-        // starts empty and gets updated every time the user submits responses
-        // TODO: update view and sample app to follow this format
-        // TODO: I think this is a temporary representation used in compute_summary
-        //      it probably doesn't need to be a field.
-        //      The data gets stored in model_data as a frame.
-        this.summary = new Map();
 
         // get all the statements for this category
         let category = model_data.meta.subsection;
@@ -154,8 +143,7 @@ class DbtWorksheetModelFwd extends Model {
             this.user_data.set(stmt.Statement, form_entry);
         }
 
-        // make a list of all the frames
-        // todo make this more concise
+        // make a list of references to all the frames, so we can index into it
         this.frames = [];
         for(let frame of model_data.intro) {
             this.frames.push(frame);
@@ -198,7 +186,7 @@ class DbtWorksheetModelFwd extends Model {
         for(let page of pages) {
             let page_statements = [];
             for(let stmt of page) {
-                page_statements.push(stmt.Statement);
+                page_statements.push([stmt.Statement, false, stmt.Emotion]);
             }
 
             let frame = {};
@@ -207,11 +195,10 @@ class DbtWorksheetModelFwd extends Model {
             frame.question = 'Check the box for each thing you have experienced recently.';
             frame.statements = [];
             for(let statement of page_statements) {
-                frame.statements.push([statement, false]);
+                frame.statements.push(statement);
             }
             body_frames.push(frame);
         }
-        console.log('body_frames', body_frames);
         return body_frames;
     }
 
@@ -279,16 +266,14 @@ class DbtWorksheetModelFwd extends Model {
      *     * frame.statements - list of [string, boolean] pairs
      */
     fill_in_user_data(frame) {
-        //console.log('frame', frame);
-
         if(!frame.hasOwnProperty('statements')) return;
 
         let statements = frame.statements;
-        for(let pair of statements) {
-            let text = pair[0];
+        for(let tuple of statements) {
+            let text = tuple[0];
             
-            let known_answer = this.user_data.get(text);
-            pair[1] = known_answer;
+            let known_answer = this.user_data.get(text).response;
+            tuple[1] = known_answer;
         }
     }
 
@@ -318,22 +303,22 @@ class DbtWorksheetModelFwd extends Model {
             entry => entry[1].response === true
         );
 
-        // store true responses in this.summary (for internal manipulation)
+        // sort true responses by emotion, into an intermediate representation
         // {emotion : list of matching statements}
-        this.summary = new Map();
+        let summary = new Map();
         for(let response of true_responses) {
             let res_emotion = response[1].emotion;
             let res_stmt = response[0];
-            if(!(this.summary.has(res_emotion))) {
-                this.summary.set(res_emotion, []);
+            if(!(summary.has(res_emotion))) {
+                summary.set(res_emotion, []);
             }
-            this.summary.get(res_emotion).push(res_stmt);
+            summary.get(res_emotion).push(res_stmt);
         }
 
         // spit summary out into the frame (for sending to the user)
         let matched_emotions = this.model_data.summary[0].matched_emotions;
         matched_emotions.length = 0;
-        for(let item of this.summary.entries()) {
+        for(let item of summary.entries()) {
             console.log('item', item);
             let summary_obj = {};
             summary_obj.emotion = item[0];
