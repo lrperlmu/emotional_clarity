@@ -1,3 +1,9 @@
+"use strict";
+
+// Sample App is an example of the properties that frames need to have, but
+// does not imply that they should be instantiated as hard-coded objects.
+// They should be built by the model class from scratch, to resemble the
+// frames below in format.
 
 var SAMPLE_APP = {
     'meta': {

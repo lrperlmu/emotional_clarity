@@ -1,6 +1,5 @@
 "use strict";
 
-let model_data = DBT_WORKSHEET_FWD_PROMPTING_EVENTS;
 let knowledgebase = KNOWLEDGEBASE_DATA;
 
 // TODO: file with all the model configs (one for each app)
@@ -17,7 +16,7 @@ let knowledgebase = KNOWLEDGEBASE_DATA;
 // TODO: move does-it-run test to a different file
 $(document).ready(function() {
 
-    let model = new DbtWorksheetModelFwd(model_data, knowledgebase);
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
 
     // * has_next should be true
     // * has_prev should be false
@@ -66,6 +65,13 @@ $(document).ready(function() {
             }
             model.update(user_input2);
         }
+
+        if(frame.title == SUMMARY_TITLE) {
+            console.log('summary contains');
+            for(let entry of frame.matched_emotions) {
+                console.log(entry);
+            }
+        }
     }
 
     // go back and re-fill the initial frame
@@ -88,4 +94,8 @@ $(document).ready(function() {
         frame = model.next_frame();
     }
     console.log('updated summary', frame);
+    console.log('summary contains');
+    for(let entry of frame.matched_emotions) {
+        console.log(entry);
+    }
 });
