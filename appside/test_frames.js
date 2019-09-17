@@ -14,6 +14,7 @@ $(document).ready(function() {
         'summary_qual': summary_qualifier_frame_main,
         'selection': selection_frame_main,
         'intro': intro_main,
+        'intro_nographic': intro_nographic_main,
         'bodymap_color_fwd': bodymap_color_fwd_main,
         'bodymap_color': bodymap_color_main,    // requires 2 parameters [emotion, bodypart]
         'bodymap': bodymap_main,
@@ -95,6 +96,14 @@ function bodymap_main() {
 function intro_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.intro[0];
+
+    let frame = new IntroFrame(frame_data);
+    frame.render();
+}
+
+function intro_nographic_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.intro[1];
 
     let frame = new IntroFrame(frame_data);
     frame.render();

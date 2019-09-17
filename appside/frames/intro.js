@@ -47,7 +47,7 @@ class IntroFrame extends Frame {
         frame.appendChild(content);
 
         // insert graphic
-        if (this.graphic.length > 0) {
+        if(typeof this.graphic !== 'undefined') {
             var graphic = document.createElement('img');
             graphic.setAttribute('src', this.graphic);
             graphic.setAttribute('height', '228');

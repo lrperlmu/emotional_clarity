@@ -8,13 +8,90 @@ let knowledgebase = KNOWLEDGEBASE_DATA;
 
 // TODO: capitalization of object property names and map keys (should be lowercase I think)
 // TODO: check all for loops for correct use of "of" vs "in"
-// TODO: decide which features should be in Model superclass
-// TODO: consider making knowledgebase not a global variable?
 
-// TODO: doc comments (class and method)
 
-// TODO: move does-it-run test to a different file
 $(document).ready(function() {
+    let test_methods = {
+        'doesitrun' : does_it_run_test,
+        'intro': visual_test_intro,
+        'body': visual_test_body,
+        'summary': visual_test_summary,
+    }
+    let page_types = Object.keys(test_methods);
+    let page_to_show = page_types[0];
+
+    // see if a frame type was written in the query string, otherwise use default
+    let query_string = location.search;
+    if (query_string.length > 0) {
+        let query = query_string.substring(1, query_string.length);
+        if (page_types.includes(query)) {
+            page_to_show = query;
+        }
+    }
+
+    let test_fcn = test_methods[page_to_show];
+    test_fcn();
+});
+
+
+/*
+ * Integration test that invokes IntroFrame to render the intro frame of this app.
+ * Manually verified.
+ */
+function visual_test_intro() {
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
+    let frame = model.get_frame('next');
+    let view = new IntroFrame(frame);
+    view.render();
+}
+
+
+/*
+ * Integration test that invokes StatementsBodyFrame to render a body frame of this app.
+ * Manually verified.
+ */
+function visual_test_body() {
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
+    model.get_frame('next');
+    let frame = model.get_frame('next');
+    let view = new StatementsBodyFrame(frame);
+    view.render();
+}
+
+
+/*
+ * Integration test that invokes SuffaryFrameCount to render a summary frame generated
+ * by this app.
+ * Manually verified.
+ */
+function visual_test_summary() {
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
+    let frame = model.get_frame('next');
+
+    frame = model.get_frame('next');
+    // submit some answers to the model
+    let user_input = new Map();
+    for(let pair of frame.statements) {
+        let stmt = pair[0];
+        user_input.set(stmt, true);
+    }
+    model.update(user_input);
+
+    while(frame.template === 'statements') {
+        frame = model.get_frame('next');
+    }
+    let view = new SummaryFrameCount(frame);
+    view.render();
+}
+
+
+/*
+ * A messy icky monolithic non-automated test where you have to read the output and
+ * manually verify all of the comments marked with "*"
+ * TODO: refactor into multiple tests that each test one thing and automatically
+ *       verify it (if deemed worthwhile)
+ */
+function does_it_run_test() {
 
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
 
@@ -98,4 +175,4 @@ $(document).ready(function() {
     for(let entry of frame.matched_emotions) {
         console.log(entry);
     }
-});
+}

@@ -47,6 +47,13 @@ class DbtWorksheetModelFwd extends Model {
         this.frames.push(this.summary_frame);
         // index into frames
         this.frame_idx = -1;
+
+        // function mapping for get_frame. It's initialized here so that child classes
+        //    can optionally add entries
+        this.nav_functions = new Map([
+            ['next', this.next_frame.bind(this)],
+            ['back', this.back.bind(this)],
+        ]);
     }
 
     /**
@@ -73,7 +80,6 @@ class DbtWorksheetModelFwd extends Model {
         let statements = section_statements.concat();
 
         // divide them into pages
-        // TODO do we care to prevent one-statement pages?
         let num_stmts = statements.length;
         let statements_per_page = BODY_STATEMENTS_PER_PAGE;
         //statements = _.shuffle(statements);
@@ -81,6 +87,16 @@ class DbtWorksheetModelFwd extends Model {
         let pages = [];
         while(statements.length > 0) {
             pages.push(statements.splice(0, statements_per_page));
+        }
+
+        // prevent the last page from having only one statement, if possible
+        if(statements_per_page >= 3 && pages.length > 1) {
+            if(pages[pages.length-1].length == 1) {
+                let penultimate_page = pages[pages.length-2];
+                let ultimate_page = pages[pages.length-1];
+                let removed = penultimate_page.splice(penultimate_page.length-1, 1);
+                pages[pages.length-1] = ultimate_page.concat(removed);
+            }
         }
 
         // make a frame for each page
@@ -176,16 +192,12 @@ class DbtWorksheetModelFwd extends Model {
      * Child classes can add other get_frame methods.
      *
      * @param slug - a string that indicates which frame to get.
+     *               'back' :  back()
+     *               'next' : next_frame()
      * @return an object containing data for the requested frame.
      */
-    // TODO: create a hook to let children modify the frames map.
-    //       Perhaps initialize frames map in the constructor, and child constructors can add.
     get_frame(slug) {
-        let frames = new Map([
-            ['next', this.next_frame.bind(this)],
-            ['back', this.back.bind(this)],
-        ]);
-        return frames.get(slug)();
+        return this.nav_functions.get(slug)();
     }
 
     /**

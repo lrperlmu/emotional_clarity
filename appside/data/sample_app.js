@@ -20,7 +20,6 @@ var SAMPLE_APP = {
         1: {
             'title': 'Spec Testing app!',
             'text': 'The introduction has two pages',
-            'graphic': 'https://i2.wp.com/metro.co.uk/wp-content/uploads/2017/07/187144066.jpg',
         },
     },
 
