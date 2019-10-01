@@ -209,14 +209,17 @@ class BodyMapFrame extends Frame {
             let check = document.createElement('input');
             $(check).attr('type', 'checkbox');
             $(check).attr('id', name);
+            check.dataset.text = stmt;
             right.appendChild(check);
 
             let label = document.createElement('label');
+            $(label).attr('for', name);
             $(label).text(stmt);
+
             right.appendChild(label);
             right.appendChild(document.createElement('br'));
 
-            this.user_input.set(name, 'false'); // all unchecked
+            this.user_input.set(stmt, 'false'); // all unchecked
         }
 
         // next will be implemented in navigator?
@@ -235,7 +238,7 @@ class BodyMapFrame extends Frame {
 
     /**
      * Returns map of user input
-     * if render() is called, map with keys as each statement's id and value boolean;
+     * if render() is called, map with keys as each statement's text and value boolean;
      * otherwise, returns uninitialized map
      * @return map of user input
      */
@@ -243,7 +246,9 @@ class BodyMapFrame extends Frame {
         var choices = document.getElementsByTagName('input');
         for (let each of choices) {
             if (each.checked) {
-                this.user_input.set(each.id, 'true');
+                this.user_input.set(each.dataset.text, 'true');
+            } else {
+                this.user_input.set(each.dataset.text, 'false');
             }
         }
         return this.user_input;
