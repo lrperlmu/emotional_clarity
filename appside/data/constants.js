@@ -31,14 +31,21 @@ var BODY_FRAME_TEMPLATE = 'statements';
 // Intro frame strings
 var INTRO_TITLE = {};
 INTRO_TITLE[SECTION_PROMPTING] = 'Prompting Events fwd (variant 1af)';
+INTRO_TITLE[SECTION_INTERP] = 'Interperetations of Events fwd (variant 1bf)';
+INTRO_TITLE[SECTION_BIO] = 'Biological Changes and Experiences fwd (variant 1cf)';
+INTRO_TITLE[SECTION_ACT] = 'Expressions and Actions fwd (variant 1df)';
+INTRO_TITLE[SECTION_AFTER] = 'Aftereffects fwd (variant 1ef)';
 
 var INTRO_TEXT = 'Please answer some questions. Tap NEXT to begin';
 
-// Body frame strings
+// Body frame strings (I think we will eventually want these to be different...?)
 var BODY_TITLE = 'Questions';
 var BODY_QUESTION = {}
 BODY_QUESTION[SECTION_PROMPTING] = 'Check the box for each thing you have experienced recently.';
-
+BODY_QUESTION[SECTION_INTERP] = 'Check the box for each thing you have experienced recently.';
+BODY_QUESTION[SECTION_BIO] = 'Check the box for each thing you have experienced recently.';
+BODY_QUESTION[SECTION_ACT] = 'Check the box for each thing you have experienced recently.';
+BODY_QUESTION[SECTION_AFTER] = 'Check the box for each thing you have experienced recently.';
 
 // Summary frame strings (all DBT worksheet models)
 var SUMMARY_TITLE = 'Summary';

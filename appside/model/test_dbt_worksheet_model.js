@@ -2,20 +2,13 @@
 
 let knowledgebase = KNOWLEDGEBASE_DATA;
 
-// TODO: file with all the model configs (one for each app)
-// TODO: dispatcher that takes in a slug, chooses the right config,
-//       and uses the config to determine what kind of model to instantiate
-
-// TODO: capitalization of object property names and map keys (should be lowercase I think)
-// TODO: check all for loops for correct use of "of" vs "in"
-
-
 $(document).ready(function() {
     let test_methods = {
         'doesitrun' : does_it_run_test,
         'intro': visual_test_intro,
         'body': visual_test_body,
         'summary': visual_test_summary,
+        'noerror': all_wkshts_noerror,
     }
     let page_types = Object.keys(test_methods);
     let page_to_show = page_types[0];
@@ -32,6 +25,37 @@ $(document).ready(function() {
     let test_fcn = test_methods[page_to_show];
     test_fcn();
 });
+
+
+/*
+ * Flip through all the frames of each config. Manually check to make sure there's no error
+ */
+function all_wkshts_noerror() {
+    let configs = [
+        FWD_PROMPTING_CONFIG,
+        FWD_INTERP_CONFIG,
+        FWD_BIO_CONFIG,
+        FWD_ACT_CONFIG,
+        FWD_AFTER_CONFIG,
+    ];
+    for(let config of configs) {
+        console.log('section', config.section);
+        wksht_noerror(config);
+        console.log('ok\n\n');
+    }
+}
+
+/*
+ * Helper method for all_wkshts_noerror
+ * @param config -- which config to run
+ */
+function wksht_noerror(config) {
+    let model = new DbtWorksheetModelFwd(knowledgebase, config);
+    let frame = model.get_frame('next');
+    while(model.has_next_frame()) {
+        model.get_frame('next');
+    }
+}
 
 
 /*
@@ -65,7 +89,7 @@ function visual_test_body() {
  * Manually verified.
  */
 function visual_test_summary() {
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_AFTER_CONFIG);
     let frame = model.get_frame('next');
 
     frame = model.get_frame('next');
