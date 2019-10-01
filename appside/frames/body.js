@@ -2,7 +2,7 @@
 
 /**
  * Rendering (View) code for body frames
- * @author Leah Perlmutter
+ * @author Leah Perlmutter, Rachel Sitt
  */
 
 
@@ -182,7 +182,7 @@ class BodyMapFrame extends Frame {
         this.title = frame_data.title;
         this.question = frame_data.question;
         this.statements = frame_data.statements;
-        this.user_input;
+        this.user_input = new Map();
     }
 
     /**
@@ -200,7 +200,6 @@ class BodyMapFrame extends Frame {
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div');
         $(frame).attr('id', 'frame');
-
         let title = document.createElement('h2');
         $(title).text(this.title);
         frame.appendChild(title);
@@ -220,8 +219,6 @@ class BodyMapFrame extends Frame {
         let question = document.createElement('h4');
         $(question).text(this.question);
         right.appendChild(question);
-
-        this.user_input = new Map();
 
         // checkboxes
         let i = 0;
@@ -246,14 +243,6 @@ class BodyMapFrame extends Frame {
         let next = document.createElement('button');
         $(next).attr('class', 'bodymap_button');
         $(next).text('Next');
-        $(next).click(function() {
-            var choices = document.getElementsByTagName('input');
-            for (let each of choices) {
-                if (each.checked) {
-                    this.user_input.set(each.id, 'true');
-                }
-            }
-        }.bind(this));
         right.appendChild(next);
 
         // append both columns to frame
@@ -265,10 +254,18 @@ class BodyMapFrame extends Frame {
     }
 
     /**
-     * Returns data of user input
-     * including each statement's id and whether it was checked
+     * Returns map of user input
+     * if render() is called, map with keys as each statement's id and value boolean;
+     * otherwise, returns uninitialized map
+     * @return map of user input
      */
-    userInput() {
+    get_user_input() {
+        var choices = document.getElementsByTagName('input');
+        for (let each of choices) {
+            if (each.checked) {
+                this.user_input.set(each.id, 'true');
+            }
+        }
         return this.user_input;
     }
 }
@@ -295,7 +292,7 @@ class BodyMapColorFrame extends Frame {
         this.emotion;
         this.bodypart;
         this.answer;
-        this.user_input;
+        this.user_input = new Map();
     }
 
     /**
@@ -317,23 +314,24 @@ class BodyMapColorFrame extends Frame {
         $(title).text(this.title);
         frame.appendChild(title);
         
-        frame.left = document.createElement('div');
+        frame.left = document.createElement('div');             // displays body image and scale
         $(frame.left).attr('class', 'bodymap_color_frame_left');
 
-        frame.right = document.createElement('div');
+        frame.right = document.createElement('div');            // displays questionnaire and NEXT button
         $(frame.right).attr('class', 'bodymap_color_frame_right');
 
-        let greeting = document.createElement('h4');
+        let greeting = document.createElement('h4');            // displays when emotion/bodypart NOT specified
         $(greeting).text('Please select an emotion.');
         frame.left.appendChild(greeting);
 
-        let query = location.search.substring(14);
-        if (query.includes('/') && query.includes('_')) {
-            this.emotion = query.substring(1, query.indexOf('_'));
-            this.bodypart = query.substring(query.indexOf('_') + 1); // query after _
-            if (emotions.includes(this.emotion) && bodyparts.includes(this.bodypart)) {
-                this.render_left_col(frame);
-                this.render_right_col(frame);
+        // query format: ?bodymap_color&emotion=EMOTION&bodypart=BODYPART
+        var query = new URLSearchParams(location.search);
+        if (query.has('emotion') && query.has('bodypart')) {
+            if (emotions.includes(query.get('emotion')) && bodyparts.includes(query.get('bodypart'))) {
+                this.emotion = query.get('emotion');
+                this.bodypart = query.get('bodypart');
+                this.render_left_col(frame);                    // only renders when emotion is specified
+                this.render_right_col(frame);                   // only renders when bodypart is specified
             }
         }
 
@@ -422,25 +420,25 @@ class BodyMapColorFrame extends Frame {
         let next = document.createElement('button');
         $(next).attr('class', 'bodymap_color_button');
         $(next).text('Next');
-        $(next).click(function() {
-            var choices = document.getElementsByTagName('input');;
-            for (let each of choices) {
-                if (each.checked) { this.answer = each.id; } // only one checked
-            }
-            this.user_input = new Map();
-            this.user_input.set('emotion', this.emotion);
-            this.user_input.set('bodypart', this.bodypart);
-            this.user_input.set('answer', this.answer);
-        }.bind(this));
         frame.right.appendChild(next);
 
     }
 
     /**
-     * Returns data of user input
-     * including emotion, bodypart, and answer (qualifier)
+     * Returns map of user input
+     * if render() called before, with keys emotion, bodypart, and answer;
+     * values are undefined at default when not specified;
+     * if render() not called yet, returns empty map
+     * @return map of user input
      */
-    userInput() {
+    get_user_input() {
+        var choices = document.getElementsByTagName('input');;
+        for (let each of choices) {
+            if (each.checked) { this.answer = each.id; } // only one checked
+        }
+        this.user_input.set('emotion', this.emotion);
+        this.user_input.set('bodypart', this.bodypart);
+        this.user_input.set('answer', this.answer);
         return this.user_input;
     }
 }
