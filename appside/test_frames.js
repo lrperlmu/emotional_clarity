@@ -15,7 +15,7 @@ $(document).ready(function() {
         'selection': selection_frame_main,
         'intro': intro_main,
         'bodymap_color_fwd': bodymap_color_fwd_main,
-        'bodymap_color': bodymap_color_main,
+        'bodymap_color': bodymap_color_main,    // requires 2 parameters [emotion, bodypart]
         'bodymap': bodymap_main,
     };
 
