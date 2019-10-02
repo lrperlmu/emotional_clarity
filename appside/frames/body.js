@@ -274,9 +274,9 @@ class BodyMapColorFrame extends Frame {
         this.title = frame_data.title;
         this.question = frame_data.question;
         this.qualifiers = frame_data.qualifiers;
-        this.emotion;
-        this.bodypart;
-        this.answer;
+        this.emotion = frame_data.emotion;
+        this.bodypart = frame_data.bodypart;
+        this.answer = null;
         this.user_input = new Map();
     }
 
@@ -289,8 +289,6 @@ class BodyMapColorFrame extends Frame {
      *
      **/
     render() {
-        let emotions = ['anger', 'disgust', 'envy', 'fear', 'guilt', 'happiness', 'love', 'sadness', 'shame'];
-        let bodyparts = ['head', 'neck', 'arms', 'chest', 'belly', 'legs'];
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div');
         $(frame).attr('id', 'frame');
@@ -309,15 +307,9 @@ class BodyMapColorFrame extends Frame {
         $(greeting).text('Please select an emotion.');
         frame.left.appendChild(greeting);
 
-        // query format: ?bodymap_color&emotion=EMOTION&bodypart=BODYPART
-        var query = new URLSearchParams(location.search);
-        if (query.has('emotion') && query.has('bodypart')) {
-            if (emotions.includes(query.get('emotion')) && bodyparts.includes(query.get('bodypart'))) {
-                this.emotion = query.get('emotion');
-                this.bodypart = query.get('bodypart');
-                this.render_left_col(frame);                    // only renders when emotion is specified
-                this.render_right_col(frame);                   // only renders when bodypart is specified
-            }
+        if (this.emotion != null && this.bodypart != null) {
+            this.render_left_col(frame);                    // only renders when emotion is specified
+            this.render_right_col(frame);                   // only renders when bodypart is specified
         }
 
         frame.appendChild(frame.left);
@@ -346,7 +338,9 @@ class BodyMapColorFrame extends Frame {
         frame.left.innerHTML = '';
         const bodymap = document.createElement('img');
         $(bodymap).attr('class', 'bodymap_color_img');
-        $(bodymap).attr('src', 'images/' + this.emotion + '.png');
+        if (this.emotion != null) {
+            $(bodymap).attr('src', 'images/' + this.emotion + '.png');
+        }
 
         if (this.bodypart != null) {      // clipping picture when specified body part
             $(bodymap).attr('class', `bodymap_color_img bodymap_color_${this.bodypart}`);
@@ -392,6 +386,7 @@ class BodyMapColorFrame extends Frame {
             $(radio).attr('type', 'radio');
             $(radio).attr('name', this.emotion + '_' + this.bodypart);
             $(radio).attr('id', choice);
+            radio.dataset.text = choice;
 
             let label = document.createElement('label');
             $(label).attr('for', choice);
@@ -411,15 +406,17 @@ class BodyMapColorFrame extends Frame {
 
     /**
      * Returns map of user input
-     * if render() called before, with keys emotion, bodypart, and answer;
-     * values are undefined at default when not specified;
-     * if render() not called yet, returns empty map
+     * containing keys {
+     * 'emotion': null or string
+     * 'bodypart': null or string
+     * 'answer': null or string of qualifier
+     * }
      * @return map of user input
      */
     get_user_input() {
         var choices = document.getElementsByTagName('input');;
         for (let each of choices) {
-            if (each.checked) { this.answer = each.id; } // only one checked
+            if (each.checked) { this.answer = each.dataset.text; } // only one checked
         }
         this.user_input.set('emotion', this.emotion);
         this.user_input.set('bodypart', this.bodypart);
