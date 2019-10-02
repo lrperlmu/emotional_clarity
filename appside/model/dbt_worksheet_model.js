@@ -139,6 +139,8 @@ class DbtWorksheetModelFwd extends Model {
 
     /**
      * Indicate whether it's safe to call next_frame() or get_frame('next') on this
+     * [For use by NAV.]
+     *
      * @return true if next frame exists, false if not
      */
     has_next_frame() {
@@ -162,6 +164,8 @@ class DbtWorksheetModelFwd extends Model {
 
     /**
      * Indicate whether it's safe to call back() or get_frame('back') on this
+     * [For use by NAV.]
+     *
      * @return true if previous frame exists, false if not
      */
     has_prev_frame() {
