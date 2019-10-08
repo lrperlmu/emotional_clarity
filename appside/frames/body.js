@@ -33,6 +33,7 @@ class ListBodyFrame extends Frame {
         this.template = frame_data.template;
         this.title = frame_data.title;
         this.question = frame_data.question;
+        this.user_input = new Map();
     }
 
     /**
@@ -76,6 +77,7 @@ class ListBodyFrame extends Frame {
             $(input).attr('type', 'checkbox');
             $(input).attr('name', name);
             $(input).attr('id', name);
+            input.dataset.text = statement;
             statements.appendChild(input);
 
             // label that can also be clicked to select the checkbox
@@ -84,6 +86,7 @@ class ListBodyFrame extends Frame {
             $(label).attr('for', name);
             $(label).text(statement);
             statements.appendChild(label);
+            this.user_input.set(statement, 'false');
             
             statements.appendChild(document.createElement('br'));
         }
@@ -91,9 +94,26 @@ class ListBodyFrame extends Frame {
 
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
-        
     }
 
+    /**
+     * Returns map of user input
+     * containing keys {
+     * 'question_text': boolean (if checked: true)
+     * }
+     * @return map of user input
+     */
+    get_user_input() {
+        var choices = document.getElementsByTagName('input');;
+        for (let each of choices) {
+            if (each.checked) {
+                this.user_input.set(each.dataset.text, true);
+            } else {
+                this.user_input.set(each.dataset.text, false);
+            }
+        }
+        return this.user_input;
+    }
 }
 
 /**
