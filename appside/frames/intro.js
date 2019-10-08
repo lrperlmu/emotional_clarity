@@ -41,11 +41,6 @@ class IntroFrame extends Frame {
         $(title).text(this.title);
         frame.appendChild(title);
 
-        // insert a h5 node for the header1
-        let header = document.createElement('h5');
-        $(header).text('When to do this activity');
-        frame.appendChild(header);
-
         // insert a p node for the content of header1
         let content = document.createElement('p');
         $(content).text(this.text);
