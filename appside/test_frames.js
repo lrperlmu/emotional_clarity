@@ -27,19 +27,7 @@ $(document).ready(function() {
     let query_string = new URLSearchParams(location.search);
 
     if (query_string.has('frame')) {
-        let query = query_string.get('frame');
-
-        // checks if substring of query matches an element in page_types
-        // this allows flexibility and additional string in query (esp for bm_color)
-        var contains = function(element) {
-            if (query.includes(element)) {
-                query = element;
-                return true;
-            } // stops searching each element if true or no more elements to search
-        };
-        if (page_types.some(contains)) {
-            page_to_show = query;
-        }
+        page_to_show = query_string.get('frame');
     }
 
     let test_fcn = test_methods[page_to_show];
