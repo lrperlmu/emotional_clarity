@@ -24,6 +24,9 @@ class ListBodyFrame extends Frame {
      */
     constructor(frame_data) {
         super();
+        if (new.target == ListBodyFrame) {
+            throw new TypeError('cannot construct ListBodyFrame directly (use child)');
+        }
 
         // check validity (todo)
         // has title with length > 1
@@ -65,6 +68,9 @@ class ListBodyFrame extends Frame {
         // insert a checkbox list for the statements
         let statements = document.createElement('div');
         $(statements).attr('class', 'form-check');
+
+        console.log(this.items);
+
 
         let i = 0;
         for (let tuple of this.items) {

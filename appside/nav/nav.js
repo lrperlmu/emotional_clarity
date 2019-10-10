@@ -44,6 +44,7 @@ class Nav {
         // make a back button
         // TODO: don't make on first slide
         let back = document.createElement('button');
+        $(back).text('back');
         $(back).click(function() {
             this.navigate('back')
         }.bind(this));
@@ -52,6 +53,7 @@ class Nav {
         // make a next button
         // TODO: let frame help with placement, don't make on last slide
         let next = document.createElement('button');
+        $(next).text('next');
         $(next).click(function() {
             this.navigate('next');
         }.bind(this));
@@ -59,11 +61,12 @@ class Nav {
 
         // make an exit button
         // TODO: implement exit navigation.
-        let exit = document.createElement('button');
-        $(exit).click(function() {
-            this.navigate('exit');
-        }.bind(this));
-        nav_menu.appendChild(exit);
+        // let exit = document.createElement('button');
+        // $(exit).text('exit');
+        // $(exit).click(function() {
+        //     this.navigate('exit');
+        // }.bind(this));
+        // nav_menu.appendChild(exit);
 
         let old_nav_menu = $('#nav')[0];
         old_nav_menu.replaceWith(nav_menu);
@@ -93,10 +96,11 @@ class FrameFactory {
         }
         else if(frame.hasOwnProperty('statements')) {
             // TODO: identify when a different subtype of body frame is needed
-            return new ListBodyFrame(frame);
+            return new StatementsBodyFrame(frame);
         }
         else if(frame.hasOwnProperty('matched_emotions')) {
-            return new SummaryFrame(frame);
+            // TODO: identify when this should be qualifier
+            return new SummaryFrameCount(frame);
         }
     }
 }

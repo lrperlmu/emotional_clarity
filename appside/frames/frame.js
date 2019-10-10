@@ -35,4 +35,13 @@ class Frame {
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
     }
+
+    /**
+     * Returns empty map
+     * @return empty map
+     */
+    get_user_input() {
+        return new Map();
+    }
+
 }
