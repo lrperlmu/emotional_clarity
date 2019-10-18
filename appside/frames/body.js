@@ -34,6 +34,7 @@ class ListBodyFrame extends Frame {
         this.title = frame_data.title;
         this.question = frame_data.question;
         this.user_input = new Map();
+        this.graphic = frame_data.graphic;
     }
 
     /**
@@ -56,11 +57,17 @@ class ListBodyFrame extends Frame {
         $(title).attr('class', 'text-info text-uppercase mb-2');
         frame.appendChild(title);
 
+        let left = document.createElement('div');
+        $(left).attr('class', 'bodymap_frame_left');
+
+        let right = document.createElement('div');
+        $(right).attr('class', 'bodymap_frame_right');
+
         // insert a p node for the question
         let question = document.createElement('h2');
         $(question).text(this.question);
         $(question).attr('class', 'font-weight-light mb-4');
-        frame.appendChild(question);
+        right.appendChild(question);
         
         // insert a checkbox list for the statements
         let statements = document.createElement('div');
@@ -110,8 +117,17 @@ class ListBodyFrame extends Frame {
             
             statements.appendChild(document.createElement('br'));
         }
-        frame.appendChild(statements);
+        right.appendChild(statements);
 
+        if (this.graphic != null) {
+            var graphic = document.createElement('img');
+            $(graphic).attr('src', 'images/neutral.png');
+            $(graphic).attr('class', 'bodymap_img');
+            left.appendChild(graphic);
+        }
+
+        frame.appendChild(left);
+        frame.appendChild(right);
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
     }
@@ -185,7 +201,7 @@ class WordsBodyFrame extends ListBodyFrame {
  * Frame consists of a list of statements relating to body sensations
  * and a body map image.
  */
-class BodyMapFrame extends Frame {
+class BodyMapFrame extends ListBodyFrame {
 
      /**
      * Construct a body map frame
@@ -197,12 +213,13 @@ class BodyMapFrame extends Frame {
      * Behavior undefined if frame doe snot have these properties.
      **/
     constructor(frame_data) {
-        super();
+        super(frame_data);
 
-        this.title = frame_data.title;
-        this.question = frame_data.question;
-        this.statements = frame_data.statements;
-        this.user_input = new Map();
+        this.items = frame_data.statements;
+        // this.title = frame_data.title;
+        // this.question = frame_data.question;
+        // this.statements = frame_data.statements;
+        // this.user_input = new Map();
     }
 
     /**
@@ -216,65 +233,65 @@ class BodyMapFrame extends Frame {
      *
      **/
      
-    render() {
-        // make a new empty div with id frame, not yet in the dom
-        let frame = document.createElement('div');
-        $(frame).attr('id', 'frame');
-        let title = document.createElement('h2');
-        $(title).text(this.title);
-        frame.appendChild(title);
+    // render() {
+    //     // make a new empty div with id frame, not yet in the dom
+    //     let frame = document.createElement('div');
+    //     $(frame).attr('id', 'frame');
+    //     let title = document.createElement('h2');
+    //     $(title).text(this.title);
+    //     frame.appendChild(title);
 
-        let left = document.createElement('div');
-        $(left).attr('class', 'bodymap_frame_left');
+    //     let left = document.createElement('div');
+    //     $(left).attr('class', 'bodymap_frame_left');
 
-        let right = document.createElement('div');
-        $(right).attr('class', 'bodymap_frame_right');
+    //     let right = document.createElement('div');
+    //     $(right).attr('class', 'bodymap_frame_right');
 
-        // body maps graphic column
-        var graphic = document.createElement('img');
-        $(graphic).attr('src', 'images/neutral.png');
-        $(graphic).attr('class', 'bodymap_img');
-        left.appendChild(graphic);
+    //     // body maps graphic column
+    //     var graphic = document.createElement('img');
+    //     $(graphic).attr('src', 'images/neutral.png');
+    //     $(graphic).attr('class', 'bodymap_img');
+    //     left.appendChild(graphic);
 
-        let question = document.createElement('h4');
-        $(question).text(this.question);
-        right.appendChild(question);
+    //     let question = document.createElement('h4');
+    //     $(question).text(this.question);
+    //     right.appendChild(question);
 
-        // checkboxes
-        let i = 0;
-        for (let stmt of this.statements) {
-            let name = 'label' + i;
-            i++;
+    //     // checkboxes
+    //     let i = 0;
+    //     for (let stmt of this.statements) {
+    //         let name = 'label' + i;
+    //         i++;
 
-            let check = document.createElement('input');
-            $(check).attr('type', 'checkbox');
-            $(check).attr('id', name);
-            check.dataset.text = stmt;
-            right.appendChild(check);
+    //         let check = document.createElement('input');
+    //         $(check).attr('type', 'checkbox');
+    //         $(check).attr('id', name);
+    //         check.dataset.text = stmt;
+    //         right.appendChild(check);
 
-            let label = document.createElement('label');
-            $(label).attr('for', name);
-            $(label).text(stmt);
+    //         let label = document.createElement('label');
+    //         $(label).attr('for', name);
+    //         $(label).text(stmt);
 
-            right.appendChild(label);
-            right.appendChild(document.createElement('br'));
+    //         right.appendChild(label);
+    //         right.appendChild(document.createElement('br'));
 
-            this.user_input.set(stmt, 'false'); // all unchecked
-        }
+    //         this.user_input.set(stmt, 'false'); // all unchecked
+    //     }
 
-        // next will be implemented in navigator?
-        let next = document.createElement('button');
-        $(next).attr('class', 'bodymap_button');
-        $(next).text('Next');
-        right.appendChild(next);
+    //     // next will be implemented in navigator?
+    //     let next = document.createElement('button');
+    //     $(next).attr('class', 'bodymap_button');
+    //     $(next).text('Next');
+    //     right.appendChild(next);
 
-        // append both columns to frame
-        frame.appendChild(right);
-        frame.appendChild(left);
+    //     // append both columns to frame
+    //     frame.appendChild(right);
+    //     frame.appendChild(left);
 
-        let old_frame = $('#frame')[0];
-        old_frame.replaceWith(frame);
-    }
+    //     let old_frame = $('#frame')[0];
+    //     old_frame.replaceWith(frame);
+    // }
 
     /**
      * Returns map of user input
@@ -282,17 +299,17 @@ class BodyMapFrame extends Frame {
      * otherwise, returns uninitialized map
      * @return map of user input
      */
-    get_user_input() {
-        var choices = document.getElementsByTagName('input');
-        for (let each of choices) {
-            if (each.checked) {
-                this.user_input.set(each.dataset.text, 'true');
-            } else {
-                this.user_input.set(each.dataset.text, 'false');
-            }
-        }
-        return this.user_input;
-    }
+    // get_user_input() {
+    //     var choices = document.getElementsByTagName('input');
+    //     for (let each of choices) {
+    //         if (each.checked) {
+    //             this.user_input.set(each.dataset.text, 'true');
+    //         } else {
+    //             this.user_input.set(each.dataset.text, 'false');
+    //         }
+    //     }
+    //     return this.user_input;
+    // }
 }
 
 /**

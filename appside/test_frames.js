@@ -87,6 +87,7 @@ function selection_frame_main() {
 function bodymap_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.body[1];
+    frame_data.graphic = 'head';
 
     let frame = new BodyMapFrame(frame_data);
     frame.render();

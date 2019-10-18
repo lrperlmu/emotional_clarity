@@ -33,6 +33,7 @@ var SAMPLE_APP = {
             'template': 'statements',
             'title': 'Kittens',
             'question': 'What makes a kitten adorable?',
+            'graphic': null,
             'statements': [
                 ['its purr', false, 'correct'],
                 ['its floof', true, 'correct'],
@@ -43,11 +44,12 @@ var SAMPLE_APP = {
             'template': 'bodymap_statements',
             'title': 'Body map example slide',
             'question': 'What is your favorite body part?',
+            'graphic': null,
             'statements': [
-                'Head',
-                'Shoulders',
-                'Knees',
-                'Toes',
+                ['Head', false, 'head'],
+                ['Shoulders', false, 'chest'],
+                ['Knees', false, 'legs'],
+                ['Toes', false, 'legs'],
             ],
         },
         2: {
@@ -71,6 +73,7 @@ var SAMPLE_APP = {
             'template': 'words',
             'title': 'Word selection example',
             'question': 'Which words are palindromes?',
+            'graphic': null,
             'words': [
                 ['pop', false, 'palindrome'],
                 ['radar', true, 'palindrome'],
