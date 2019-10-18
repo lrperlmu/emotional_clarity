@@ -73,6 +73,7 @@ body {
 
 .container-fixed {
     width: 800px;
+    margin: auto;
     height: auto;
     background: #FFF;
 }
@@ -89,7 +90,7 @@ body {
 
 }
 .list_body_graphic {
-  max-width: 100%;
+  max-width: 90%;
   height: auto;
 }
 
