@@ -77,6 +77,22 @@ body {
     background: #FFF;
 }
 
+.list_body_frame {
+  justify-content: center;
+  align-items: flex-start;
+  display: flex;
+  flex-direction: row;
+}
+.list_body_frame > .frame_left, .frame_right {
+  height: 100%;
+  margin: 10px;
+
+}
+.list_body_graphic {
+  max-width: 100%;
+  height: auto;
+}
+
 .bodymap_frame_left, .bodymap_frame_right, .bodymap_color_frame_left, .bodymap_color_frame_right {
   width: 300px;
   height: 100%;
