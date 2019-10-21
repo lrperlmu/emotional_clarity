@@ -35,6 +35,7 @@ class ListBodyFrame extends Frame {
         this.question = frame_data.question;
         this.user_input = new Map();
         this.graphic = frame_data.graphic;
+        this.emotion = null;    // only currently used in BodyMapFrame
     }
 
     /**
