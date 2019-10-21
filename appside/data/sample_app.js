@@ -45,6 +45,7 @@ var SAMPLE_APP = {
             'title': 'Body map example slide',
             'question': 'What is your favorite body part?',
             'graphic': null,
+            'emotion': null,
             'statements': [
                 ['Head', false, 'head'],
                 ['Shoulders', false, 'chest'],

@@ -87,8 +87,14 @@ function selection_frame_main() {
 function bodymap_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.body[1];
-    frame_data.graphic = 'head';
+    frame_data.graphic = 'chest';
 
+    var query = new URLSearchParams(location.search);
+    if (query.has('emotion')) {
+        if (EMOTION_TYPE.includes(query.get('emotion'))) {
+            frame_data.emotion = query.get('emotion');
+        }
+    }
     let frame = new BodyMapFrame(frame_data);
     frame.render();
     console.log(frame.get_user_input());
@@ -114,16 +120,18 @@ function bodymap_color_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.body[2];
 
-    // need to add constants to constants.js!
-    let emotions = ['anger', 'disgust', 'envy', 'fear', 'guilt', 'happiness', 'love', 'sadness', 'shame'];
-    let bodyparts = ['head', 'neck', 'arms', 'chest', 'belly', 'legs'];
+    // Added these constants EMOTION_TYPE and BODY_PART under body config in constants.js
+    // let emotions = ['anger', 'disgust', 'envy', 'fear', 'guilt', 'happiness', 'love', 'sadness', 'shame'];
+    // let bodyparts = ['head', 'neck', 'arms', 'chest', 'belly', 'legs'];
+    // let emotions = EMOTION_TYPE;
+    // let bodyparts = BODY_PART;
     frame_data.emotion = null;      // by default
     frame_data.bodypart = null;     // by default
 
     // query format: ?frame=bodymap_color&emotion=EMOTION&bodypart=BODYPART
     var query = new URLSearchParams(location.search);
     if (query.has('emotion') && query.has('bodypart')) {
-        if (emotions.includes(query.get('emotion')) && bodyparts.includes(query.get('bodypart'))) {
+        if (EMOTION_TYPE.includes(query.get('emotion')) && BODY_PART.includes(query.get('bodypart'))) {
             frame_data.emotion = query.get('emotion');
             frame_data.bodypart = query.get('bodypart');
         }

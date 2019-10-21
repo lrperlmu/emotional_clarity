@@ -68,7 +68,11 @@ class ListBodyFrame extends Frame {
             $(left).attr('class', 'frame_left');
 
             let graphic = document.createElement('img');
-            $(graphic).attr('src', 'images/neutral.png');
+            if (this.emotion != null) {
+                $(graphic).attr('src', 'images/' + this.emotion + '.png');
+            } else {
+                $(graphic).attr('src', 'images/neutral.png');
+            }
             $(graphic).attr('class', 'list_body_graphic');
             left.appendChild(graphic);
 
@@ -214,12 +218,14 @@ class BodyMapFrame extends ListBodyFrame {
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *      frame_data.title (string)
      *      frame_data.question (string) -- text before checkboxes
+     *      frame_data.emotion (string) -- emotion type
      *      frame_data.statements (list of string) -- checkbox statements
      * Behavior undefined if frame doe snot have these properties.
      **/
     constructor(frame_data) {
         super(frame_data);
 
+        this.emotion = frame_data.emotion;
         this.items = frame_data.statements;
     }
 }
