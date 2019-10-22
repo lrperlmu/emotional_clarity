@@ -90,9 +90,9 @@ function bodymap_main() {
     frame_data.graphic = 'chest';
 
     var query = new URLSearchParams(location.search);
-    if (query.has('emotion')) {
-        if (EMOTION_TYPE.includes(query.get('emotion'))) {
-            frame_data.emotion = query.get('emotion');
+    if (query.has('bodypart')) {
+        if (BODY_PART.includes(query.get('bodypart'))) {
+            frame_data.bodypart = query.get('bodypart');
         }
     }
     let frame = new BodyMapFrame(frame_data);

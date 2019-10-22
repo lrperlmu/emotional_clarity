@@ -79,19 +79,87 @@ body {
 }
 
 .list_body_frame {
-  justify-content: center;
-  align-items: flex-start;
-  display: flex;
-  flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
 }
 .list_body_frame > .frame_left, .frame_right {
-  height: 100%;
-  margin: 10px;
-
+    height: 100%;
+    width: 100%;
+    margin: 10px;
 }
+.list_body_bg {
+    height: 500px;
+    width: auto;
+}
+
 .list_body_graphic {
-  max-width: 90%;
-  height: auto;
+    width: 100%;
+    height: 100%;
+    stroke-width: 4;
+    stroke: gray;
+    fill: none;
+}
+
+.list_body_head {
+    width: 45px;
+    height: 65px;
+    x: 127px;
+    y: 5px;
+    rx: 40px;
+    ry: 40px;
+}
+
+.list_body_neck {
+    width: 25px;
+    height: 20px;
+    x: 137px;
+    y: 63px;
+    rx: 5px;
+    ry: 5px;
+}
+
+.list_body_chest {
+    width: 90px;
+    height: 110px;
+    x: 105px;
+    y: 80px;
+    rx: 55px;
+    ry: 70px;
+}
+
+.list_body_belly {
+    width: 80px;
+    height: 70px;
+    x: 110px;
+    y: 165px;
+    rx: 55px;
+    ry: 70px;
+}
+.list_body_legs {
+    width: 100px;
+    height: 240px;
+    x: 100px;
+    y: 260px;
+    rx: 50px;
+    ry: 100px;
+}
+.list_body_arm1 {
+    width: 60px;
+    height: 210px;
+    x: 60px;
+    y: 90px;
+    rx: 40px;
+    ry: 105px;
+}
+.list_body_arm2 {
+    width: 60px;
+    height: 210px;
+    x: 175px;
+    y: 90px;
+    rx: 40px;
+    ry: 105px;
 }
 
 .bodymap_frame_left, .bodymap_frame_right, .bodymap_color_frame_left, .bodymap_color_frame_right {

@@ -35,7 +35,7 @@ class ListBodyFrame extends Frame {
         this.question = frame_data.question;
         this.user_input = new Map();
         this.graphic = frame_data.graphic;
-        this.emotion = null;    // only currently used in BodyMapFrame
+        this.bodypart = null;    // only currently used in BodyMapFrame
     }
 
     /**
@@ -67,16 +67,29 @@ class ListBodyFrame extends Frame {
         if (this.graphic != null) {
             let left = document.createElement('div');
             $(left).attr('class', 'frame_left');
+            // SVG
+            let url = 'http://www.w3.org/2000/svg';
+            let bg = document.createElementNS(url, 'svg');
+            $(bg).attr('class', 'list_body_bg');
 
-            let graphic = document.createElement('img');
-            if (this.emotion != null) {
-                $(graphic).attr('src', 'images/' + this.emotion + '.png');
-            } else {
-                $(graphic).attr('src', 'images/neutral.png');
+            let img = document.createElementNS(url, 'image');
+            $(img).attr('class', 'list_body_graphic');
+            $(img).attr('href', 'images/neutral.png');
+            bg.appendChild(img);
+
+            if (this.bodypart != null) {
+                let highlight = document.createElementNS(url, 'rect');
+                if (this.bodypart != "arms") {
+                    $(highlight).attr('class', `list_body_graphic list_body_${this.bodypart}`);
+                } else {    // 2 SVG elements for arms
+                    $(highlight).attr('class', `list_body_graphic list_body_arm1`);
+                    let highlight2 = document.createElementNS(url, 'rect');
+                    $(highlight2).attr('class', `list_body_graphic list_body_arm2`);
+                    bg.appendChild(highlight2);
+                }
+                bg.appendChild(highlight);
             }
-            $(graphic).attr('class', 'list_body_graphic');
-            left.appendChild(graphic);
-
+            left.appendChild(bg);
             container.appendChild(left);
         }
 
@@ -219,14 +232,14 @@ class BodyMapFrame extends ListBodyFrame {
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *      frame_data.title (string)
      *      frame_data.question (string) -- text before checkboxes
-     *      frame_data.emotion (string) -- emotion type
+     *      frame_data.bodypart (string) -- type of body part
      *      frame_data.statements (list of string) -- checkbox statements
      * Behavior undefined if frame doe snot have these properties.
      **/
     constructor(frame_data) {
         super(frame_data);
 
-        this.emotion = frame_data.emotion;
+        this.bodypart = frame_data.bodypart;
         this.items = frame_data.statements;
     }
 }
