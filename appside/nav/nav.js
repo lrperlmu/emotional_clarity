@@ -78,7 +78,7 @@ class Nav {
      * Navigate to the page specified by slug.
      * Delegates actual navigation to the model, and renders the frame
      * returned by the model.
-     * 
+     *
      * @param slug - string indicating to the model which page is desired
      * @requires - model must know which frame slug refers to
      * @effects - renders the frame specified by slug

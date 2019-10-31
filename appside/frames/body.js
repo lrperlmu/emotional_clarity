@@ -69,9 +69,6 @@ class ListBodyFrame extends Frame {
         let statements = document.createElement('div');
         $(statements).attr('class', 'form-check');
 
-        console.log(this.items);
-
-
         let i = 0;
         for (let tuple of this.items) {
             let statement = tuple[0];
