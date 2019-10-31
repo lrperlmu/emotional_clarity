@@ -14,6 +14,7 @@ class Nav {
      *
      * @public
      *
+     * @param model - the backend
      */
     constructor(model) {
         this.model = model;
@@ -34,7 +35,6 @@ class Nav {
      *    Renders the navigation buttons into that div.
      */
     render() {
-        // TODO: use FrameFactory instead of constructor
         this.view = FrameFactory.build(this.current_frame);
 
         // make a new empty div with id nav, not yet in the dom
@@ -74,6 +74,15 @@ class Nav {
         this.view.render();
     }
 
+    /**
+     * Navigate to the page specified by slug.
+     * Delegates actual navigation to the model, and renders the frame
+     * returned by the model.
+     * 
+     * @param slug - string indicating to the model which page is desired
+     * @requires - model must know which frame slug refers to
+     * @effects - renders the frame specified by slug
+     */
     navigate(slug) {
         let input = this.view.get_user_input();
         this.model.update(input)
@@ -84,6 +93,9 @@ class Nav {
 }
 
 
+/**
+ * Factory to build various kinds of frame objects polymorphically
+ */
 class FrameFactory {
     /**
      * Take in a frame struct and return the correct type of Frame object,
