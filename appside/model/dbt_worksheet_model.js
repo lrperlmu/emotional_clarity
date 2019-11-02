@@ -271,6 +271,29 @@ class DbtWorksheetModelFwd extends Model {
             summary_obj.responses = item[1];
             matched_emotions.push(summary_obj);
         }
+        this.summary_frame.matched_emotions = this.sort_summary(this.summary_frame.matched_emotions);
+    }
+
+    /** Sorts summary by decreasing matched responses
+     *
+     * @param summary_entries key of emotions and values of corresponding responses
+     * @return sorted summary_entries by decreasing responses matched with an emotion,
+     *      or empty array if summary_entries is undefined
+     */
+    sort_summary(summary_entries) {
+        if (summary_entries != undefined) {
+            for (let i = 1; i < summary_entries.length; i++) {  // Using Insertion sort
+                let key = summary_entries[i];
+                let j = i - 1;
+                while (j >= 0 && summary_entries[j].responses.length < key.responses.length) {
+                    summary_entries[j + 1] = summary_entries[j];
+                    j--;
+                }
+                summary_entries[j + 1] = key;
+            }
+            return summary_entries;
+        }
+        return [];
     }
 }
 
