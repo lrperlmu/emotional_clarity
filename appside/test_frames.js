@@ -87,7 +87,6 @@ function selection_frame_main() {
 function bodymap_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.body[1];
-    frame_data.graphic = 'chest';
 
     var query = new URLSearchParams(location.search);
     if (query.has('bodypart')) {
@@ -97,7 +96,6 @@ function bodymap_main() {
     }
     let frame = new BodyMapFrame(frame_data);
     frame.render();
-    console.log(frame.get_user_input());
 }
 
 function intro_main() {
@@ -119,12 +117,6 @@ function intro_nographic_main() {
 function bodymap_color_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.body[2];
-
-    // Added these constants EMOTION_TYPE and BODY_PART under body config in constants.js
-    // let emotions = ['anger', 'disgust', 'envy', 'fear', 'guilt', 'happiness', 'love', 'sadness', 'shame'];
-    // let bodyparts = ['head', 'neck', 'arms', 'chest', 'belly', 'legs'];
-    // let emotions = EMOTION_TYPE;
-    // let bodyparts = BODY_PART;
     frame_data.emotion = null;      // by default
     frame_data.bodypart = null;     // by default
 

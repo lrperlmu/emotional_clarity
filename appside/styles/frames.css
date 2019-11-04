@@ -84,7 +84,7 @@ body {
     display: flex;
     flex-direction: row;
 }
-.list_body_frame > .frame_left, .frame_right {
+.list_body_frame > .frame_left, .frame_text_column {
     height: 100%;
     width: 100%;
     margin: 10px;
@@ -162,7 +162,7 @@ body {
     ry: 105px;
 }
 
-.bodymap_frame_left, .bodymap_frame_right, .bodymap_color_frame_left, .bodymap_color_frame_right {
+.bodymap_frame_graphic_column, .bodymap_frame_text_column, .bodymap_color_frame_graphic_column, .bodymap_color_frame_text_column {
   width: 300px;
   height: 100%;
   position: absolute;
@@ -188,11 +188,11 @@ body {
   top: 40px;
 }
 
-.bodymap_frame_left, .bodymap_color_frame_left, .bodymap_color_fwd_frame_left {
+.bodymap_frame_graphic_column, .bodymap_color_frame_graphic_column, .bodymap_color_fwd_frame_left {
   left: 0px;
 }
 
-.bodymap_frame_right, .bodymap_color_frame_right, .bodymap_color_fwd_frame_center {
+.bodymap_frame_text_column, .bodymap_color_frame_text_column, .bodymap_color_fwd_frame_center {
   left: 300px;
 }
 

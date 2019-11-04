@@ -29,6 +29,7 @@ var BODY_STATEMENTS_PER_PAGE = 12;
 var BODY_FRAME_TEMPLATE = 'statements';
 var EMOTION_TYPE = ['anger', 'disgust', 'envy', 'fear', 'guilt', 'happiness', 'love', 'sadness', 'shame'];
 var BODY_PART = ['head', 'neck', 'arms', 'chest', 'belly', 'legs'];
+var SVG_URL = 'http://www.w3.org/2000/svg';
 
 // Intro frame strings
 var INTRO_TITLE = {};
