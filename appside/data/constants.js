@@ -47,6 +47,11 @@ BODY_QUESTION[SECTION_BIO] = 'Check the box for each thing you have experienced 
 BODY_QUESTION[SECTION_ACT] = 'Check the box for each thing you have experienced recently.';
 BODY_QUESTION[SECTION_AFTER] = 'Check the box for each thing you have experienced recently.';
 
+// Likert frame strings
+var LIKERT_TEMPLATE = 'likert';
+var LIKERT_TITLE = 'an eloquently formed title';
+var LIKERT_INSTRUCTION = 'instructions for the user!';
+
 // Summary frame strings (all DBT worksheet models)
 var SUMMARY_TITLE = 'Summary';
 var SUMMARY_TEXT = 'Your input for this activity suggests:';
