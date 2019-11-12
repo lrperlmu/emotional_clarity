@@ -268,3 +268,9 @@ body {
 .listbody-note-hidden {
     display: none;
 }
+
+.likert_input, .likert_input_text {
+  display: inline;
+  padding: 10px;
+}
+

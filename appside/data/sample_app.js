@@ -92,6 +92,18 @@ var SAMPLE_APP = {
         }
     },
 
+
+    'likert': {
+        'template': 'likert',   // should come from constants.js
+        'title': 'Measurement',       // should come from constants.js
+        'instructions': 'Instructions here...',    // should come from constants.js
+
+        'questions': [          // provided in constructor
+            ['Question 1', undefined],    // question text, user response 1-5
+            ['question #2', undefined],
+        ],
+    },
+
     'summary_count': {
         'title': 'Summarific summary <3',
         'description': 'This text appears at the top of the summary! I like hedgehogs because they are so so cute.',

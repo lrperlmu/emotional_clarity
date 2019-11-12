@@ -18,6 +18,7 @@ $(document).ready(function() {
         'bodymap_color_fwd': bodymap_color_fwd_main,
         'bodymap_color': bodymap_color_main,    // requires 2 parameters [emotion, bodypart]
         'bodymap': bodymap_main,
+        'likert': likert_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -136,5 +137,13 @@ function bodymap_color_fwd_main() {
     let frame_data = sample_app.body[4];
 
     let frame = new BodyMapColorFwdFrame(frame_data);
+    frame.render();
+}
+
+function likert_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.likert;
+
+    let frame = new LikertFrame(frame_data);
     frame.render();
 }
