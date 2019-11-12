@@ -31,9 +31,8 @@ class LikertFrame extends Frame {
         // has question with length > 1
 
         // set fields
-        this.template = frame_data.template;
-        this.title = frame_data.title;
-        this.instructions = frame_data.instructions;
+        this.title = LIKERT_TITLE;
+        this.instructions = LIKERT_INSTRUCTIONS;
         this.questions = frame_data.questions;
         this.user_input = new Map();
     }

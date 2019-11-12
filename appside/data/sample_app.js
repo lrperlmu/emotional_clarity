@@ -94,13 +94,12 @@ var SAMPLE_APP = {
 
 
     'likert': {
-        'template': 'likert',   // should come from constants.js
-        'title': 'Measurement',       // should come from constants.js
-        'instructions': 'Instructions here...',    // should come from constants.js
+        'title': '',       // should come from constants.js
+        'instructions': '',    // should come from constants.js
 
         'questions': [          // provided in constructor
             ['Question 1', undefined],    // question text, user response 1-5
-            ['question #2', undefined],
+            ['Question 2', undefined],    // default answer choice = undefined
         ],
     },
 
