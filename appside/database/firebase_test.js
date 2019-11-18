@@ -3,6 +3,21 @@
 $(document).ready(function() {
     let logger = new Logger();
     logger.logTimestamp('logger1_my_event');
+
+    let responses = {
+        'hello': 'kitty',
+        'fluffer': 'nuffin',
+    }
+
+    console.log(responses)
+    
+    // let map2 = new Map();
+    // map2.set('foo', 'bar');
+    // map2.set('buzz', 'lightyear');
+    // console.log(map2);
+
+    logger.logResponses(responses);
+
 });
 
 

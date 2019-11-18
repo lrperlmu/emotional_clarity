@@ -39,12 +39,43 @@ class Logger {
     }
 
     /**
+     * Stores responses from obj into the database. Overwrites any values previously logged
+     * using this method in the current session. Keys and values of the input map will
+     * be cleaned of illegal characters and stored as strings.
+     *
+     * Data is stored in app-responses subtree, under current uid
+     *
+     * @param data - a map whose keys and values are primitives
+     *
+     */
+    logResponses(data) {
+        this.signIn.then(credential => {
+            for(let pair of data.entries()) {
+                let key = pair[0];
+                let value = pair[1];
+
+                // clean the strings.
+                key = this.encodeString(key.toString());
+                value = this.encodeString(value.toString());
+                let update_data = {};
+                update_data[key] = value;
+
+                // store them one by one so as not to overwrite existing content.
+                firebase.database()
+                    .ref(`app-responses/${credential.user.uid}`)
+                    .update(update_data);
+            }
+        });
+    }
+
+    /**
      * Log a timestamp to the database. Overwrites any timestamp previously logged
      * in the current session with the current name.
      * 
+     * Data is stored in events subtree, under current uid, as {event_name: timestamp}
+     *
      * @param event_name - string saying the name of the event
      */
-    // in the events subtree, under the current uid, log {event_name: timestamp}
     logTimestamp(event_name) {
         this.signIn.then(credential => {
             let ref = firebase.database().ref(`events/${credential.user.uid}`);
@@ -52,6 +83,21 @@ class Logger {
             data[event_name] = '' + new Date();
             ref.update(data);
         });
+    }
+
+    /**
+     * Transform a string so it's suitable for storing in firebase
+     */
+    encodeString(str) {
+        // replace each illegal char with its URI encoding
+        // '%' is also replaced since it's the escape character for the encodings
+        return str.replace(/\%/g, '%25')
+            .replace(/\./g, '%2E')
+            .replace(/\$/g, '%24')
+            .replace(/\[/g, '%5B')
+            .replace(/\]/g, '%5D')
+            .replace(/\#/g, '%23')
+            .replace(/\//g, '%2F');
     }
 }
 

@@ -236,6 +236,7 @@ class DbtWorksheetModelFwd extends Model {
             this.user_data.get(key).response = response;
         }
         this.compute_summary();
+        this.logger.logResponses(input)
     }
 
     /**
