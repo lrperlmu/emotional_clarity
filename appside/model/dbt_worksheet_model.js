@@ -239,6 +239,15 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
+     * Log event to the model. [For use by NAV.]
+     *
+     * @param name - string for model to log
+     */
+    log(name) {
+        this.logger.logTimestamp(name);
+    }
+
+    /**
      * Transfer data from user_data to the summary frame
      */
     compute_summary() {

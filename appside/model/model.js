@@ -13,6 +13,8 @@ class Model {
         if (new.target == Model) {
             throw new TypeError('cannot construct Model directly (use child)');
         }
+        this.logger = new Logger();
+
         Model.emotion_selection_frame = {
             'template': 'emotion_selection',
         }
@@ -23,6 +25,13 @@ class Model {
      * @param input - Map of data to be absorbed by the model
      */
     update(input) {
+    }
+
+    /**
+     * Log event to the model
+     * @param name - string for model to log
+     */
+    log(name) {
     }
 
     /**
