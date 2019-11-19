@@ -9,7 +9,7 @@
 /**
  * A frame composed of a list of things.
  * 
- * Things in the list are to be rendered as a list of checkboxes.
+ * Things in the list are to be rendered as a list of radio buttons.
  **/
 class LikertFrame extends Frame {
 
@@ -17,15 +17,18 @@ class LikertFrame extends Frame {
      * Construct LikertFrame from an object
      * 
      * @param frame_data -- Object containing the frame's data. Expected fields:
+     *    frame_data.title (string) -- frame's title
+     *    frame_data.instructions (string) -- frame's instructions for user
      *    frame_data.question (string) -- Text to appear before the list of statements
+     *    
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
         super();
 
         // set fields
-        this.title = LIKERT_TITLE;
-        this.instructions = LIKERT_INSTRUCTIONS;
+        this.title = frame_data.title;  // add from test_frames!
+        this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
         this.user_input = new Map();
     }
@@ -69,7 +72,7 @@ class LikertFrame extends Frame {
             $(question_text).attr('class', 'likert_question_text');
             $(question_text).text(data);
             statements.appendChild(question_text);
-            this.user_input.set(question, undefined);
+            this.user_input.set(question, answer);
 
             // the actual radio buttons
             for (let j = 1; j <= 5; j++) {
@@ -78,11 +81,18 @@ class LikertFrame extends Frame {
                 $(input).attr('class', 'likert_input');
                 $(input).attr('type', 'radio');
                 $(input).attr('name', question);    // question text
+                $(input).attr('value', j);
+                if (answer != undefined && answer == j) {
+                    $(input).attr('checked', 'checked');    // one option checked per q
+                }
                 input.dataset.text = j;             // answer choice
 
                 let input_text = document.createElement('p');
                 $(input_text).attr('class', 'likert_input_text');
                 $(input_text).text(j);
+                $(input_text).click(function() {
+                    $(input).attr('checked', true);
+                }.bind(this));
 
                 statements.appendChild(input);
                 statements.appendChild(input_text);

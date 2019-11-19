@@ -49,8 +49,8 @@ BODY_QUESTION[SECTION_AFTER] = 'Check the box for each thing you have experience
 
 // Likert frame strings
 var LIKERT_TEMPLATE = 'likert';
-var LIKERT_TITLE = 'an eloquently formed title';
-var LIKERT_INSTRUCTIONS = 'instructions for the user!';
+var LIKERT_TITLE = 'Likert';
+var LIKERT_INSTRUCTIONS = 'Please indicate how much each statement applies to you right now (1=strongly disagree; 5=strongly agree)';
 
 // Summary frame strings (all DBT worksheet models)
 var SUMMARY_TITLE = 'Summary';
