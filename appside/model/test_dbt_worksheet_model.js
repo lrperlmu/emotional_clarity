@@ -8,6 +8,7 @@ $(document).ready(function() {
         'intro': visual_test_intro,
         'body': visual_test_body,
         'summary': visual_test_summary,
+        'pre_post': visual_test_pre_post,
         'noerror': all_wkshts_noerror,
     }
     let page_types = Object.keys(test_methods);
@@ -105,6 +106,23 @@ function visual_test_summary() {
         frame = model.get_frame('next');
     }
     let view = new SummaryFrameCount(frame);
+    view.render();
+}
+
+/*
+ * Integration test that invokes LikertFrame to render the pre and post measurement frame of this app.
+ * Manually verified.
+ */
+function visual_test_pre_post() {
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
+
+    let frame = model.get_frame('next');
+    frame.template = 'likert';
+    let user_input = new Map();
+
+    console.log(frame);
+    model.update(user_input);
+    let view = new LikertFrame(frame);
     view.render();
 }
 

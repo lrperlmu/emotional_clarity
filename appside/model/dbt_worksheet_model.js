@@ -38,6 +38,10 @@ class DbtWorksheetModelFwd extends Model {
 
         // make a list of references to all the frames, so we can index into it
         this.frames = [];
+        if (this.pre_post_measurement == true) {
+            this.frames.push(this.build_pre_post_measurement_frames());
+        }
+
         for(let frame of this.build_intro_frames()) {
             this.frames.push(frame);
         }
@@ -46,6 +50,10 @@ class DbtWorksheetModelFwd extends Model {
         }
         this.frames.push(this.summary_frame);
         // index into frames
+
+        if (this.pre_post_measurement == true) {
+            this.frames.push(this.build_pre_post_measurement_frames());
+        }
         this.frame_idx = -1;
 
         // function mapping for get_frame. It's initialized here so that child classes
@@ -55,6 +63,25 @@ class DbtWorksheetModelFwd extends Model {
             ['back', this.back.bind(this)],
         ]);
     }
+
+    /**
+     * Build likert frames for a DBT worksheet model as pre or post measurement frame.
+     */
+    build_pre_post_measurement_frames() {
+        let pre_post = {};
+
+        pre_post.title = LIKERT_TITLE;
+        pre_post.template = LIKERT_TEMPLATE;
+        pre_post.instructions = LIKERT_INSTRUCTIONS;
+        
+        let pre_post_questions = [];
+        pre_post_questions.push("Question 1");
+        pre_post_questions.push("Question 2");
+
+        pre_post.questions = pre_post_questions;
+        return pre_post;
+    }
+
 
     /**
      * Build intro frames for a DBT worksheet model.
@@ -291,6 +318,7 @@ class DbtWorksheetModelConfig {
         this.section = section;
         this.info_sheet_links = false;
         this.offer_ideas = false;
+        this.pre_post_measurement = false;
     }
 
     /**
@@ -314,6 +342,17 @@ class DbtWorksheetModelConfig {
         this.offer_ideas = value;
         return this;
     }
+
+    /**
+     * Setter for this.measurements, tells the model whether to offer pre/post measurements
+     * at beginning and end of activity.
+     * @param value - boolean to set it to
+     * @return this
+     */
+    pre_post_measurement(value) {
+        this.pre_post_measurement = value;
+        return this;
+    }
 }
 
 
@@ -323,6 +362,8 @@ var FWD_INTERP_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_INTER
 var FWD_BIO_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_BIO);
 var FWD_ACT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_ACT);
 var FWD_AFTER_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_AFTER);
+var FWD_MEASUREMENT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_PROMPTING);
+// FWD_MEASUREMENT_CONFIG.pre_post_measurement(true);
 
 
 
