@@ -26,8 +26,7 @@ class LikertFrame extends Frame {
     constructor(frame_data) {
         super();
 
-        // set fields
-        this.title = frame_data.title;  // add from test_frames!
+        this.title = frame_data.title;
         this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
         this.user_input = new Map();
