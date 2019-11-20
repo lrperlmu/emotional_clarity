@@ -99,6 +99,7 @@ var SAMPLE_APP = {
         'template': 'likert',
         'title': 'Measurement form',       
         'instructions': 'Instructions for the user here!',
+        'name': '',
 
         'questions': [          // provided in constructor
             ['Question 1', 2],    // question text, user response 1-5
