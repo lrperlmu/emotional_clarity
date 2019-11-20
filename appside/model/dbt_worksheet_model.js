@@ -38,7 +38,7 @@ class DbtWorksheetModelFwd extends Model {
 
         // make a list of references to all the frames, so we can index into it
         this.frames = [];
-        if (this.pre_post_measurement == true) {
+        if (this.config.pre_post_measurement === true) {
             this.frames.push(this.build_pre_post_measurement_frames());
         }
 
@@ -51,7 +51,7 @@ class DbtWorksheetModelFwd extends Model {
         this.frames.push(this.summary_frame);
         // index into frames
 
-        if (this.pre_post_measurement == true) {
+        if (this.config.pre_post_measurement === true) {
             this.frames.push(this.build_pre_post_measurement_frames());
         }
         this.frame_idx = -1;
@@ -71,12 +71,12 @@ class DbtWorksheetModelFwd extends Model {
         let pre_post = {};
 
         pre_post.title = LIKERT_TITLE;
-        pre_post.template = LIKERT_TEMPLATE;
+        pre_post.template = LIKERT_FRAME_TEMPLATE;
         pre_post.instructions = LIKERT_INSTRUCTIONS;
         
         let pre_post_questions = [];
-        pre_post_questions.push("Question 1");
-        pre_post_questions.push("Question 2");
+        pre_post_questions.push(['Question 1', 2]);
+        pre_post_questions.push(['Question 2', undefined]);
 
         pre_post.questions = pre_post_questions;
         return pre_post;
@@ -93,6 +93,7 @@ class DbtWorksheetModelFwd extends Model {
         let intro_frame = {};
         intro_frame.title = INTRO_TITLE[this.config.section];
         intro_frame.text = INTRO_TEXT;
+        intro_frame.template = INTRO_FRAME_TEMPLATE;
         return [intro_frame];
     }
 
@@ -136,7 +137,7 @@ class DbtWorksheetModelFwd extends Model {
 
             let frame = {};
             frame.title = BODY_TITLE;
-            frame.template = BODY_FRAME_TEMPLATE;
+            frame.template = STATEMENTS_FRAME_TEMPLATE;
             frame.question = BODY_QUESTION[this.config.section];
             frame.statements = [];
             for(let statement of page_statements) {
@@ -318,7 +319,7 @@ class DbtWorksheetModelConfig {
         this.section = section;
         this.info_sheet_links = false;
         this.offer_ideas = false;
-        this.pre_post_measurement = false;
+        this.pre_post_measurement = true;
     }
 
     /**

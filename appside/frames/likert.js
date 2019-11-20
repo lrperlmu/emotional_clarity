@@ -69,7 +69,7 @@ class LikertFrame extends Frame {
 
             let question_text = document.createElement('h5');
             $(question_text).attr('class', 'likert_question_text');
-            $(question_text).text(data);
+            $(question_text).text(question);
             statements.appendChild(question_text);
             this.user_input.set(question, answer);
 

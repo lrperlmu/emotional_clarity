@@ -13,11 +13,13 @@ var SAMPLE_APP = {
     },
     'intro': {
         0: {
+            'template': 'intro',
             'title': 'Spec Testing app!',
             'text': 'Look at this lovely app, it demonstrates all the stuff in our spec :)',
             'graphic': 'https://kittentoob.com/wp-content/uploads/2018/07/Purrito-750x392.jpg',
         },
         1: {
+            'template': 'intro',
             'title': 'Spec Testing app!',
             'text': 'The introduction has two pages',
         },
@@ -105,6 +107,7 @@ var SAMPLE_APP = {
     },
 
     'summary_count': {
+        'template': 'summary_count',
         'title': 'Summarific summary <3',
         'description': 'This text appears at the top of the summary! I like hedgehogs because they are so so cute.',
         'graphic': 'https://www.washingtonpost.com/resizer/xEOALOr9qrImfg4OWCupZ1OS4kQ=/1396x0/arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/ZGD2JCRBUAI6TJ2ZFOCUDO56EA.jpg',
@@ -148,6 +151,7 @@ var SAMPLE_APP = {
     },
 
     'summary_qualifier': {
+        'template': 'summary_qualifier',
         'title': 'A Quality Summary',
         'description': 'This text appears at the top of the summary! Your input for this activity suggests:',
         'type': 'qualifier',

@@ -26,9 +26,10 @@ var SUMMARY_TEMPLATE_QUAL = 'qual';
 
 // Body config (all DBT worksheet models)
 var BODY_STATEMENTS_PER_PAGE = 12;
-var BODY_FRAME_TEMPLATE = 'statements';
+var STATEMENTS_FRAME_TEMPLATE = 'statements';
 
 // Intro frame strings
+var INTRO_FRAME_TEMPLATE = 'intro';
 var INTRO_TITLE = {};
 INTRO_TITLE[SECTION_PROMPTING] = 'Prompting Events fwd (variant 1af)';
 INTRO_TITLE[SECTION_INTERP] = 'Interperetations of Events fwd (variant 1bf)';
@@ -48,7 +49,7 @@ BODY_QUESTION[SECTION_ACT] = 'Check the box for each thing you have experienced 
 BODY_QUESTION[SECTION_AFTER] = 'Check the box for each thing you have experienced recently.';
 
 // Likert frame strings
-var LIKERT_TEMPLATE = 'likert';
+var LIKERT_FRAME_TEMPLATE = 'likert';
 var LIKERT_TITLE = 'Likert';
 var LIKERT_INSTRUCTIONS = 'Please indicate how much each statement applies to you right now (1=strongly disagree; 5=strongly agree)';
 
@@ -56,4 +57,5 @@ var LIKERT_INSTRUCTIONS = 'Please indicate how much each statement applies to yo
 var SUMMARY_TITLE = 'Summary';
 var SUMMARY_TEXT = 'Your input for this activity suggests:';
 var SUMMARY_FOLLOW_TEXT = 'Thank you for doing this activity';
+var SUMMARY_COUNT_FRAME_TEMPLATE = 'summary_count';
 
