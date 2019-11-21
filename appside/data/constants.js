@@ -53,6 +53,13 @@ var LIKERT_FRAME_TEMPLATE = 'likert';
 var LIKERT_TITLE = 'Likert';
 var LIKERT_INSTRUCTIONS = 'Please indicate how much each statement applies to you right now (1=strongly disagree; 5=strongly agree)';
 
+// Self report strings
+var SELF_REPORT_TITLE = 'Self Report';
+var SELF_REPORT_TEMPLATE = 'self_report';
+var SELF_REPORT_Q1 = 'Which emotion(s) are you feeling right now after thinking about the Reference Event?';
+var SELF_REPORT_Q2 = 'How certain are you about your answer to the previous question?';
+var QUALIFIERS = ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree'];
+
 // Summary frame strings (all DBT worksheet models)
 var SUMMARY_TITLE = 'Summary';
 var SUMMARY_TEXT = 'Your input for this activity suggests:';

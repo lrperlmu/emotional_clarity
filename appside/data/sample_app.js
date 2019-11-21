@@ -94,7 +94,6 @@ var SAMPLE_APP = {
         }
     },
 
-
     'likert': {
         'template': 'likert',
         'title': 'Measurement form',       
@@ -104,6 +103,18 @@ var SAMPLE_APP = {
         'questions': [          // provided in constructor
             ['Question 1', 2],    // question text, user response 1-5
             ['Question 2', undefined],    // default answer choice = undefined
+        ],
+    },
+
+    'self_report': {
+        'title': 'Self Report',
+        'template': 'self_report',
+        'questions': [
+            ['Which emotion(s) are you feeling right now after thinking about the Reference Event?', ''],
+            ['How certain are you about your answer to the previous question?', 'Disagree'],
+        ],
+        'qualifiers': [
+            'Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree',
         ],
     },
 

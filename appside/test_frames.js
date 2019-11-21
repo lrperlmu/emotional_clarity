@@ -19,6 +19,7 @@ $(document).ready(function() {
         'bodymap_color': bodymap_color_main,    // requires 2 parameters [emotion, bodypart]
         'bodymap': bodymap_main,
         'likert': likert_main,
+        'self_report': self_report_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -145,5 +146,13 @@ function likert_main() {
     let frame_data = sample_app.likert;
 
     let frame = new LikertFrame(frame_data);
+    frame.render();
+}
+
+function self_report_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.self_report;
+
+    let frame = new SelfReportFrame(frame_data);
     frame.render();
 }
