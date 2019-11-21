@@ -19,6 +19,7 @@ class ConsentFrame extends Frame {
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *    frame_data.template -- The frame's template
      *    frame_data.title (string) -- The frame's title
+     *    frame_data.instructions (string) -- instructions for user to read pdf
      *    frame_data.questions (Array of map of string) -- 2 key/value pairs
      *    -- formatted as (key: question, value: boolean); value is false by default
      *  Behavior undefined if frame does not have these properties.
@@ -28,6 +29,7 @@ class ConsentFrame extends Frame {
         
         this.template = frame_data.template;
         this.title = frame_data.title;
+        this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
         this.user_input = new Map();
     }
@@ -52,13 +54,34 @@ class ConsentFrame extends Frame {
         $(title).attr('class', 'text-info text-uppercase mb-2');
         frame.appendChild(title);
 
-        let pdf = document.createElement('iframe');
-        $(pdf).attr('src', 'images/consent.pdf');
+        let instructions = document.createElement('h5');
+        $(instructions).attr('class', 'text-info text-uppercase mb-2');
+
+        $(instructions).attr('class', 'consent_instructions');
+        $(instructions).text(this.instructions);
+        frame.appendChild(instructions);
+
+        let pdf = document.createElement('a');
+        $(pdf).attr('href', 'images/consent.pdf');
+        $(pdf).attr('target', '_blank');    // opens pdf in new window/tab
         $(pdf).attr('class', 'consent_pdf');
+        $(pdf).text('Consent Disclosure Form');
         frame.appendChild(pdf);
 
         let container = document.createElement('div');  // flexbox for content
         $(container).attr('class', 'consent_frame');
+
+        $(pdf).click(function() {   // ONLY when pdf is clicked will checkboxes appear
+            container = this.after_form(container);
+        }.bind(this));
+        frame.appendChild(container);
+        
+        let old_frame = $('#frame')[0];
+        old_frame.replaceWith(frame);
+    }
+
+    after_form(frame) {
+        let container = frame;
 
         for (let each_question of this.questions) {
             let question_text = each_question[0];
@@ -68,37 +91,24 @@ class ConsentFrame extends Frame {
             $(input).attr('class', 'form-check-input');
             $(input).attr('class', 'consent_input');
             $(input).attr('type', 'checkbox');
-            $(input).attr('name', question_text);    // question text
+            $(input).attr('id', question_text);    // question text
+
+            $(input).prop('checked', answer);
             input.dataset.text = question_text;
-            $(input).attr('checked', answer);
             container.appendChild(input);
 
             let label = document.createElement('label');
             $(label).attr('class', 'form-check-label');
             $(label).attr('class', 'consent_label');
-            $(label).attr('name', question_text);
+            $(label).attr('for', question_text);
             $(label).text(question_text);
             container.appendChild(label);
 
             this.user_input.set(question_text, false);
 
             container.appendChild(document.createElement('br'));
-
-            $(label).click(function() {
-                $(input).attr('checked', true);
-            }.bind(this));
         }
-        frame.appendChild(container);
-
-        let next = document.createElement('button');
-        $(next).text('Continue');
-        $(next).click(function() {
-            console.log(this.get_user_input());
-        }.bind(this));
-        frame.appendChild(next);
-        
-        let old_frame = $('#frame')[0];
-        old_frame.replaceWith(frame);
+        return container;
     }
 
     /**

@@ -121,6 +121,7 @@ var SAMPLE_APP = {
     'consent': {
         'title': 'Consent Disclosure Form',
         'template': 'consent',
+        'instructions': 'Please click on the following link to read the consent disclosure form.',
         'questions': [
             ['I have read the information above. I understand the risks of this study and wish to participate.', false],
             ['I am 18 or 19 years old.', false],
