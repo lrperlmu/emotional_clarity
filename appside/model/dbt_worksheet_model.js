@@ -75,9 +75,9 @@ class DbtWorksheetModelFwd extends Model {
     build_consent_disclosure_frames() {
         let consent_disclosure = {};
 
-        consent_disclosure.title = CONSENT_TITLE;
-        consent_disclosure.template = CONSENT_FRAME_TEMPLATE;
-        consent_disclosure.instructions = CONSENT_INSTRUCTIONS;
+        consent_disclosure.title = CONSENT_DISCLOSURE_TITLE;
+        consent_disclosure.template = CONSENT_DISCLOSURE_FRAME_TEMPLATE;
+        consent_disclosure.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
 
         let questions = [];
         for (let each of CONSENT_DISCLOSURE_QUESTIONS) {
