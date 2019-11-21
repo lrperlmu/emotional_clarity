@@ -39,7 +39,7 @@ class DbtWorksheetModelFwd extends Model {
         // make a list of references to all the frames, so we can index into it
         this.frames = [];
         if (this.config.pre_post_measurement === true) {
-            this.frames.push(this.build_pre_post_measurement_frames());
+            this.frames.push(this.build_pre_post_measurement_frame());
         }
 
         for(let frame of this.build_intro_frames()) {
@@ -52,7 +52,7 @@ class DbtWorksheetModelFwd extends Model {
         // index into frames
 
         if (this.config.pre_post_measurement === true) {
-            this.frames.push(this.build_pre_post_measurement_frames());
+            this.frames.push(this.build_pre_post_measurement_frame());
         }
         this.frame_idx = -1;
 
@@ -67,7 +67,7 @@ class DbtWorksheetModelFwd extends Model {
     /**
      * Build likert frames for a DBT worksheet model as pre or post measurement frame.
      */
-    build_pre_post_measurement_frames() {
+    build_pre_post_measurement_frame() {
         let pre_post = {};
 
         pre_post.title = LIKERT_TITLE;
@@ -320,7 +320,7 @@ class DbtWorksheetModelConfig {
         this.section = section;
         this.info_sheet_links = false;
         this.offer_ideas = false;
-        this.pre_post_measurement = true;
+        this.pre_post_measurement = false;
     }
 
     /**
@@ -329,7 +329,7 @@ class DbtWorksheetModelConfig {
      * @param value - boolean to set it to
      * @return this
      */
-    info_sheet_links(value) {
+    set_info_sheet_links(value) {
         this.info_sheet_links = value;
         return this;
     }
@@ -340,7 +340,7 @@ class DbtWorksheetModelConfig {
      * @param value - boolean to set it to
      * @return this
      */
-    offer_ideas(value) {
+    set_offer_ideas(value) {
         this.offer_ideas = value;
         return this;
     }
@@ -351,7 +351,7 @@ class DbtWorksheetModelConfig {
      * @param value - boolean to set it to
      * @return this
      */
-    pre_post_measurement(value) {
+    set_pre_post_measurement(value) {
         this.pre_post_measurement = value;
         return this;
     }
@@ -364,9 +364,6 @@ var FWD_INTERP_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_INTER
 var FWD_BIO_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_BIO);
 var FWD_ACT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_ACT);
 var FWD_AFTER_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_AFTER);
-var FWD_MEASUREMENT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_PROMPTING);
-// FWD_MEASUREMENT_CONFIG.pre_post_measurement(true);
-
 
 
 /*

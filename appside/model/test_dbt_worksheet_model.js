@@ -7,7 +7,7 @@ $(document).ready(function() {
         'intro': visual_test_intro,
         'body': visual_test_body,
         'summary': visual_test_summary,
-        'pre_measurement': visual_test_pre_measurement,
+        // 'pre_measurement': visual_test_pre_measurement,
         'noerror': all_wkshts_noerror,
     }
     let page_types = Object.keys(test_methods);
@@ -116,17 +116,21 @@ function visual_test_summary() {
     view.render();
 }
 
-/*
- * Integration test that invokes LikertFrame to render the pre and post measurement frame of this app.
- * Manually verified.
- */
-function visual_test_pre_measurement() {
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
 
-    let frame = model.get_frame('next');
-    while(frame.template !== LIKERT_FRAME_TEMPLATE) {
-        frame = model.get_frame('next');
-    }
-    let view = new LikertFrame(frame);
-    view.render();
-}
+// /*
+//  * Integration test that invokes LikertFrame to render the pre and post measurement frame of this app.
+//  * Manually verified.
+//  */
+// function visual_test_pre_measurement() {
+//     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
+//     FWD_PROMPTING_CONFIG.set_pre_post_measurement(true);
+
+
+//     let frame = model.get_frame('next');
+//     while(frame.template !== LIKERT_FRAME_TEMPLATE) {
+//         frame = model.get_frame('next');
+//     }
+//     let view = new LikertFrame(frame);
+//     view.render();
+// }
+
