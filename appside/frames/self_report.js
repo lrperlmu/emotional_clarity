@@ -77,6 +77,7 @@ class SelfReportFrame extends Frame {
             $(input).attr('class', 'self_report_input');
             $(input).attr('type', 'radio');
             $(input).attr('name', this.questions[1][0]);    // question text
+            $(input).attr('id', this.questions[1][0] + answer);
             $(input).attr('value', answer);
 
             if (this.questions[1][1] === answer) {
@@ -84,13 +85,10 @@ class SelfReportFrame extends Frame {
             }
             input.dataset.text = answer;             // answer choice
 
-            let input_text = document.createElement('p');
+            let input_text = document.createElement('label');
             $(input_text).attr('class', 'self_report_input_text');
+            $(input_text).attr('for', this.questions[1][0] + answer);
             $(input_text).text(answer);
-
-            $(input_text).click(function() {
-                $(input).attr('checked', true);
-            }.bind(this));
 
             container.appendChild(input);
             container.appendChild(input_text);
