@@ -17,7 +17,6 @@ class LikertFrame extends Frame {
      * Construct LikertFrame from an object
      * 
      * @param frame_data -- Object containing the frame's data. Expected fields:
-     *    frame_data.title (string) -- frame's title
      *    frame_data.instructions (string) -- frame's instructions for user
      *    frame_data.question (string) -- Text to appear before the list of statements
      *    frame_data.qualifiers (array of string) -- Text for answer choices
@@ -27,7 +26,6 @@ class LikertFrame extends Frame {
     constructor(frame_data) {
         super();
 
-        this.title = frame_data.title;
         this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
@@ -47,12 +45,6 @@ class LikertFrame extends Frame {
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
         $(frame).attr('id', 'frame');
-        
-        // insert a h5 node for the title
-        let title = document.createElement('h5');
-        $(title).text(this.title);
-        $(title).attr('class', 'text-info text-uppercase mb-2');
-        frame.appendChild(title);
         
         // insert a h5 node for the instruction
         let instructions = document.createElement('h5');

@@ -70,7 +70,6 @@ class DbtWorksheetModelFwd extends Model {
     build_pre_post_measurement_frame() {
         let pre_post = {};
 
-        pre_post.title = LIKERT_TITLE;
         pre_post.template = LIKERT_FRAME_TEMPLATE;
         pre_post.instructions = LIKERT_INSTRUCTIONS;
         pre_post.qualifiers = SDERS_QUALIFIERS;
