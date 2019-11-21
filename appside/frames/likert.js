@@ -20,6 +20,7 @@ class LikertFrame extends Frame {
      *    frame_data.title (string) -- frame's title
      *    frame_data.instructions (string) -- frame's instructions for user
      *    frame_data.question (string) -- Text to appear before the list of statements
+     *    frame_data.qualifiers (array of string) -- Text for answer choices
      *    
      *  Behavior undefined if frame does not have these properties.
      */
@@ -29,6 +30,7 @@ class LikertFrame extends Frame {
         this.title = frame_data.title;
         this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
+        this.qualifiers = frame_data.qualifiers;
         this.user_input = new Map();
     }
 
@@ -80,18 +82,17 @@ class LikertFrame extends Frame {
                 $(input).attr('class', 'likert_input');
                 $(input).attr('type', 'radio');
                 $(input).attr('name', question);    // question text
-                $(input).attr('value', j);
-                if (answer != undefined && answer == j) {
+                $(input).attr('id', question + j);
+                $(input).attr('value', this.qualifiers[j - 1]); // 0-based index
+                if (answer != undefined && answer == j - 1) {
                     $(input).attr('checked', 'checked');    // one option checked per q
                 }
                 input.dataset.text = j;             // answer choice
 
-                let input_text = document.createElement('p');
+                let input_text = document.createElement('label');
                 $(input_text).attr('class', 'likert_input_text');
-                $(input_text).text(j);
-                $(input_text).click(function() {
-                    $(input).attr('checked', true);
-                }.bind(this));
+                $(input_text).attr('for', question + j);
+                $(input_text).text(this.qualifiers[j - 1]);
 
                 statements.appendChild(input);
                 statements.appendChild(input_text);

@@ -73,12 +73,13 @@ class DbtWorksheetModelFwd extends Model {
         pre_post.title = LIKERT_TITLE;
         pre_post.template = LIKERT_FRAME_TEMPLATE;
         pre_post.instructions = LIKERT_INSTRUCTIONS;
+        pre_post.qualifiers = SDERS_QUALIFIERS;
         
-        let pre_post_questions = [];
-        pre_post_questions.push(['Question 1', 2]);
-        pre_post_questions.push(['Question 2', undefined]);
+        let questions = [];
+        questions.push([SDERS_QUESTIONS[0], 2]);
+        questions.push([SDERS_QUESTIONS[1], undefined]);
 
-        pre_post.questions = pre_post_questions;
+        pre_post.questions = questions;
         return pre_post;
     }
 
