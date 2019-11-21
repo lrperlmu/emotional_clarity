@@ -284,11 +284,6 @@ body {
     display: inline;
 }
 
-.consent_pdf {
-  width: 100%;
-  height: 70%;
-}
-
 .consent_label {
     padding: 10px;
     display: inline;
