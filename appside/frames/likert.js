@@ -84,7 +84,7 @@ class LikertFrame extends Frame {
                 $(input).attr('name', question);    // question text
                 $(input).attr('id', question + j);
                 $(input).attr('value', this.qualifiers[j - 1]); // 0-based index
-                if (answer != undefined && answer == j - 1) {
+                if (answer != undefined && answer == j) {
                     $(input).attr('checked', 'checked');    // one option checked per q
                 }
                 input.dataset.text = j;             // answer choice

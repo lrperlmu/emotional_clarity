@@ -76,7 +76,7 @@ class DbtWorksheetModelFwd extends Model {
         pre_post.qualifiers = SDERS_QUALIFIERS;
         
         let questions = [];
-        questions.push([SDERS_QUESTIONS[0], 2]);
+        questions.push([SDERS_QUESTIONS[0], 5]);
         questions.push([SDERS_QUESTIONS[1], undefined]);
 
         pre_post.questions = questions;
