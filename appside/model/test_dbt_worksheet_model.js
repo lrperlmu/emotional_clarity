@@ -9,7 +9,7 @@ $(document).ready(function() {
         'summary': visual_test_summary,
         'pre_measurement': visual_test_pre_measurement,
         'self_report': visual_test_self_report,
-        'consent': visual_test_consent,
+        'consent_disclosure': visual_test_consent_disclosure,
         'noerror': all_wkshts_noerror,
     }
     let page_types = Object.keys(test_methods);
@@ -148,15 +148,15 @@ function visual_test_self_report() {
 }
 
 /*
- * Integration test that invokes ConsentFrame to render the consent frame of this app.
+ * Integration test that invokes ConsentDisclosureFrame to render the consent disclosure frame of this app.
  * Manually verified.
  */
-function visual_test_consent() {
+function visual_test_consent_disclosure() {
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
     let frame = model.get_frame('next');
-    while(frame.template !== CONSENT_FRAME_TEMPLATE) {
+    while(frame.template !== CONSENT_DISCLOSURE_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new ConsentFrame(frame);
+    let view = new ConsentDisclosureFrame(frame);
     view.render();
 }

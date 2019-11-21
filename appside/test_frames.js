@@ -20,7 +20,7 @@ $(document).ready(function() {
         'bodymap': bodymap_main,
         'likert': likert_main,
         'self_report': self_report_main,
-        'consent': consent_main,
+        'consent_disclosure': consent_disclosure_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -158,10 +158,10 @@ function self_report_main() {
     frame.render();
 }
 
-function consent_main() {
+function consent_disclosure_main() {
     let sample_app = SAMPLE_APP;
-    let frame_data = sample_app.consent;
+    let frame_data = sample_app.consent_disclosure;
 
-    let frame = new ConsentFrame(frame_data);
+    let frame = new ConsentDisclosureFrame(frame_data);
     frame.render();
 }

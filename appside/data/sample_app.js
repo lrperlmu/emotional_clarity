@@ -118,9 +118,9 @@ var SAMPLE_APP = {
         ],
     },
 
-    'consent': {
+    'consent_disclosure': {
         'title': 'Consent Disclosure Form',
-        'template': 'consent',
+        'template': 'consent_disclosure',
         'instructions': 'Please click on the following link to read the consent disclosure form.',
         'questions': [
             ['I have read the information above. I understand the risks of this study and wish to participate.', false],

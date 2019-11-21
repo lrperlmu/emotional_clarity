@@ -38,8 +38,8 @@ class DbtWorksheetModelFwd extends Model {
 
         // make a list of references to all the frames, so we can index into it
         this.frames = [];
-        if (this.config.consent === true) {
-            this.frames.push(this.build_consent_frames());
+        if (this.config.consent_disclosure === true) {
+            this.frames.push(this.build_consent_disclosure_frames());
         }
         if (this.config.self_report === true) {
             this.frames.push(this.build_self_report_frames());
@@ -70,21 +70,21 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
-     * Build consent frames for a DBT worksheet model.
+     * Build consent disclosure frames for a DBT worksheet model.
      */
-    build_consent_frames() {
-        let consent = {};
+    build_consent_disclosure_frames() {
+        let consent_disclosure = {};
 
-        consent.title = CONSENT_TITLE;
-        consent.template = CONSENT_FRAME_TEMPLATE;
-        consent.instructions = CONSENT_INSTRUCTIONS;
+        consent_disclosure.title = CONSENT_TITLE;
+        consent_disclosure.template = CONSENT_FRAME_TEMPLATE;
+        consent_disclosure.instructions = CONSENT_INSTRUCTIONS;
 
         let questions = [];
-        for (let each of CONSENT_QUESTIONS) {
+        for (let each of CONSENT_DISCLOSURE_QUESTIONS) {
             questions.push([each, false]);
         }
-        consent.questions = questions;
-        return consent;
+        consent_disclosure.questions = questions;
+        return consent_disclosure;
     }
 
     /**
@@ -362,7 +362,7 @@ class DbtWorksheetModelConfig {
         this.offer_ideas = false;
         this.pre_post_measurement = true;
         this.self_report = true;
-        this.consent = true;
+        this.consent_disclosure = true;
     }
 
     /**
@@ -388,7 +388,7 @@ class DbtWorksheetModelConfig {
     }
 
     /**
-     * Setter for this.measurements, tells the model whether to offer pre/post measurements
+     * Setter for this.pre_post_measurement, tells the model whether to offer pre/post measurements
      * at beginning and end of activity.
      * @param value - boolean to set it to
      * @return this
@@ -398,10 +398,25 @@ class DbtWorksheetModelConfig {
         return this;
     }
 
+    /**
+     * Setter for this.self_report, tells the model whether to offer self report frame.
+     * @param value - boolean to set it to
+     * @return this
+     */
     self_report(value) {
         this.self_report = value;
         return this;
     }
+
+    /**
+     * Setter for this.consent_disclosure, tells the model whether to offer consent disclosure frame.
+     * @param value - boolean to set it to
+     * @return this
+     */
+     consent_disclosure(value) {
+        this.consent_disclosure = value;
+        return this;
+     }
 }
 
 

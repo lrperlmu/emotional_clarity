@@ -11,10 +11,10 @@
  * 
  * Frame contains pdf file and a set of checkboxes.
  **/
-class ConsentFrame extends Frame {
+class ConsentDisclosureFrame extends Frame {
 
     /**
-     * Construct ConsentFrame from an object
+     * Construct ConsentDisclosureFrame from an object
      * 
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *    frame_data.template -- The frame's template
@@ -80,33 +80,38 @@ class ConsentFrame extends Frame {
         old_frame.replaceWith(frame);
     }
 
+    /**
+     * Constructs checkboxes for user input
+     * @param frame can be erased
+     */
     after_form(frame) {
         let container = frame;
+        if (container.innerHTML === '') {   // if first time called => no checkboxes displayed yet
+            for (let each_question of this.questions) {
+                let question_text = each_question[0];
+                let answer = each_question[1];
 
-        for (let each_question of this.questions) {
-            let question_text = each_question[0];
-            let answer = each_question[1];
+                let input = document.createElement('input');
+                $(input).attr('class', 'form-check-input');
+                $(input).attr('class', 'consent_input');
+                $(input).attr('type', 'checkbox');
+                $(input).attr('id', question_text);    // question text
 
-            let input = document.createElement('input');
-            $(input).attr('class', 'form-check-input');
-            $(input).attr('class', 'consent_input');
-            $(input).attr('type', 'checkbox');
-            $(input).attr('id', question_text);    // question text
+                $(input).prop('checked', answer);
+                input.dataset.text = question_text;
+                container.appendChild(input);
 
-            $(input).prop('checked', answer);
-            input.dataset.text = question_text;
-            container.appendChild(input);
+                let label = document.createElement('label');
+                $(label).attr('class', 'form-check-label');
+                $(label).attr('class', 'consent_label');
+                $(label).attr('for', question_text);
+                $(label).text(question_text);
+                container.appendChild(label);
 
-            let label = document.createElement('label');
-            $(label).attr('class', 'form-check-label');
-            $(label).attr('class', 'consent_label');
-            $(label).attr('for', question_text);
-            $(label).text(question_text);
-            container.appendChild(label);
+                this.user_input.set(question_text, false);
 
-            this.user_input.set(question_text, false);
-
-            container.appendChild(document.createElement('br'));
+                container.appendChild(document.createElement('br'));
+            }
         }
         return container;
     }
