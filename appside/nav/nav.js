@@ -113,6 +113,8 @@ class FrameFactory {
             return new SummaryFrameCount(frame);
         } else if(frame.template === LIKERT_FRAME_TEMPLATE) {
             return new LikertFrame(frame);
+        } else if(frame.template === SELF_REPORT_FRAME_TEMPLATE) {
+            return new SelfReportFrame(frame);
         }
     }
 }

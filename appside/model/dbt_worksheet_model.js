@@ -38,10 +38,12 @@ class DbtWorksheetModelFwd extends Model {
 
         // make a list of references to all the frames, so we can index into it
         this.frames = [];
+        if (this.config.self_report === true) {
+            this.frames.push(this.build_self_report_frames());
+        }
         if (this.config.pre_post_measurement === true) {
             this.frames.push(this.build_pre_post_measurement_frames());
         }
-
         for(let frame of this.build_intro_frames()) {
             this.frames.push(frame);
         }
@@ -62,6 +64,24 @@ class DbtWorksheetModelFwd extends Model {
             ['next', this.next_frame.bind(this)],
             ['back', this.back.bind(this)],
         ]);
+    }
+
+    /**
+     * Build self report frames for a DBT worksheet model.
+     */
+    build_self_report_frames() {
+        let self_report = {};
+
+        self_report.title = SELF_REPORT_TITLE;
+        self_report.template = SELF_REPORT_FRAME_TEMPLATE;
+        self_report.qualifiers = QUALIFIERS;
+
+        let questions = [];
+        questions.push([SELF_REPORT_Q1, '']);
+        questions.push([SELF_REPORT_Q2, '']);
+
+        self_report.questions = questions;
+        return self_report;
     }
 
     /**
@@ -320,6 +340,7 @@ class DbtWorksheetModelConfig {
         this.info_sheet_links = false;
         this.offer_ideas = false;
         this.pre_post_measurement = true;
+        this.self_report = true;
     }
 
     /**
@@ -354,6 +375,11 @@ class DbtWorksheetModelConfig {
         this.pre_post_measurement = value;
         return this;
     }
+
+    self_report(value) {
+        this.self_report = value;
+        return this;
+    }
 }
 
 
@@ -364,8 +390,6 @@ var FWD_BIO_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_BIO);
 var FWD_ACT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_ACT);
 var FWD_AFTER_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_AFTER);
 var FWD_MEASUREMENT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_PROMPTING);
-// FWD_MEASUREMENT_CONFIG.pre_post_measurement(true);
-
 
 
 /*
