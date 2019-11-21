@@ -38,6 +38,9 @@ class DbtWorksheetModelFwd extends Model {
 
         // make a list of references to all the frames, so we can index into it
         this.frames = [];
+        if (this.config.consent === true) {
+            this.frames.push(this.build_consent_frames());
+        }
         if (this.config.self_report === true) {
             this.frames.push(this.build_self_report_frames());
         }
@@ -64,6 +67,24 @@ class DbtWorksheetModelFwd extends Model {
             ['next', this.next_frame.bind(this)],
             ['back', this.back.bind(this)],
         ]);
+    }
+
+    /**
+     * Build consent frames for a DBT worksheet model.
+     */
+    build_consent_frames() {
+        let consent = {};
+
+        consent.title = CONSENT_TITLE;
+        consent.template = CONSENT_FRAME_TEMPLATE;
+        consent.instructions = CONSENT_INSTRUCTIONS;
+
+        let questions = [];
+        for (let each of CONSENT_QUESTIONS) {
+            questions.push([each, false]);
+        }
+        consent.questions = questions;
+        return consent;
     }
 
     /**
@@ -341,6 +362,7 @@ class DbtWorksheetModelConfig {
         this.offer_ideas = false;
         this.pre_post_measurement = true;
         this.self_report = true;
+        this.consent = true;
     }
 
     /**

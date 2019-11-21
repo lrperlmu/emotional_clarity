@@ -60,6 +60,14 @@ var SELF_REPORT_Q1 = 'Which emotion(s) are you feeling right now after thinking 
 var SELF_REPORT_Q2 = 'How certain are you about your answer to the previous question?';
 var QUALIFIERS = ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree'];
 
+// Consent frame strings
+var CONSENT_TITLE = 'Consent Disclosure Form';
+var CONSENT_FRAME_TEMPLATE = 'consent';
+var CONSENT_QUESTIONS = ['I have read the information above. I understand the risks of this study and wish to participate.',
+    'I am 18 or 19 years old.',
+    'I am not able to read, understand, and respond to a web questionnaire written in English.'];
+var CONSENT_INSTRUCTIONS = 'Please click on the following link to read the consent disclosure form.';
+
 // Summary frame strings (all DBT worksheet models)
 var SUMMARY_TITLE = 'Summary';
 var SUMMARY_TEXT = 'Your input for this activity suggests:';
