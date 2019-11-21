@@ -80,18 +80,17 @@ class LikertFrame extends Frame {
                 $(input).attr('class', 'likert_input');
                 $(input).attr('type', 'radio');
                 $(input).attr('name', question);    // question text
+                $(input).attr('id', question + j);  // for clickable input_text
                 $(input).attr('value', j);
                 if (answer != undefined && answer == j) {
                     $(input).attr('checked', 'checked');    // one option checked per q
                 }
                 input.dataset.text = j;             // answer choice
 
-                let input_text = document.createElement('p');
+                let input_text = document.createElement('label');
                 $(input_text).attr('class', 'likert_input_text');
+                $(input_text).attr('for', question + j);
                 $(input_text).text(j);
-                $(input_text).click(function() {
-                    $(input).attr('checked', true);
-                }.bind(this));
 
                 statements.appendChild(input);
                 statements.appendChild(input_text);
