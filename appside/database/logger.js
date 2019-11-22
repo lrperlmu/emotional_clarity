@@ -46,7 +46,6 @@ class Logger {
      * Data is stored in app-responses subtree, under current uid
      *
      * @param data - a map whose keys and values are primitives
-     *
      */
     logResponses(data) {
         this.signIn.then(credential => {
@@ -100,5 +99,3 @@ class Logger {
             .replace(/\//g, '%2F');
     }
 }
-
-
