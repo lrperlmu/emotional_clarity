@@ -65,7 +65,7 @@ class DbtWorksheetModelFwd extends Model {
         // only one intro frame so far, but we'll likely add more
         let intro_frame = {};
         intro_frame.title = INTRO_TITLE[this.config.section];
-        intro_frame.text = INTRO_TEXT;
+        intro_frame.text = INTRO_TEXT(this.config.section);
         return [intro_frame];
     }
 
@@ -326,7 +326,6 @@ var FWD_INTERP_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_INTER
 var FWD_BIO_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_BIO);
 var FWD_ACT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_ACT);
 var FWD_AFTER_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_AFTER);
-
 
 
 /*

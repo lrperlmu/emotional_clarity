@@ -12,7 +12,7 @@ class IntroFrame extends Frame {
     /** Constructs Intro frame template
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *      frame_data.title (string)
-     *      frame_data.text (string) -- content of each page on introduction
+     *      frame_data.text (array of string) -- content of each paragraph of introduction
      *      frame_data.graphic (string) -- URL link to graphic
      * Behavior undefined if frame does not have these properties.
      **/
@@ -42,9 +42,11 @@ class IntroFrame extends Frame {
         frame.appendChild(title);
 
         // insert a p node for the content of header1
-        let content = document.createElement('p');
-        $(content).text(this.text);
-        frame.appendChild(content);
+        for (let para of this.text) {
+            let content = document.createElement('p');
+            $(content).text(para);
+            frame.appendChild(content);
+        }
 
         // insert graphic
         if(typeof this.graphic !== 'undefined') {

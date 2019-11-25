@@ -12,25 +12,35 @@ $(document).ready(function() {
     }
     let page_types = Object.keys(test_methods);
     let page_to_show = page_types[0];
+    let variant = SECTION_PROMPTING;
 
-    // see if a frame type was written in the query string, otherwise use default
-    let query_string = location.search;
-    if (query_string.length > 0) {
-        let query = query_string.substring(1, query_string.length);
-        if (page_types.includes(query)) {
-            page_to_show = query;
-        }
+    let query_string = new URLSearchParams(location.search);
+
+    if(query_string.has('test')) {
+        page_to_show = query_string.get('test');
+    }
+    if(query_string.has('variant')) {
+        let slug = query_string.get('variant');
+        let variants = new Map([
+            ['prompting', SECTION_PROMPTING],
+            ['interp', SECTION_INTERP],
+            ['bio', SECTION_BIO],
+            ['act', SECTION_ACT],
+            ['after', SECTION_AFTER],
+        ]);
+        variant = variants.get(slug);
     }
 
     let test_fcn = test_methods[page_to_show];
-    test_fcn();
+    test_fcn(variant);
 });
 
 
 /*
  * Flip through all the frames of each config. Manually check to make sure there's no error
+ * @param variant - placeholder arg for consistency w/other tests. ignored
  */
-function all_wkshts_noerror() {
+function all_wkshts_noerror(variant) {
     let configs = [
         FWD_PROMPTING_CONFIG,
         FWD_INTERP_CONFIG,
@@ -61,9 +71,11 @@ function wksht_noerror(config) {
 /*
  * Integration test that invokes IntroFrame to render the intro frame of this app.
  * Manually verified.
+ * @param variant - the variant to test
  */
-function visual_test_intro() {
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
+function visual_test_intro(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    let model = new DbtWorksheetModelFwd(knowledgebase, config);
     let frame = model.get_frame('next');
     let view = new IntroFrame(frame);
     view.render();
@@ -73,9 +85,11 @@ function visual_test_intro() {
 /*
  * Integration test that invokes StatementsBodyFrame to render a body frame of this app.
  * Manually verified.
+ * @param variant - the variant to test
  */
-function visual_test_body() {
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
+function visual_test_body(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    let model = new DbtWorksheetModelFwd(knowledgebase, config);
     model.get_frame('next');
     let frame = model.get_frame('next');
     let view = new StatementsBodyFrame(frame);
@@ -87,8 +101,10 @@ function visual_test_body() {
  * Integration test that invokes SuffaryFrameCount to render a summary frame generated
  * by this app.
  * Manually verified.
+ * @param variant - the variant to test
  */
-function visual_test_summary() {
+function visual_test_summary(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_AFTER_CONFIG);
     let frame = model.get_frame('next');
 
