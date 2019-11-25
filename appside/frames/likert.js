@@ -19,7 +19,8 @@ class LikertFrame extends Frame {
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *    frame_data.title (string) -- frame's title
      *    frame_data.instructions (string) -- frame's instructions for user
-     *    frame_data.question (string) -- Text to appear before the list of statements
+     *    frame_data.questions (array) -- list of question/response pair
+     *    -- Question (String): Response (int 1-5 or undefined)
      *    
      *  Behavior undefined if frame does not have these properties.
      */
