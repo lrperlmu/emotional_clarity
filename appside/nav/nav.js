@@ -109,6 +109,10 @@ class FrameFactory {
             return new SummaryFrameCount(frame);
         } else if(frame.template === LIKERT_FRAME_TEMPLATE) {
             return new LikertFrame(frame);
+        } else if(frame.template === SELF_REPORT_FRAME_TEMPLATE) {
+            return new SelfReportFrame(frame);
+        } else if(frame.template === CONSENT_FRAME_TEMPLATE) {
+            return new ConsentDisclosureFrame(frame);
         } else {
             throw new Error('Frame template not recognized ' + frame.template);
         }

@@ -19,6 +19,8 @@ $(document).ready(function() {
         'bodymap_color': bodymap_color_main,    // requires 2 parameters [emotion, bodypart]
         'bodymap': bodymap_main,
         'likert': likert_main,
+        'self_report': self_report_main,
+        'consent_disclosure': consent_disclosure_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -145,5 +147,21 @@ function likert_main() {
     let frame_data = sample_app.likert;
 
     let frame = new LikertFrame(frame_data);
+    frame.render();
+}
+
+function self_report_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.self_report;
+
+    let frame = new SelfReportFrame(frame_data);
+    frame.render();
+}
+
+function consent_disclosure_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.consent_disclosure;
+
+    let frame = new ConsentDisclosureFrame(frame_data);
     frame.render();
 }

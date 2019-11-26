@@ -38,6 +38,12 @@ class DbtWorksheetModelFwd extends Model {
 
         // make a list of references to all the frames, so we can index into it
         this.frames = [];
+        if (this.config.consent_disclosure === true) {
+            this.frames.push(this.build_consent_disclosure_frame());
+        }
+        if (this.config.self_report === true) {
+            this.frames.push(this.build_self_report_frame());
+        }
         if (this.config.pre_post_measurement === true) {
             this.frames.push(this.build_pre_post_measurement_frame());
         }
@@ -60,6 +66,41 @@ class DbtWorksheetModelFwd extends Model {
             ['next', this.next_frame.bind(this)],
             ['back', this.back.bind(this)],
         ]);
+    }
+
+    /**
+     * Build consent disclosure frames for a DBT worksheet model.
+     */
+    build_consent_disclosure_frame() {
+        let consent_disclosure = {};
+
+        consent_disclosure.title = CONSENT_DISCLOSURE_TITLE;
+        consent_disclosure.template = CONSENT_DISCLOSURE_FRAME_TEMPLATE;
+        consent_disclosure.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
+
+        let questions = [];
+        for (let each of CONSENT_DISCLOSURE_QUESTIONS) {
+            questions.push([each, false]);
+        }
+        consent_disclosure.questions = questions;
+        return consent_disclosure;
+    }
+
+    /**
+     * Build self report frames for a DBT worksheet model.
+     */
+    build_self_report_frame() {
+        let self_report = {};
+
+        self_report.template = SELF_REPORT_FRAME_TEMPLATE;
+        self_report.qualifiers = QUALIFIERS;
+
+        let questions = [];
+        questions.push([SELF_REPORT_Q1, '']);
+        questions.push([SELF_REPORT_Q2, '']);
+
+        self_report.questions = questions;
+        return self_report;
     }
 
     /**
@@ -318,6 +359,8 @@ class DbtWorksheetModelConfig {
         this.info_sheet_links = false;
         this.offer_ideas = false;
         this.pre_post_measurement = false;
+        this.self_report = false;
+        this.consent_disclosure = false;
     }
 
     /**
@@ -343,7 +386,7 @@ class DbtWorksheetModelConfig {
     }
 
     /**
-     * Setter for this.measurements, tells the model whether to offer pre/post measurements
+     * Setter for this.pre_post_measurement, tells the model whether to offer pre/post measurements
      * at beginning and end of activity.
      * @param value - boolean to set it to
      * @return this
@@ -352,8 +395,27 @@ class DbtWorksheetModelConfig {
         this.pre_post_measurement = value;
         return this;
     }
-}
 
+    /**
+     * Setter for this.self_report, tells the model whether to offer self report frame.
+     * @param value - boolean to set it to
+     * @return this
+     */
+    set_self_report(value) {
+        this.self_report = value;
+        return this;
+    }
+
+    /**
+     * Setter for this.consent_disclosure, tells the model whether to offer consent disclosure frame.
+     * @param value - boolean to set it to
+     * @return this
+     */
+    set_consent_disclosure(value) {
+        this.consent_disclosure = value;
+        return this;
+     }
+}
 
 // One config instance for each type of DBT worksheet model
 var FWD_PROMPTING_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_PROMPTING);
@@ -361,7 +423,6 @@ var FWD_INTERP_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_INTER
 var FWD_BIO_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_BIO);
 var FWD_ACT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_ACT);
 var FWD_AFTER_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_AFTER);
-
 
 /*
 Example frames -- visual aid for the developer to see what kind of frames

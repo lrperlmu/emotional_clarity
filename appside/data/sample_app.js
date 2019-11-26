@@ -94,7 +94,6 @@ var SAMPLE_APP = {
         }
     },
 
-
     'likert': {
         'template': 'likert',
         'title': 'Measurement form',       
@@ -104,6 +103,28 @@ var SAMPLE_APP = {
         'questions': [          // provided in constructor
             ['Question 1', 2],    // question text, user response 1-5
             ['Question 2', undefined],    // default answer choice = undefined
+        ],
+    },
+
+    'self_report': {
+        'template': 'self_report',
+        'questions': [
+            ['Which emotion(s) are you feeling right now after thinking about the Reference Event?', ''],
+            ['How certain are you about your answer to the previous question?', 'Disagree'],
+        ],
+        'qualifiers': [
+            'Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree',
+        ],
+    },
+
+    'consent_disclosure': {
+        'title': 'Consent Disclosure Form',
+        'template': 'consent_disclosure',
+        'instructions': 'Please click on the following link to read the consent disclosure form.',
+        'questions': [
+            ['I have read the information above. I understand the risks of this study and wish to participate.', false],
+            ['I am 18 or 19 years old.', false],
+            ['I am not able to read, understand, and respond to a web questionnaire written in English.', true],
         ],
     },
 
