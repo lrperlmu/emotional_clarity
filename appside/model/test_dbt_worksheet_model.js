@@ -145,6 +145,7 @@ function visual_test_self_report() {
     while(frame.template !== SELF_REPORT_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
+
     let view = new SelfReportFrame(frame);
     view.render();
 }

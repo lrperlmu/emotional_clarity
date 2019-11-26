@@ -427,7 +427,6 @@ var FWD_ACT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_ACT);
 var FWD_AFTER_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_AFTER);
 var FWD_MEASUREMENT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_PROMPTING);
 
-
 /*
 Example frames -- visual aid for the developer to see what kind of frames
 a DBT worksheet model generates.

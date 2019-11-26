@@ -58,7 +58,7 @@ var SELF_REPORT_TITLE = 'Self Report';
 var SELF_REPORT_FRAME_TEMPLATE = 'self_report';
 var SELF_REPORT_Q1 = 'Which emotion(s) are you feeling right now after thinking about the Reference Event?';
 var SELF_REPORT_Q2 = 'How certain are you about your answer to the previous question?';
-var QUALIFIERS = ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree'];
+var QUALIFIERS = ['Very uncertain', 'Somewhat uncertain', 'Neutral', 'Somewhat certain', 'Very certain'];
 
 // Consent disclosure frame strings
 var CONSENT_DISCLOSURE_TITLE = 'Consent';

@@ -17,7 +17,7 @@ class SelfReportFrame extends Frame {
      * Construct SelfReport from an object
      * 
      * @param frame_data -- Object containing the frame's data. Expected fields:
-     *    frame_data.template -- The exact string 'statements'
+     *    frame_data.template (string) -- Exact String phrase 'likert'
      *    frame_data.title (string) -- The frame's title
      *    frame_data.questions (Array of map of string) -- 2 key/value pairs
      *    -- formatted as (key: question, value: answer); value is empty string by default
@@ -63,7 +63,7 @@ class SelfReportFrame extends Frame {
         $(textbox).val(this.questions[0][1]);
         frame.appendChild(textbox);
 
-        let container = document.createElement('div');  // flexbox for content
+        let container = document.createElement('div');
         $(container).attr('class', 'self_report_frame');
 
         let question2 = document.createElement('h3');
@@ -77,6 +77,7 @@ class SelfReportFrame extends Frame {
             $(input).attr('class', 'self_report_input');
             $(input).attr('type', 'radio');
             $(input).attr('name', this.questions[1][0]);    // question text
+            $(input).attr('id', this.questions[1][0] + answer);
             $(input).attr('value', answer);
 
             if (this.questions[1][1] === answer) {
@@ -84,13 +85,10 @@ class SelfReportFrame extends Frame {
             }
             input.dataset.text = answer;             // answer choice
 
-            let input_text = document.createElement('p');
+            let input_text = document.createElement('label');
             $(input_text).attr('class', 'self_report_input_text');
+            $(input_text).attr('for', this.questions[1][0] + answer);
             $(input_text).text(answer);
-
-            $(input_text).click(function() {
-                $(input).attr('checked', true);
-            }.bind(this));
 
             container.appendChild(input);
             container.appendChild(input_text);
