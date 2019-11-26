@@ -338,6 +338,9 @@ class DbtWorksheetModelFwd extends Model {
             summary_obj.responses = item[1];
             matched_emotions.push(summary_obj);
         }
+        this.summary_frame.matched_emotions.sort(function(entry_a, entry_b) {
+            return entry_b.responses.length - entry_a.responses.length;
+        });
     }
 }
 
