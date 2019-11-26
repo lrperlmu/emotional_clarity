@@ -125,7 +125,6 @@ function visual_test_summary() {
 function visual_test_pre_measurement() {
     FWD_PROMPTING_CONFIG.set_pre_post_measurement(true);
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
-
     let frame = model.get_frame('next');
     while(frame.template !== LIKERT_FRAME_TEMPLATE) {
         frame = model.get_frame('next');

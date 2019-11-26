@@ -55,7 +55,6 @@ class DbtWorksheetModelFwd extends Model {
         }
         this.frames.push(this.summary_frame);
         // index into frames
-
         if (this.config.pre_post_measurement === true) {
             this.frames.push(this.build_pre_post_measurement_frame());
         }
@@ -111,15 +110,15 @@ class DbtWorksheetModelFwd extends Model {
     build_pre_post_measurement_frame() {
         let pre_post = {};
 
-        pre_post.title = LIKERT_TITLE;
         pre_post.template = LIKERT_FRAME_TEMPLATE;
         pre_post.instructions = LIKERT_INSTRUCTIONS;
+        pre_post.qualifiers = SDERS_QUALIFIERS;
         
-        let pre_post_questions = [];
-        pre_post_questions.push(['Question 1', 2]);
-        pre_post_questions.push(['Question 2', undefined]);
+        let questions = [];
+        questions.push([SDERS_QUESTIONS[0], 5]);
+        questions.push([SDERS_QUESTIONS[1], undefined]);
 
-        pre_post.questions = pre_post_questions;
+        pre_post.questions = questions;
         return pre_post;
     }
 
@@ -425,7 +424,6 @@ var FWD_INTERP_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_INTER
 var FWD_BIO_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_BIO);
 var FWD_ACT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_ACT);
 var FWD_AFTER_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_AFTER);
-var FWD_MEASUREMENT_CONFIG = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_PROMPTING);
 
 /*
 Example frames -- visual aid for the developer to see what kind of frames

@@ -51,7 +51,11 @@ BODY_QUESTION[SECTION_AFTER] = 'Check the box for each thing you have experience
 // Likert frame strings
 var LIKERT_FRAME_TEMPLATE = 'likert';
 var LIKERT_TITLE = 'Likert';
-var LIKERT_INSTRUCTIONS = 'Please indicate how much each statement applies to you right now (1=strongly disagree; 5=strongly agree)';
+var LIKERT_INSTRUCTIONS = 'Please indicate how much each statement applies to you right now.';
+
+// Pre-measurement strings
+var SDERS_QUESTIONS = ['I am confused about how I feel.', 'I have no idea how I am feeling.'];
+var SDERS_QUALIFIERS = ['not all all', 'somewhat', 'moderately', 'very much', 'completely'];
 
 // Self report strings
 var SELF_REPORT_TITLE = 'Self Report';
