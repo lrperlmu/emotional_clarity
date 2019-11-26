@@ -41,7 +41,6 @@ class DbtWorksheetModelFwd extends Model {
         if (this.config.pre_post_measurement === true) {
             this.frames.push(this.build_pre_post_measurement_frame());
         }
-
         for(let frame of this.build_intro_frames()) {
             this.frames.push(frame);
         }
