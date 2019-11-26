@@ -284,3 +284,15 @@ body {
     display: inline;
 }
 
+.consent_label {
+    padding: 10px;
+    display: inline;
+}
+
+.consent_label[grayed=true] {
+  color: lightgray;
+}
+
+.consent_label[grayed=false] {
+  color: auto;
+}

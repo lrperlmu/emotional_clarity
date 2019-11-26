@@ -117,6 +117,17 @@ var SAMPLE_APP = {
         ],
     },
 
+    'consent_disclosure': {
+        'title': 'Consent Disclosure Form',
+        'template': 'consent_disclosure',
+        'instructions': 'Please click on the following link to read the consent disclosure form.',
+        'questions': [
+            ['I have read the information above. I understand the risks of this study and wish to participate.', false],
+            ['I am 18 or 19 years old.', false],
+            ['I am not able to read, understand, and respond to a web questionnaire written in English.', true],
+        ],
+    },
+
     'summary_count': {
         'template': 'summary_count',
         'title': 'Summarific summary <3',
