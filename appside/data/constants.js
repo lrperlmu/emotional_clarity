@@ -61,7 +61,7 @@ var SELF_REPORT_Q2 = 'How certain are you about your answer to the previous ques
 var QUALIFIERS = ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree'];
 
 // Consent disclosure frame strings
-var CONSENT_DISCLOSURE_TITLE = 'Consent Disclosure Form';
+var CONSENT_DISCLOSURE_TITLE = 'Consent';
 var CONSENT_DISCLOSURE_FRAME_TEMPLATE = 'consent_disclosure';
 var CONSENT_DISCLOSURE_QUESTIONS = ['I have read the information above. I understand the risks of this study and wish to participate.',
     'I am 18 or 19 years old.',

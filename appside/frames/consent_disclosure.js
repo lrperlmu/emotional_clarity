@@ -17,16 +17,15 @@ class ConsentDisclosureFrame extends Frame {
      * Construct ConsentDisclosureFrame from an object
      * 
      * @param frame_data -- Object containing the frame's data. Expected fields:
-     *    frame_data.template -- The frame's template
+     *    frame_data.template (string) -- Exact string 'consent_disclosure'
      *    frame_data.title (string) -- The frame's title
      *    frame_data.instructions (string) -- instructions for user to read pdf
-     *    frame_data.questions (Array of map of string) -- 2 key/value pairs
+     *    frame_data.questions (Array of map of string) -- question/response pairs
      *    -- formatted as (key: question, value: boolean); value is false by default
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
         super();
-        
         this.template = frame_data.template;
         this.title = frame_data.title;
         this.instructions = frame_data.instructions;
@@ -68,10 +67,38 @@ class ConsentDisclosureFrame extends Frame {
         $(pdf).text('Consent Disclosure Form');
         frame.appendChild(pdf);
 
-        let container = document.createElement('div');  // flexbox for content
+        let container = document.createElement('div');
         $(container).attr('class', 'consent_frame');
 
-        $(pdf).click(function() {   // ONLY when pdf is clicked will checkboxes appear
+        for (let each_question of this.questions) {
+            let question_text = each_question[0];
+            let answer = each_question[1];
+
+            let input = document.createElement('input');
+            $(input).attr('class', 'form-check-input');
+            $(input).attr('class', 'consent_input');
+            $(input).attr('type', 'checkbox');
+            $(input).attr('id', question_text);
+            $(input).attr('disabled', true);
+
+            $(input).prop('checked', answer);
+            input.dataset.text = question_text;
+            container.appendChild(input);
+
+            let label = document.createElement('label');
+            $(label).attr('class', 'form-check-label');
+            $(label).attr('class', 'consent_label');
+            $(label).attr('grayed', true);
+            $(label).attr('for', question_text);
+            $(label).text(question_text);
+            container.appendChild(label);
+
+            this.user_input.set(question_text, false);
+
+            container.appendChild(document.createElement('br'));
+        }
+
+        $(pdf).click(function() {   // ONLY when pdf is clicked will checkboxes enable user input
             container = this.after_form(container);
         }.bind(this));
         frame.appendChild(container);
@@ -81,39 +108,20 @@ class ConsentDisclosureFrame extends Frame {
     }
 
     /**
-     * Constructs checkboxes for user input
-     * @param frame can be erased
+     * Enables users to select/unselect checkboxes
+     * @param frame contains input and label elements
+     * @effects allows checkboxes to be checked and labels to auto styling
      */
     after_form(frame) {
-        let container = frame;
-        if (container.innerHTML === '') {   // if first time called => no checkboxes displayed yet
-            for (let each_question of this.questions) {
-                let question_text = each_question[0];
-                let answer = each_question[1];
-
-                let input = document.createElement('input');
-                $(input).attr('class', 'form-check-input');
-                $(input).attr('class', 'consent_input');
-                $(input).attr('type', 'checkbox');
-                $(input).attr('id', question_text);    // question text
-
-                $(input).prop('checked', answer);
-                input.dataset.text = question_text;
-                container.appendChild(input);
-
-                let label = document.createElement('label');
-                $(label).attr('class', 'form-check-label');
-                $(label).attr('class', 'consent_label');
-                $(label).attr('for', question_text);
-                $(label).text(question_text);
-                container.appendChild(label);
-
-                this.user_input.set(question_text, false);
-
-                container.appendChild(document.createElement('br'));
-            }
+        var checkboxes = document.getElementsByTagName('input');
+        for (let checkbox of checkboxes) {
+            $(checkbox).attr('disabled', false);
         }
-        return container;
+        var labels = document.getElementsByTagName('label');
+        for (let label of labels) {
+            $(label).attr('grayed', false);
+        }
+        return frame;
     }
 
     /**

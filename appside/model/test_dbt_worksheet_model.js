@@ -123,6 +123,7 @@ function visual_test_summary() {
  * Manually verified.
  */
 function visual_test_pre_measurement() {
+    FWD_PROMPTING_CONFIG.set_pre_post_measurement(true);
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
 
     let frame = model.get_frame('next');
@@ -138,6 +139,7 @@ function visual_test_pre_measurement() {
  * Manually verified.
  */
 function visual_test_self_report() {
+    FWD_PROMPTING_CONFIG.set_self_report(true);
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
     let frame = model.get_frame('next');
     while(frame.template !== SELF_REPORT_FRAME_TEMPLATE) {
@@ -152,6 +154,7 @@ function visual_test_self_report() {
  * Manually verified.
  */
 function visual_test_consent_disclosure() {
+    FWD_PROMPTING_CONFIG.set_consent_disclosure(true);
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
     let frame = model.get_frame('next');
     while(frame.template !== CONSENT_DISCLOSURE_FRAME_TEMPLATE) {
