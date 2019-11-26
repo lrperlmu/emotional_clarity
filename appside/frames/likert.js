@@ -18,9 +18,10 @@ class LikertFrame extends Frame {
      * 
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *    frame_data.instructions (string) -- frame's instructions for user
-     *    frame_data.question (string) -- Text to appear before the list of statements
+     *    frame_data.questions (array) -- list of question/response pair
+     *    -- Question (String): Response (int 1-5 or undefined)
      *    frame_data.qualifiers (array of string) -- Text for answer choices
-     *    
+     *
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
@@ -76,6 +77,7 @@ class LikertFrame extends Frame {
                 $(input).attr('name', question);    // question text
                 $(input).attr('id', question + j);
                 $(input).attr('value', this.qualifiers[j - 1]); // 0-based index
+
                 if (answer != undefined && answer == j) {
                     $(input).attr('checked', 'checked');    // one option checked per q
                 }
