@@ -3,7 +3,7 @@
 /**
    nav.js
    Navigation module for EC app
-   @author Leah Perlmutter
+   @author Leah Perlmutter, Rachel Sitt
 */
  
 
@@ -92,30 +92,29 @@ class Nav {
     }
 }
 
-
 /**
  * Factory to build various kinds of frame objects polymorphically
  */
 class FrameFactory {
     /**
-     * Take in a frame struct and return the correct type of Frame object,
-     * initialized with the given frame struct
+     * Take in a frame template and return the correct type of Frame object,
+     * initialized with the given template field from frame.
      */
     static build(frame) {
-        // TODO: more sane identification of frame type (type property)
-        if(frame.hasOwnProperty('text')) {
+        if(frame.template === INTRO_FRAME_TEMPLATE) {
             return new IntroFrame(frame);
-        }
-        else if(frame.hasOwnProperty('statements')) {
-            // TODO: identify when a different subtype of body frame is needed
+        } else if(frame.template === STATEMENTS_FRAME_TEMPLATE) {
             return new StatementsBodyFrame(frame);
-        }
-        else if(frame.hasOwnProperty('matched_emotions')) {
-            // TODO: identify when this should be qualifier
+        } else if(frame.template === SUMMARY_COUNT_FRAME_TEMPLATE) {
             return new SummaryFrameCount(frame);
+        } else if(frame.template === LIKERT_FRAME_TEMPLATE) {
+            return new LikertFrame(frame);
+        } else if(frame.template === SELF_REPORT_FRAME_TEMPLATE) {
+            return new SelfReportFrame(frame);
+        } else if(frame.template === CONSENT_FRAME_TEMPLATE) {
+            return new ConsentDisclosureFrame(frame);
+        } else {
+            throw new Error('Frame template not recognized ' + frame.template);
         }
     }
 }
-
-
-

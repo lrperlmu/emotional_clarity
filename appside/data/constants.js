@@ -26,12 +26,13 @@ var SUMMARY_TEMPLATE_QUAL = 'qual';
 
 // Body config (all DBT worksheet models)
 var BODY_STATEMENTS_PER_PAGE = 12;
-var BODY_FRAME_TEMPLATE = 'statements';
+var STATEMENTS_FRAME_TEMPLATE = 'statements';
 var EMOTION_TYPE = ['anger', 'disgust', 'envy', 'fear', 'guilt', 'happiness', 'love', 'sadness', 'shame'];
 var BODY_PART = ['head', 'neck', 'arms', 'chest', 'belly', 'legs'];
 var SVG_URL = 'http://www.w3.org/2000/svg';
 
 // Intro frame strings
+var INTRO_FRAME_TEMPLATE = 'intro';
 var INTRO_TITLE = {};
 INTRO_TITLE[SECTION_PROMPTING] = 'Prompting Events fwd (variant 1af)';
 INTRO_TITLE[SECTION_INTERP] = 'Interperetations of Events fwd (variant 1bf)';
@@ -50,8 +51,32 @@ BODY_QUESTION[SECTION_BIO] = 'Check the box for each thing you have experienced 
 BODY_QUESTION[SECTION_ACT] = 'Check the box for each thing you have experienced recently.';
 BODY_QUESTION[SECTION_AFTER] = 'Check the box for each thing you have experienced recently.';
 
+// Likert frame strings
+var LIKERT_FRAME_TEMPLATE = 'likert';
+var LIKERT_TITLE = 'Likert';
+var LIKERT_INSTRUCTIONS = 'Please indicate how much each statement applies to you right now.';
+
+// Pre-measurement strings
+var SDERS_QUESTIONS = ['I am confused about how I feel.', 'I have no idea how I am feeling.'];
+var SDERS_QUALIFIERS = ['not all all', 'somewhat', 'moderately', 'very much', 'completely'];
+
+// Self report strings
+var SELF_REPORT_FRAME_TEMPLATE = 'self_report';
+var SELF_REPORT_Q1 = 'Which emotion(s) are you feeling right now after thinking about the Reference Event?';
+var SELF_REPORT_Q2 = 'How certain are you about your answer to the previous question?';
+var QUALIFIERS = ['Very uncertain', 'Somewhat uncertain', 'Neutral', 'Somewhat certain', 'Very certain'];
+
+// Consent disclosure frame strings
+var CONSENT_DISCLOSURE_TITLE = 'Consent';
+var CONSENT_DISCLOSURE_FRAME_TEMPLATE = 'consent_disclosure';
+var CONSENT_DISCLOSURE_QUESTIONS = ['I have read the information above. I understand the risks of this study and wish to participate.',
+    'I am 18 or 19 years old.',
+    'I am not able to read, understand, and respond to a web questionnaire written in English.'];
+var CONSENT_DISCLOSURE_INSTRUCTIONS = 'Please click on the following link to read the consent disclosure form.';
+
 // Summary frame strings (all DBT worksheet models)
 var SUMMARY_TITLE = 'Summary';
 var SUMMARY_TEXT = 'Your input for this activity suggests:';
 var SUMMARY_FOLLOW_TEXT = 'Thank you for doing this activity';
+var SUMMARY_COUNT_FRAME_TEMPLATE = 'summary_count';
 
