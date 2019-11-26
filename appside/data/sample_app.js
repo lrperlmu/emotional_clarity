@@ -107,7 +107,6 @@ var SAMPLE_APP = {
     },
 
     'self_report': {
-        'title': 'Self Report',
         'template': 'self_report',
         'questions': [
             ['Which emotion(s) are you feeling right now after thinking about the Reference Event?', ''],

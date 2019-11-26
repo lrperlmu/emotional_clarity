@@ -18,7 +18,6 @@ class SelfReportFrame extends Frame {
      * 
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *    frame_data.template (string) -- Exact String phrase 'likert'
-     *    frame_data.title (string) -- The frame's title
      *    frame_data.questions (Array of map of string) -- 2 key/value pairs
      *    -- formatted as (key: question, value: answer); value is empty string by default
      *    frame_data.qualifiers (Array of string) -- 5 answers for second question
@@ -28,7 +27,6 @@ class SelfReportFrame extends Frame {
         super();
         
         this.template = frame_data.template;
-        this.title = frame_data.title;
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
     }
@@ -46,12 +44,6 @@ class SelfReportFrame extends Frame {
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
         $(frame).attr('id', 'frame');
-        
-        // insert a h2 node for the title
-        let title = document.createElement('h5');
-        $(title).text(this.title);
-        $(title).attr('class', 'text-info text-uppercase mb-2');
-        frame.appendChild(title);
 
         let question1 = document.createElement('h3');
         $(question1).text(this.questions[0][0]);

@@ -71,7 +71,6 @@ class DbtWorksheetModelFwd extends Model {
     build_self_report_frame() {
         let self_report = {};
 
-        self_report.title = SELF_REPORT_TITLE;
         self_report.template = SELF_REPORT_FRAME_TEMPLATE;
         self_report.qualifiers = QUALIFIERS;
 
