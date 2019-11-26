@@ -31,8 +31,15 @@ $(document).ready(function() {
         page_to_show = query_string.get('frame');
     }
 
-    let test_fcn = test_methods[page_to_show];
-    test_fcn();
+    let test_names = Object.keys(test_methods);
+    if(test_names.includes(page_to_show)) {
+        let test_fcn = test_methods[page_to_show];
+        test_fcn();
+    } else {
+        console.error('Valid test names are: ' + test_names);
+        throw Error('Unknown test requested: ' + page_to_show);
+    }
+
 });
 
 /*

@@ -32,12 +32,13 @@ var BODY_PART = ['head', 'neck', 'arms', 'chest', 'belly', 'legs'];
 var SVG_URL = 'http://www.w3.org/2000/svg';
 
 // Intro frame strings
+var the_title = 'Emotional Clarity App';
 var INTRO_TITLE = {};
-INTRO_TITLE[SECTION_PROMPTING] = 'Emotional Clarity App';
-INTRO_TITLE[SECTION_INTERP] = 'Emotional Clarity App';
-INTRO_TITLE[SECTION_BIO] = 'Emotional Clarity App';
-INTRO_TITLE[SECTION_ACT] = 'Emotional Clarity App';
-INTRO_TITLE[SECTION_AFTER] = 'Emotional Clarity App';
+INTRO_TITLE[SECTION_PROMPTING] = the_title;
+INTRO_TITLE[SECTION_INTERP] = the_title;
+INTRO_TITLE[SECTION_BIO] = the_title;
+INTRO_TITLE[SECTION_ACT] = the_title;
+INTRO_TITLE[SECTION_AFTER] = the_title;
 
 var INTRO_TEXT_START = 'Consider the Reference Event that you just wrote about.';
 var INTRO_MAIN_TEXT = {};

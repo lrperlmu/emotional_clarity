@@ -45,6 +45,7 @@ class IntroFrame extends Frame {
         for (let para of this.text) {
             let content = document.createElement('p');
             $(content).text(para);
+            $(content).attr('class', 'intro_text');
             frame.appendChild(content);
         }
 
