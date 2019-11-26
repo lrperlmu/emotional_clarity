@@ -13,6 +13,9 @@ body {
     background: #F8F8F8;
 }
 
+.intro_text {
+}
+
 .summary_flex {
     display: flex;
 }

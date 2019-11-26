@@ -1,6 +1,6 @@
 "use strict";
 
-// Constants and magic strings
+// Constants, magic strings, and macros
 
 // Knowledgebase keys
 var KB_KEY_SECTION = 'Category';
@@ -32,24 +32,36 @@ var BODY_PART = ['head', 'neck', 'arms', 'chest', 'belly', 'legs'];
 var SVG_URL = 'http://www.w3.org/2000/svg';
 
 // Intro frame strings
+var the_title = 'Emotional Clarity App';
 var INTRO_FRAME_TEMPLATE = 'intro';
 var INTRO_TITLE = {};
-INTRO_TITLE[SECTION_PROMPTING] = 'Prompting Events fwd (variant 1af)';
-INTRO_TITLE[SECTION_INTERP] = 'Interperetations of Events fwd (variant 1bf)';
-INTRO_TITLE[SECTION_BIO] = 'Biological Changes and Experiences fwd (variant 1cf)';
-INTRO_TITLE[SECTION_ACT] = 'Expressions and Actions fwd (variant 1df)';
-INTRO_TITLE[SECTION_AFTER] = 'Aftereffects fwd (variant 1ef)';
+INTRO_TITLE[SECTION_PROMPTING] = the_title;
+INTRO_TITLE[SECTION_INTERP] = the_title;
+INTRO_TITLE[SECTION_BIO] = the_title;
+INTRO_TITLE[SECTION_ACT] = the_title;
+INTRO_TITLE[SECTION_AFTER] = the_title;
 
-var INTRO_TEXT = 'Please answer some questions. Tap NEXT to begin';
+var INTRO_TEXT_START = 'Consider the Reference Event that you just wrote about.';
+var INTRO_MAIN_TEXT = {};
+INTRO_MAIN_TEXT[SECTION_PROMPTING] = 'In the following exercise, you will answer some questions about components of the Reference Event.';
+INTRO_MAIN_TEXT[SECTION_INTERP] = 'In the following exercise, you will answer some questions about your interpretations of the Reference Event or thoughts you are having right now as a result.';
+INTRO_MAIN_TEXT[SECTION_BIO] = 'In the following exercise, you will answer some questions about biological changes and experiences you are having right now.';
+INTRO_MAIN_TEXT[SECTION_ACT] = 'In the following exercise, you will answer some questions about your actions and expressions in response to the Reference Event.';
+INTRO_MAIN_TEXT[SECTION_AFTER] = 'In the following exercise, you will answer some questions about things you are likely to do, feel, or experience in the near future, now that you have recalled the Reference Event.';
+var INTRO_TEXT_END = 'Tap NEXT to begin.';
 
-// Body frame strings (I think we will eventually want these to be different...?)
+function INTRO_TEXT(section) {
+    return [INTRO_TEXT_START, INTRO_MAIN_TEXT[section], INTRO_TEXT_END];
+}
+
+// Body frame strings
 var BODY_TITLE = 'Questions';
 var BODY_QUESTION = {}
-BODY_QUESTION[SECTION_PROMPTING] = 'Check the box for each thing you have experienced recently.';
-BODY_QUESTION[SECTION_INTERP] = 'Check the box for each thing you have experienced recently.';
-BODY_QUESTION[SECTION_BIO] = 'Check the box for each thing you have experienced recently.';
-BODY_QUESTION[SECTION_ACT] = 'Check the box for each thing you have experienced recently.';
-BODY_QUESTION[SECTION_AFTER] = 'Check the box for each thing you have experienced recently.';
+BODY_QUESTION[SECTION_PROMPTING] = 'Check the box for each item that describes a component of the Reference Event.';
+BODY_QUESTION[SECTION_INTERP] = ' Check the box for each item that describes your interpretations of the Reference Event or thoughts you are having right now as a result.';
+BODY_QUESTION[SECTION_BIO] = 'Check the box for each item that describes biological changes or experiences you are having right now.';
+BODY_QUESTION[SECTION_ACT] = 'Check the box for each item that describes your actions and expressions right now in response to the Reference Event.';
+BODY_QUESTION[SECTION_AFTER] = 'Check the box for each item that describes things you are likely to do, feel, or experience in the near future, now that you have recalled the Reference Event.';
 
 // Likert frame strings
 var LIKERT_FRAME_TEMPLATE = 'likert';
@@ -76,7 +88,8 @@ var CONSENT_DISCLOSURE_INSTRUCTIONS = 'Please click on the following link to rea
 
 // Summary frame strings (all DBT worksheet models)
 var SUMMARY_TITLE = 'Summary';
-var SUMMARY_TEXT = 'Your input for this activity suggests:';
-var SUMMARY_FOLLOW_TEXT = 'Thank you for doing this activity';
+var SUMMARY_TEXT = 'Please reflect on this summary to see which emotion(s), if any, resonate most with your experience of the Reference Event.';
+var SUMMARY_FOLLOW_TEXT = 'Thank you for doing this activity.';
 var SUMMARY_COUNT_FRAME_TEMPLATE = 'summary_count';
+
 

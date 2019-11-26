@@ -131,7 +131,7 @@ class DbtWorksheetModelFwd extends Model {
         // only one intro frame so far, but we'll likely add more
         let intro_frame = {};
         intro_frame.title = INTRO_TITLE[this.config.section];
-        intro_frame.text = INTRO_TEXT;
+        intro_frame.text = INTRO_TEXT(this.config.section);
         intro_frame.template = INTRO_FRAME_TEMPLATE;
         return [intro_frame];
     }
