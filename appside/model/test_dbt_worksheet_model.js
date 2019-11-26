@@ -137,11 +137,13 @@ function visual_test_pre_measurement() {
  * Manually verified.
  */
 function visual_test_self_report() {
+    FWD_PROMPTING_CONFIG.set_self_report(true);
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
     let frame = model.get_frame('next');
     while(frame.template !== SELF_REPORT_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
+
     let view = new SelfReportFrame(frame);
     view.render();
 }

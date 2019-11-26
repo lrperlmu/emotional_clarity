@@ -17,7 +17,7 @@ class SelfReportFrame extends Frame {
      * Construct SelfReport from an object
      * 
      * @param frame_data -- Object containing the frame's data. Expected fields:
-     *    frame_data.template -- The frame's template
+     *    frame_data.template (string) -- Exact String phrase 'likert'
      *    frame_data.title (string) -- The frame's title
      *    frame_data.questions (Array of map of string) -- 2 key/value pairs
      *    -- formatted as (key: question, value: answer); value is empty string by default
@@ -63,7 +63,7 @@ class SelfReportFrame extends Frame {
         $(textbox).val(this.questions[0][1]);
         frame.appendChild(textbox);
 
-        let container = document.createElement('div');  // flexbox for content
+        let container = document.createElement('div');
         $(container).attr('class', 'self_report_frame');
 
         let question2 = document.createElement('h3');
