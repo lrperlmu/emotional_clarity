@@ -17,19 +17,19 @@ class LikertFrame extends Frame {
      * Construct LikertFrame from an object
      * 
      * @param frame_data -- Object containing the frame's data. Expected fields:
-     *    frame_data.title (string) -- frame's title
      *    frame_data.instructions (string) -- frame's instructions for user
      *    frame_data.questions (array) -- list of question/response pair
      *    -- Question (String): Response (int 1-5 or undefined)
-     *    
+     *    frame_data.qualifiers (array of string) -- Text for answer choices
+     *
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
         super();
 
-        this.title = frame_data.title;
         this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
+        this.qualifiers = frame_data.qualifiers;
         this.user_input = new Map();
     }
 
@@ -46,12 +46,6 @@ class LikertFrame extends Frame {
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
         $(frame).attr('id', 'frame');
-        
-        // insert a h5 node for the title
-        let title = document.createElement('h5');
-        $(title).text(this.title);
-        $(title).attr('class', 'text-info text-uppercase mb-2');
-        frame.appendChild(title);
         
         // insert a h5 node for the instruction
         let instructions = document.createElement('h5');
@@ -70,7 +64,7 @@ class LikertFrame extends Frame {
 
             let question_text = document.createElement('h5');
             $(question_text).attr('class', 'likert_question_text');
-            $(question_text).text(data);
+            $(question_text).text(question);
             statements.appendChild(question_text);
             this.user_input.set(question, answer);
 
@@ -81,8 +75,9 @@ class LikertFrame extends Frame {
                 $(input).attr('class', 'likert_input');
                 $(input).attr('type', 'radio');
                 $(input).attr('name', question);    // question text
-                $(input).attr('id', question + j);  // for clickable input_text
-                $(input).attr('value', j);
+                $(input).attr('id', question + j);
+                $(input).attr('value', this.qualifiers[j - 1]); // 0-based index
+
                 if (answer != undefined && answer == j) {
                     $(input).attr('checked', 'checked');    // one option checked per q
                 }
@@ -91,7 +86,7 @@ class LikertFrame extends Frame {
                 let input_text = document.createElement('label');
                 $(input_text).attr('class', 'likert_input_text');
                 $(input_text).attr('for', question + j);
-                $(input_text).text(j);
+                $(input_text).text(this.qualifiers[j - 1]);
 
                 statements.appendChild(input);
                 statements.appendChild(input_text);

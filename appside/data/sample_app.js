@@ -13,11 +13,13 @@ var SAMPLE_APP = {
     },
     'intro': {
         0: {
+            'template': 'intro',
             'title': 'Spec Testing app!',
             'text': 'Look at this lovely app, it demonstrates all the stuff in our spec :)',
             'graphic': 'https://kittentoob.com/wp-content/uploads/2018/07/Purrito-750x392.jpg',
         },
         1: {
+            'template': 'intro',
             'title': 'Spec Testing app!',
             'text': 'The introduction has two pages',
         },
@@ -92,11 +94,11 @@ var SAMPLE_APP = {
         }
     },
 
-
     'likert': {
         'template': 'likert',
         'title': 'Measurement form',       
         'instructions': 'Instructions for the user here!',
+        'name': '',
 
         'questions': [          // provided in constructor
             ['Question 1', 2],    // question text, user response 1-5
@@ -104,7 +106,30 @@ var SAMPLE_APP = {
         ],
     },
 
+    'self_report': {
+        'template': 'self_report',
+        'questions': [
+            ['Which emotion(s) are you feeling right now after thinking about the Reference Event?', ''],
+            ['How certain are you about your answer to the previous question?', 'Disagree'],
+        ],
+        'qualifiers': [
+            'Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree',
+        ],
+    },
+
+    'consent_disclosure': {
+        'title': 'Consent Disclosure Form',
+        'template': 'consent_disclosure',
+        'instructions': 'Please click on the following link to read the consent disclosure form.',
+        'questions': [
+            ['I have read the information above. I understand the risks of this study and wish to participate.', false],
+            ['I am 18 or 19 years old.', false],
+            ['I am not able to read, understand, and respond to a web questionnaire written in English.', true],
+        ],
+    },
+
     'summary_count': {
+        'template': 'summary_count',
         'title': 'Summarific summary <3',
         'description': 'This text appears at the top of the summary! I like hedgehogs because they are so so cute.',
         'graphic': 'https://www.washingtonpost.com/resizer/xEOALOr9qrImfg4OWCupZ1OS4kQ=/1396x0/arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/ZGD2JCRBUAI6TJ2ZFOCUDO56EA.jpg',
@@ -148,6 +173,7 @@ var SAMPLE_APP = {
     },
 
     'summary_qualifier': {
+        'template': 'summary_qualifier',
         'title': 'A Quality Summary',
         'description': 'This text appears at the top of the summary! Your input for this activity suggests:',
         'type': 'qualifier',

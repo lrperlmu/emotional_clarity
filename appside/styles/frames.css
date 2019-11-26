@@ -274,3 +274,25 @@ body {
   padding: 10px;
 }
 
+.self_report_textbox {
+  width: 100%;
+  overflow: scroll;
+}
+
+.self_report_input_text {
+    padding: 10px;
+    display: inline;
+}
+
+.consent_label {
+    padding: 10px;
+    display: inline;
+}
+
+.consent_label[grayed=true] {
+  color: lightgray;
+}
+
+.consent_label[grayed=false] {
+  color: auto;
+}
