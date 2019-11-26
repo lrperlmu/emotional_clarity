@@ -49,7 +49,6 @@ class DbtWorksheetModelFwd extends Model {
         }
         this.frames.push(this.summary_frame);
         // index into frames
-
         if (this.config.pre_post_measurement === true) {
             this.frames.push(this.build_pre_post_measurement_frame());
         }
