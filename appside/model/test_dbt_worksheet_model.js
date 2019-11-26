@@ -9,6 +9,7 @@ $(document).ready(function() {
         'summary': visual_test_summary,
         'pre_measurement': visual_test_pre_measurement,
         'self_report': visual_test_self_report,
+        'pre_measurement': visual_test_pre_measurement,
         'noerror': all_wkshts_noerror,
     }
     let page_types = Object.keys(test_methods);
@@ -122,8 +123,8 @@ function visual_test_summary() {
  * Manually verified.
  */
 function visual_test_pre_measurement() {
+    FWD_PROMPTING_CONFIG.set_pre_post_measurement(true);
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
-
     let frame = model.get_frame('next');
     while(frame.template !== LIKERT_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
