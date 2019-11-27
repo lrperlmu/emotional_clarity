@@ -303,6 +303,16 @@ class DbtWorksheetModelFwd extends Model {
             this.user_data.get(key).response = response;
         }
         this.compute_summary();
+        this.logger.logResponses(input)
+    }
+
+    /**
+     * Log event to the model. [For use by NAV.]
+     *
+     * @param name - string for model to log
+     */
+    log(name) {
+        this.logger.logTimestamp(name);
     }
 
     /**
