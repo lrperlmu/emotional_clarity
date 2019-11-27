@@ -23,7 +23,7 @@ class Nav {
         }
         this.current_frame = model.get_frame('next');
         this.render();
-        this.model.log('app-start');
+        //this.model.log('app-start');
     }
 
     /**
