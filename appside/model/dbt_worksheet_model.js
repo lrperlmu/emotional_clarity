@@ -1,6 +1,11 @@
 "use strict";
 
 /**
+ * dbt_worksheet_model.js
+ * @author Leah Perlmutter
+ */
+
+/**
  * Forward DBT Worksheet Model
  * Handles the logic and frame-construction of any DBT worksheet model app.
  */
