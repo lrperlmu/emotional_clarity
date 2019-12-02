@@ -173,7 +173,7 @@ function visual_test_consent_disclosure() {
     FWD_PROMPTING_CONFIG.set_consent_disclosure(true);
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
     let frame = model.get_frame('next');
-    while(frame.template !== CONSENT_DISCLOSURE_FRAME_TEMPLATE) {
+    while(frame.template !== CONSENT_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
     let view = new ConsentDisclosureFrame(frame);
