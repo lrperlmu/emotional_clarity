@@ -58,7 +58,7 @@ function INTRO_TEXT(section) {
 var BODY_TITLE = 'Questions';
 var BODY_QUESTION = {}
 BODY_QUESTION[SECTION_PROMPTING] = 'Check the box for each item that describes a component of the Reference Event.';
-BODY_QUESTION[SECTION_INTERP] = ' Check the box for each item that describes your interpretations of the Reference Event or thoughts you are having right now as a result.';
+BODY_QUESTION[SECTION_INTERP] = 'Check the box for each item that describes your interpretations of the Reference Event or thoughts you are having right now as a result.';
 BODY_QUESTION[SECTION_BIO] = 'Check the box for each item that describes biological changes or experiences you are having right now.';
 BODY_QUESTION[SECTION_ACT] = 'Check the box for each item that describes your actions and expressions right now in response to the Reference Event.';
 BODY_QUESTION[SECTION_AFTER] = 'Check the box for each item that describes things you are likely to do, feel, or experience in the near future, now that you have recalled the Reference Event.';
