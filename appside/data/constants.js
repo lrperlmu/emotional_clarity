@@ -20,10 +20,6 @@ var SECTION_BIO = 'Biological changes and experiences';
 var SECTION_ACT = 'Expressions and actions';
 var SECTION_AFTER = 'Aftereffects';
 
-// Summary template types
-var SUMMARY_TEMPLATE_COUNT = 'count';
-var SUMMARY_TEMPLATE_QUAL = 'qual';
-
 // Body config (all DBT worksheet models)
 var BODY_STATEMENTS_PER_PAGE = 12;
 var STATEMENTS_FRAME_TEMPLATE = 'statements';
@@ -79,8 +75,8 @@ var SELF_REPORT_Q2 = 'How certain are you about your answer to the previous ques
 var QUALIFIERS = ['Very uncertain', 'Somewhat uncertain', 'Neutral', 'Somewhat certain', 'Very certain'];
 
 // Consent disclosure frame strings
+var CONSENT_FRAME_TEMPLATE = 'consent';
 var CONSENT_DISCLOSURE_TITLE = 'Consent';
-var CONSENT_DISCLOSURE_FRAME_TEMPLATE = 'consent_disclosure';
 var CONSENT_DISCLOSURE_QUESTIONS = ['I have read the information above. I understand the risks of this study and wish to participate.',
     'I am 18 or 19 years old.',
     'I am not able to read, understand, and respond to a web questionnaire written in English.'];

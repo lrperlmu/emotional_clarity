@@ -80,7 +80,7 @@ class DbtWorksheetModelFwd extends Model {
         let consent_disclosure = {};
 
         consent_disclosure.title = CONSENT_DISCLOSURE_TITLE;
-        consent_disclosure.template = CONSENT_DISCLOSURE_FRAME_TEMPLATE;
+        consent_disclosure.template = CONSENT_FRAME_TEMPLATE;
         consent_disclosure.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
 
         let questions = [];
@@ -199,7 +199,7 @@ class DbtWorksheetModelFwd extends Model {
      */
     initialize_summary_frame() {
         let summary_frame = {};
-        summary_frame.template = SUMMARY_TEMPLATE_COUNT;
+        summary_frame.template = SUMMARY_COUNT_FRAME_TEMPLATE;
         summary_frame.title = SUMMARY_TITLE;
         summary_frame.description = SUMMARY_TEXT;
         summary_frame.matched_emotions = [];
