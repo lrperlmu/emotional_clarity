@@ -21,6 +21,8 @@ class ListBodyFrame extends Frame {
      *    frame_data.title (string) -- The frame's title
      *    frame_data.question (string) -- Text to appear before the list of statements
      *    frame_data.graphic (string) -- URL/path to image or null
+     *    frame_data.response_name (string) - name this frame will attach to each piece
+     *                 of data in return value of get_user_input
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
@@ -39,6 +41,7 @@ class ListBodyFrame extends Frame {
         this.question = frame_data.question;
         this.user_input = new Map();
         this.graphic = frame_data.graphic;
+        this.response_name = frame_data.response_name;
     }
 
     /**

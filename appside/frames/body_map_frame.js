@@ -14,10 +14,12 @@ class BodyMapColorFrame extends Frame {
     
     /** Constructs Body Map Color frame template
      * @param frame_data -- Object containing the frame's data. Expected fields:
-     *      frame_data.title (string)
-     *      frame_data.question (string) -- question users answer
-     *      frame_data.qualifiers (array of strings)
-     *          -- lists all answer choices used in questionnaire
+     *    frame_data.title (string)
+     *    frame_data.question (string) -- question users answer
+     *    frame_data.qualifiers (array of strings) -- lists all answer choices
+     *                used in questionnaire
+     *    frame_data.response_name (string) - name this frame will attach to each piece
+     *                of data in return value of get_user_input
      * Behavior undefined if frame does not have these properties.
      **/
     constructor(frame_data) {
@@ -29,6 +31,7 @@ class BodyMapColorFrame extends Frame {
         this.bodypart = frame_data.bodypart;
         this.answer = null;
         this.user_input = new Map();
+        this.response_name = frame_data.response_name;
     }
 
     /**

@@ -21,6 +21,8 @@ class SelfReportFrame extends Frame {
      *    frame_data.questions (Array of map of string) -- 2 key/value pairs
      *    -- formatted as (key: question, value: answer); value is empty string by default
      *    frame_data.qualifiers (Array of string) -- 5 answers for second question
+     *    frame_data.response_name (string) - name this frame will attach to each piece
+     *                 of data in return value of get_user_input
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
@@ -29,6 +31,7 @@ class SelfReportFrame extends Frame {
         this.template = frame_data.template;
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
+        this.response_name = frame_data.response_name;
     }
 
     /**

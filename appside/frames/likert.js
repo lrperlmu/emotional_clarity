@@ -21,6 +21,8 @@ class LikertFrame extends Frame {
      *    frame_data.questions (array) -- list of question/response pair
      *    -- Question (String): Response (int 1-5 or undefined)
      *    frame_data.qualifiers (array of string) -- Text for answer choices
+     *    frame_data.response_name (string) - name this frame will attach to each piece
+     *                 of data in return value of get_user_input
      *
      *  Behavior undefined if frame does not have these properties.
      */
@@ -31,6 +33,7 @@ class LikertFrame extends Frame {
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
         this.user_input = new Map();
+        this.response_name = frame_data.response_name;
     }
 
     /**

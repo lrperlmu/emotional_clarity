@@ -20,6 +20,11 @@ var SECTION_BIO = 'Biological changes and experiences';
 var SECTION_ACT = 'Expressions and actions';
 var SECTION_AFTER = 'Aftereffects';
 
+// generic value for frame name (when we don't need to distinguish)
+var RESPONSE_GENERIC = 'response';
+var RESPONSE_PRE = 'pre';
+var RESPONSE_POST = 'post';
+
 // Body config (all DBT worksheet models)
 var BODY_STATEMENTS_PER_PAGE = 12;
 var STATEMENTS_FRAME_TEMPLATE = 'statements';

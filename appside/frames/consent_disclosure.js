@@ -22,6 +22,8 @@ class ConsentDisclosureFrame extends Frame {
      *    frame_data.instructions (string) -- instructions for user to read pdf
      *    frame_data.questions (Array of map of string) -- question/response pairs
      *    -- formatted as (key: question, value: boolean); value is false by default
+     *    frame_data.response_name (string) - name this frame will attach to each piece
+     *                 of data in return value of get_user_input
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
@@ -31,6 +33,7 @@ class ConsentDisclosureFrame extends Frame {
         this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
         this.user_input = new Map();
+        this.response_name = frame_data.response_name;
     }
 
     /**

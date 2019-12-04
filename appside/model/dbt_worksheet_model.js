@@ -47,10 +47,10 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(this.build_consent_disclosure_frame());
         }
         if (this.config.self_report === true) {
-            this.frames.push(this.build_self_report_frame());
+            this.frames.push(this.build_self_report_frame(RESPONSE_PRE));
         }
         if (this.config.pre_post_measurement === true) {
-            this.frames.push(this.build_pre_post_measurement_frame());
+            this.frames.push(this.build_pre_post_measurement_frame(RESPONSE_PRE));
         }
         for(let frame of this.build_intro_frames()) {
             this.frames.push(frame);
@@ -60,8 +60,11 @@ class DbtWorksheetModelFwd extends Model {
         }
         this.frames.push(this.summary_frame);
         // index into frames
+        if (this.config.self_report === true) {
+            this.frames.push(this.build_self_report_frame(RESPONSE_POST));
+        }
         if (this.config.pre_post_measurement === true) {
-            this.frames.push(this.build_pre_post_measurement_frame());
+            this.frames.push(this.build_pre_post_measurement_frame(RESPONSE_POST));
         }
         this.frame_idx = -1;
 
@@ -80,6 +83,7 @@ class DbtWorksheetModelFwd extends Model {
         let consent_disclosure = {};
 
         consent_disclosure.title = CONSENT_DISCLOSURE_TITLE;
+        consent_disclosure.response_response_name = RESPONSE_GENERIC;
         consent_disclosure.template = CONSENT_FRAME_TEMPLATE;
         consent_disclosure.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
 
@@ -94,10 +98,11 @@ class DbtWorksheetModelFwd extends Model {
     /**
      * Build self report frames for a DBT worksheet model.
      */
-    build_self_report_frame() {
+    build_self_report_frame(response_name) {
         let self_report = {};
 
         self_report.template = SELF_REPORT_FRAME_TEMPLATE;
+        self_report.response_name = response_name;
         self_report.qualifiers = QUALIFIERS;
 
         let questions = [];
@@ -111,10 +116,11 @@ class DbtWorksheetModelFwd extends Model {
     /**
      * Build likert frames for a DBT worksheet model as pre or post measurement frame.
      */
-    build_pre_post_measurement_frame() {
+    build_pre_post_measurement_frame(response_name) {
         let pre_post = {};
 
         pre_post.template = LIKERT_FRAME_TEMPLATE;
+        pre_post.response_name = response_name;
         pre_post.instructions = LIKERT_INSTRUCTIONS;
         pre_post.qualifiers = SDERS_QUALIFIERS;
         
@@ -181,6 +187,7 @@ class DbtWorksheetModelFwd extends Model {
 
             let frame = {};
             frame.title = BODY_TITLE;
+            frame.response_name = RESPONSE_GENERIC;
             frame.template = STATEMENTS_FRAME_TEMPLATE;
             frame.question = BODY_QUESTION[this.config.section];
             frame.statements = [];
