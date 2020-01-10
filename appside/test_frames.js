@@ -21,6 +21,7 @@ $(document).ready(function() {
         'likert': likert_main,
         'self_report': self_report_main,
         'consent_disclosure': consent_disclosure_main,
+        'end': end_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -171,5 +172,13 @@ function consent_disclosure_main() {
     let frame_data = sample_app.consent_disclosure;
 
     let frame = new ConsentDisclosureFrame(frame_data);
+    frame.render();
+}
+
+function end_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.end;
+
+    let frame = new EndFrame(frame_data);
     frame.render();
 }

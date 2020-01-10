@@ -114,6 +114,8 @@ class FrameFactory {
             return new SelfReportFrame(frame);
         } else if(frame.template === CONSENT_FRAME_TEMPLATE) {
             return new ConsentDisclosureFrame(frame);
+        } else if (frame.template === END_FRAME_TEMPLATE) {
+            return new EndFrame(frame);
         } else {
             throw new Error('Frame template not recognized ' + frame.template);
         }

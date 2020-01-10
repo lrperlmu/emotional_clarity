@@ -202,8 +202,22 @@ var SAMPLE_APP = {
         'info_sheet_links': true,
         'offer_ideas': true,
 
-    }
+    },
 
+    'end': {
+        'template': 'end',
+        'title': 'End',
+        'completion_text': 'Your unique completion code is 123456.',
+        'directions': `<p>Make sure to record your code before leaving this page. To receive your $12 gift card, please email the research team at <a href=mailto:leahperl@uw.edu>leahperl@uw.edu</a> using the subject line "Completed Emotional Clarity Study" and write your completion code in the body of the email.</p>`,
+
+        'contact': `<p>This study has asked you to recall potentially distressing life events. If you feel distressed after participating in this study, please consider utilizing the following resources:</p>
+<ul>
+<li>UW Counseling Center: 206-543-1240</li>
+<li>National Suicide Prevention Lifeline: 1-800-273-8255</li>
+</ul>
+`,
+    },
+    
 
 };
 
