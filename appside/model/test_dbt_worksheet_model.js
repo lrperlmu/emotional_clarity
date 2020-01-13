@@ -10,6 +10,7 @@ $(document).ready(function() {
         'pre_measurement': visual_test_pre_measurement,
         'self_report': visual_test_self_report,
         'consent_disclosure': visual_test_consent_disclosure,
+        'end': visual_test_end,
         'noerror': all_wkshts_noerror,
     }
     let page_types = Object.keys(test_methods);
@@ -71,18 +72,37 @@ function wksht_noerror(config) {
 
 
 /*
+ * Integration test that constructs an EndFrame to render the end frame of this app.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_end(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    let frame = model.get_frame('next');
+    while(frame.template !== END_FRAME_TEMPLATE) {
+        frame = model.get_frame('next');
+    }
+    let view = new EndFrame(frame, logger);
+    view.render();
+}
+
+
+/*
  * Integration test that invokes IntroFrame to render the intro frame of this app.
  * Manually verified.
  * @param variant - the variant to test
  */
 function visual_test_intro(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
-    let model = new DbtWorksheetModelFwd(knowledgebase, config);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
     let frame = model.get_frame('next');
     while(frame.template !== INTRO_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new IntroFrame(frame);
+    let view = new IntroFrame(frame, logger);
     view.render();
 }
 
@@ -94,25 +114,27 @@ function visual_test_intro(variant) {
  */
 function visual_test_body(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
-    let model = new DbtWorksheetModelFwd(knowledgebase, config);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
     let frame = model.get_frame('next');
     while(frame.template !== STATEMENTS_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new StatementsBodyFrame(frame);
+    let view = new StatementsBodyFrame(frame, logger);
     view.render();
 }
 
 
 /*
- * Integration test that invokes SuffaryFrameCount to render a summary frame generated
+ * Integration test that invokes SummaryFrameCount to render a summary frame generated
  * by this app.
  * Manually verified.
  * @param variant - the variant to test
  */
 function visual_test_summary(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_AFTER_CONFIG);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_AFTER_CONFIG, logger);
     let frame = model.get_frame('next');
 
     while(frame.template !== 'statements') {
@@ -130,9 +152,10 @@ function visual_test_summary(variant) {
     while(frame.template === 'statements') {
         frame = model.get_frame('next');
     }
-    let view = new SummaryFrameCount(frame);
+    let view = new SummaryFrameCount(frame, logger);
     view.render();
 }
+
 
 /*
  * Integration test that invokes LikertFrame to render the pre and post measurement frame of this app.
@@ -140,14 +163,16 @@ function visual_test_summary(variant) {
  */
 function visual_test_pre_measurement() {
     FWD_PROMPTING_CONFIG.set_pre_post_measurement(true);
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
     let frame = model.get_frame('next');
     while(frame.template !== LIKERT_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new LikertFrame(frame);
+    let view = new LikertFrame(frame, logger);
     view.render();
 }
+
 
 /*
  * Integration test that invokes SelfReportFrame to render the self report frame of this app.
@@ -155,15 +180,17 @@ function visual_test_pre_measurement() {
  */
 function visual_test_self_report() {
     FWD_PROMPTING_CONFIG.set_self_report(true);
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
     let frame = model.get_frame('next');
     while(frame.template !== SELF_REPORT_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
 
-    let view = new SelfReportFrame(frame);
+    let view = new SelfReportFrame(frame, logger);
     view.render();
 }
+
 
 /*
  * Integration test that invokes ConsentDisclosureFrame to render the consent disclosure frame of this app.
@@ -171,11 +198,12 @@ function visual_test_self_report() {
  */
 function visual_test_consent_disclosure() {
     FWD_PROMPTING_CONFIG.set_consent_disclosure(true);
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
     let frame = model.get_frame('next');
     while(frame.template !== CONSENT_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new ConsentDisclosureFrame(frame);
+    let view = new ConsentDisclosureFrame(frame, logger);
     view.render();
 }

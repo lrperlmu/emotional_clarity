@@ -92,7 +92,7 @@ var SUMMARY_COUNT_FRAME_TEMPLATE = 'summary_count';
 var END_FRAME_TEMPLATE = 'end';
 var END_TITLE = 'End';
 var END_CODE_TEXT = 'Your unique completion code is';
-var END_DIRECTIONS = `<p>Make sure to record your code before leaving this page. To receive your $12 gift card, please email the research team at <a href=mailto:leahperl@uw.edu>leahperl@uw.edu</a> using the subject line "Completed Emotional Clarity Study" and write your completion code in the body of the email.</p>`;
+var END_DIRECTIONS = `<p>Make sure to record your code before leaving this page. To receive your $12 amazon gift code, please contact the research team by emailing Leah at <a href=mailto:leahperl@uw.edu>leahperl@uw.edu</a> using the subject line "Completed Emotional Clarity Study" and write your completion code in the body of the email.</p>`;
 var END_CONTACT = `<p>This study has asked you to recall potentially distressing life events. If you feel distressed after completing this study, please consider utilizing the following resources:</p>
 <ul>
 <li>UW Counseling Center: 206-543-1240</li>

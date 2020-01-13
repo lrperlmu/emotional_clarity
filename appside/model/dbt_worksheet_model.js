@@ -11,8 +11,8 @@ class DbtWorksheetModelFwd extends Model {
      * @param knowledgebase - js object containing the DBT worksheet data
      * @param config - DbtWorksheetModelConfig object with specifics for the model
      */
-    constructor(knowledgebase, config) {
-        super();
+    constructor(knowledgebase, config, logger) {
+        super(logger);
 
         this.config = config;
 
@@ -54,10 +54,11 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(frame);
         }
         this.frames.push(this.summary_frame);
-        // index into frames
         if (this.config.pre_post_measurement === true) {
             this.frames.push(this.build_pre_post_measurement_frame());
         }
+        this.frames.push(this.build_end_frame());
+        // index into frames
         this.frame_idx = -1;
 
         // function mapping for get_frame. It's initialized here so that child classes
@@ -87,7 +88,7 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
-     * Build self report frames for a DBT worksheet model.
+     * Build self report frame for a DBT worksheet model.
      */
     build_self_report_frame() {
         let self_report = {};
@@ -104,7 +105,7 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
-     * Build likert frames for a DBT worksheet model as pre or post measurement frame.
+     * Build likert frame for a DBT worksheet model as pre or post measurement frame.
      */
     build_pre_post_measurement_frame() {
         let pre_post = {};
@@ -120,7 +121,6 @@ class DbtWorksheetModelFwd extends Model {
         pre_post.questions = questions;
         return pre_post;
     }
-
 
     /**
      * Build intro frames for a DBT worksheet model.
@@ -188,6 +188,22 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
+     * Build end frame
+     *
+     * @return the end frame
+     */
+    build_end_frame() {
+        let end_frame = {};
+        end_frame.template = END_FRAME_TEMPLATE;
+        end_frame.title = END_TITLE;
+        end_frame.completion_code = this.generate_completion_code();
+        end_frame.completion_text = END_CODE_TEXT
+        end_frame.directions = END_DIRECTIONS;
+        end_frame.contact = END_CONTACT;
+        return end_frame;
+    }
+
+    /**
      * Build summary frame for a DBT worksheet model.
      *
      * @return the summary frame
@@ -203,6 +219,16 @@ class DbtWorksheetModelFwd extends Model {
         summary_frame.offer_ideas = this.config.offer_ideas;
         return summary_frame;
     }
+
+    /**
+     * Create a unique completion code.
+     *
+     * @return the code
+     */
+    generate_completion_code() {
+        return Math.round(Math.random() * 1e12);
+    }
+
 
     /**
      * Indicate whether it's safe to call next_frame() or get_frame('next') on this
@@ -293,6 +319,8 @@ class DbtWorksheetModelFwd extends Model {
     /**
      * Pass user input into the model. [For use by NAV.]
      *
+     * Logging: record user responses in database
+     * 
      * @param input - Map of data to be absorbed by the model
      *            where keys are statements (strings) and values are true/false
      */
@@ -304,15 +332,6 @@ class DbtWorksheetModelFwd extends Model {
         }
         this.compute_summary();
         this.logger.logResponses(input)
-    }
-
-    /**
-     * Log event to the model. [For use by NAV.]
-     *
-     * @param name - string for model to log
-     */
-    log(name) {
-        this.logger.logTimestamp(name);
     }
 
     /**

@@ -207,7 +207,8 @@ var SAMPLE_APP = {
     'end': {
         'template': 'end',
         'title': 'End',
-        'completion_text': 'Your unique completion code is 123456.',
+        'completion_text': 'Your unique completion code is',
+        'completion_code': '123456',
         'directions': `<p>Make sure to record your code before leaving this page. To receive your $12 gift card, please email the research team at <a href=mailto:leahperl@uw.edu>leahperl@uw.edu</a> using the subject line "Completed Emotional Clarity Study" and write your completion code in the body of the email.</p>`,
 
         'contact': `<p>This study has asked you to recall potentially distressing life events. If you feel distressed after participating in this study, please consider utilizing the following resources:</p>

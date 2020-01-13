@@ -8,12 +8,13 @@ class Model {
 
     /**
      * Construct model
+     * @param logger - a Logger
      */
-    constructor() {
+    constructor(logger) {
         if (new.target == Model) {
             throw new TypeError('cannot construct Model directly (use child)');
         }
-        this.logger = new Logger();
+        this.logger = logger;
 
         Model.emotion_selection_frame = {
             'template': 'emotion_selection',
