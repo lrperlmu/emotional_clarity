@@ -85,6 +85,20 @@ class Logger {
     }
 
     /**
+     * Log the given user's competion code. Overwrites the last one logged for this user.
+     * 
+     * Data is stored in completion_codes subtree, as {uid: completion_code}
+     */
+    logCompletionCode(code) {
+        this.signIn.then(credential => {
+            let ref = firebase.database().ref(`completion_codes`);
+            let data = {};
+            data[credential.user.uid] = code;
+            ref.update(data);
+        });
+    }
+
+    /**
      * Transform a string so it's suitable for storing in firebase
      */
     encodeString(str) {

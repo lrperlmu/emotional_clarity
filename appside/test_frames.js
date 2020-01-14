@@ -21,6 +21,7 @@ $(document).ready(function() {
         'likert': likert_main,
         'self_report': self_report_main,
         'consent_disclosure': consent_disclosure_main,
+        'end': end_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -45,6 +46,19 @@ $(document).ready(function() {
 
 });
 
+
+class MockLogger {
+    logResponses(data) {
+        console.log('mock log response ' + data);
+    }
+    logTimestamp(event_name) {
+        console.log('mock log timestamp ' + event_name);
+    }
+    logCompletionCode(code) {
+        console.log('mock log completion code ' + code);
+    }
+}
+
 /*
   Each method below manually obtains some data representing the given frame type
   and constructs a frame renderer from that data.
@@ -58,7 +72,7 @@ function summary_qualifier_frame_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.summary_qualifier;
 
-    let frame = new SummaryFrameQualifier(frame_data);
+    let frame = new SummaryFrameQualifier(frame_data, new MockLogger());
     frame.render();
 }
 
@@ -67,7 +81,7 @@ function summary_count_frame_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.summary_count;
 
-    let frame = new SummaryFrameCount(frame_data);
+    let frame = new SummaryFrameCount(frame_data, new MockLogger());
     frame.render();
 }
 
@@ -76,7 +90,7 @@ function words_frame_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.body[3];
 
-    let frame = new WordsBodyFrame(frame_data);
+    let frame = new WordsBodyFrame(frame_data, new MockLogger());
     frame.render()
 }
 
@@ -85,12 +99,12 @@ function statements_frame_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.body[0];
 
-    let frame = new StatementsBodyFrame(frame_data);
+    let frame = new StatementsBodyFrame(frame_data, new MockLogger());
     frame.render();
 }
 
 function selection_frame_main() {
-    let frame = new EmotionSelectionFrame();
+    let frame = new EmotionSelectionFrame(new MockLogger());
     frame.render();
 }
 
@@ -104,7 +118,7 @@ function bodymap_main() {
             frame_data.bodypart = query.get('bodypart');
         }
     }
-    let frame = new BodyMapFrame(frame_data);
+    let frame = new BodyMapFrame(frame_data, new MockLogger());
     frame.render();
 }
 
@@ -112,7 +126,7 @@ function intro_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.intro[0];
 
-    let frame = new IntroFrame(frame_data);
+    let frame = new IntroFrame(frame_data, new MockLogger());
     frame.render();
 }
 
@@ -120,7 +134,7 @@ function intro_nographic_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.intro[1];
 
-    let frame = new IntroFrame(frame_data);
+    let frame = new IntroFrame(frame_data, new MockLogger());
     frame.render();
 }
 
@@ -138,7 +152,7 @@ function bodymap_color_main() {
             frame_data.bodypart = query.get('bodypart');
         }
     }
-    let frame = new BodyMapColorFrame(frame_data);
+    let frame = new BodyMapColorFrame(frame_data, new MockLogger());
     frame.render();
 }
 
@@ -146,7 +160,7 @@ function bodymap_color_fwd_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.body[4];
 
-    let frame = new BodyMapColorFwdFrame(frame_data);
+    let frame = new BodyMapColorFwdFrame(frame_data, new MockLogger());
     frame.render();
 }
 
@@ -154,7 +168,7 @@ function likert_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.likert;
 
-    let frame = new LikertFrame(frame_data);
+    let frame = new LikertFrame(frame_data, new MockLogger());
     frame.render();
 }
 
@@ -162,7 +176,7 @@ function self_report_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.self_report;
 
-    let frame = new SelfReportFrame(frame_data);
+    let frame = new SelfReportFrame(frame_data, new MockLogger());
     frame.render();
 }
 
@@ -170,6 +184,14 @@ function consent_disclosure_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.consent_disclosure;
 
-    let frame = new ConsentDisclosureFrame(frame_data);
+    let frame = new ConsentDisclosureFrame(frame_data, new MockLogger());
+    frame.render();
+}
+
+function end_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.end;
+
+    let frame = new EndFrame(frame_data, new MockLogger());
     frame.render();
 }

@@ -16,14 +16,14 @@ class Nav {
      *
      * @param model - the backend
      */
-    constructor(model) {
+    constructor(model, logger) {
+        this.logger = logger;
         this.model = model;
         if(!this.model.has_next_frame()) {
             throw new RangeError('Model does not have any frames');
         }
         this.current_frame = model.get_frame('next');
         this.render();
-        //this.model.log('app-start');
     }
 
     /**
@@ -36,7 +36,7 @@ class Nav {
      *    Renders the navigation buttons into that div.
      */
     render() {
-        this.view = FrameFactory.build(this.current_frame);
+        this.view = FrameFactory.build(this.current_frame, this.logger);
 
         // make a new empty div with id nav, not yet in the dom
         let nav_menu = document.createElement('div');

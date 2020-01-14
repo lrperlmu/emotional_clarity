@@ -16,10 +16,11 @@ class Frame {
     /**
      * Construct new frame
      */
-    constructor() {
+    constructor(logger) {
         if (new.target == Frame) {
             throw new TypeError('cannot construct Frame directly (use FrameFactory)');
         }
+        this.logger = logger;
     }
 
     /**
@@ -57,21 +58,24 @@ class FrameFactory {
      * Take in a frame template and return the correct type of Frame object,
      * initialized with the given template field from frame.
      */
-    static build(frame) {
+    static build(frame, logger) {
         if(frame.template === INTRO_FRAME_TEMPLATE) {
-            return new IntroFrame(frame);
+            return new IntroFrame(frame, logger);
         } else if(frame.template === STATEMENTS_FRAME_TEMPLATE) {
-            return new StatementsBodyFrame(frame);
+            return new StatementsBodyFrame(frame, logger);
         } else if(frame.template === SUMMARY_COUNT_FRAME_TEMPLATE) {
-            return new SummaryFrameCount(frame);
+            return new SummaryFrameCount(frame, logger);
         } else if(frame.template === LIKERT_FRAME_TEMPLATE) {
-            return new LikertFrame(frame);
+            return new LikertFrame(frame, logger);
         } else if(frame.template === SELF_REPORT_FRAME_TEMPLATE) {
-            return new SelfReportFrame(frame);
+            return new SelfReportFrame(frame, logger);
         } else if(frame.template === CONSENT_FRAME_TEMPLATE) {
-            return new ConsentDisclosureFrame(frame);
+            return new ConsentDisclosureFrame(frame, logger);
+        } else if (frame.template === END_FRAME_TEMPLATE) {
+            return new EndFrame(frame, logger);
         } else {
             throw new Error('Frame template not recognized ' + frame.template);
         }
     }
 }
+
