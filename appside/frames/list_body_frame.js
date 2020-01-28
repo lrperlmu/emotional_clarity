@@ -192,8 +192,12 @@ class StatementsBodyFrame extends ListBodyFrame {
      * 
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *    all fields required by super constructor
-     *    frame_data.statements (list of string) -- Statements the user can agree/disagree with
-     *        contains at least one element.
+     *    frame_data.statements -- list of 3-element lists containing the following:
+     *          * statement (string)
+     *          * response (boolean)
+     *          * emotion (string)
+            [ [stmt, response, emotion], [...], ...]
+     *      contains at least one element.
      */
     constructor(frame_data) {
         super(frame_data);
