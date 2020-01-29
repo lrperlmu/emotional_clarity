@@ -14,6 +14,7 @@ class EndFrame extends Frame {
     /**
      * Constructs EndFrame template
      * @param frame_data -- object containing the frame's data. expected fields:
+     *     frame_data.template -- The exact string 'end'
      *     frame_data.title (string)
      *     frame_data.completion_text (string)
      *     frame_data.completion_code (string)
@@ -28,6 +29,7 @@ class EndFrame extends Frame {
         this.completion_code = frame_data.completion_code;
         this.directions = frame_data.directions;
         this.contact = frame_data.contact;
+        this.template = frame_data.template;
     }
 
     /**

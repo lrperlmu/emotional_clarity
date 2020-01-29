@@ -32,7 +32,6 @@ class LikertFrame extends Frame {
         this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
-        this.user_input = new Map();
         this.response_name = frame_data.response_name;
     }
 
@@ -69,7 +68,6 @@ class LikertFrame extends Frame {
             $(question_text).attr('class', 'likert_question_text');
             $(question_text).text(question);
             statements.appendChild(question_text);
-            this.user_input.set(question, answer);
 
             // the actual radio buttons
             for (let j = 1; j <= 5; j++) {
@@ -102,6 +100,7 @@ class LikertFrame extends Frame {
         old_frame.replaceWith(frame);
     }
 
+    // CAN DELETE ONCE VERIFIED THAT INPUT IS COLLECTED ACCURATELY
     // /**
     //  * Returns map of user input
     //  * containing keys {
@@ -121,19 +120,36 @@ class LikertFrame extends Frame {
 
     /**
      * Returns map of user input
-     * @return Map of 
+     * @return Map of
      *    {statement (string): {'name':name (string), 'response':response (int 1-5)} }
      */
     get_user_input() {
+        let input = new Map();
         var choices = document.getElementsByTagName('input');;
         for (let item of choices) {
             if(item.checked) {
                 let value = {};
                 value.name = this.response_name;
                 value.response = item.dataset.text;
-                this.user_input.set(item.name, value);
+                input.set(item.name, value);
             }
         }
-        return this.user_input;
+        return input;
+    }
+
+    /**
+     * Update this frame to reflect user responses in the data set passed in
+     * @param data (UserDataSet)
+     *
+     * @modifies this
+     * @effects - possibly updates this frame's statement responses
+     */
+    fill_in_data(data) {
+        for(let tuple of this.questions) { // [stmt, response]
+            let text = tuple[0];
+            let name = this.response_name;
+            let known_response = data.lookup(text, name).response;
+            tuple[1] = known_response;
+        }
     }
 }

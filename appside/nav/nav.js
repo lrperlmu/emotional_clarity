@@ -36,7 +36,7 @@ class Nav {
      *    Renders the navigation buttons into that div.
      */
     render() {
-        this.view = FrameFactory.build(this.current_frame, this.logger);
+        this.view = this.current_frame;
 
         // make a new empty div with id nav, not yet in the dom
         let nav_menu = document.createElement('div');

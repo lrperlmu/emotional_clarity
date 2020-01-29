@@ -27,9 +27,18 @@ class DbtWorksheetModelFwd extends Model {
             entry => entry[KB_KEY_SECTION] === section
         );
 
+        let consent_questions = [];
+        for (let question of CONSENT_DISCLOSURE_QUESTIONS) {
+            consent_questions.push([question, false]);
+        }
+
         let likert_questions = [];
-        likert_questions.push([SDERS_QUESTIONS[0], 5]);
+        likert_questions.push([SDERS_QUESTIONS[0], undefined]);
         likert_questions.push([SDERS_QUESTIONS[1], undefined]);
+
+        let self_report_questions = [];
+        self_report_questions.push([SELF_REPORT_Q1, '']);
+        self_report_questions.push([SELF_REPORT_Q2, '']);
 
         this.summary_frame = this.initialize_summary_frame();
         let body_frames = this.build_body_frames(section_statements);
@@ -53,16 +62,25 @@ class DbtWorksheetModelFwd extends Model {
         }
 
         // make a list of references to all the frames, so we can index into it
+        // add userdataset items where applicable
         this.frames = [];
         if (this.config.consent_disclosure === true) {
-            this.frames.push(this.build_consent_disclosure_frame());
+            this.frames.push(this.build_consent_disclosure_frame(consent_questions));
+
+            for(let item of consent_questions) {
+                let ud = new UserData(item[0], item[1], '', RESPONSE_GENERIC);
+                this.uds.add(ud);
+            }
         }
         if (this.config.self_report === true) {
-            this.frames.push(this.build_self_report_frame(RESPONSE_PRE));
+            this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
+
+            for(let item of self_report_questions) {
+                let ud = new UserData(item[0], item[1], '', RESPONSE_PRE);
+                this.uds.add(ud);
+            }
         }
         if (this.config.pre_post_measurement === true) {
-            console.log('building likert pre', likert_questions);
-
             this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_PRE));
 
             for(let item of likert_questions) {
@@ -80,9 +98,15 @@ class DbtWorksheetModelFwd extends Model {
         if (this.config.self_report === true) {
             this.frames.push(this.build_self_report_frame(RESPONSE_POST));
         }
-        if (this.config.pre_post_measurement === true) {
-            console.log('building likert post', likert_questions);
+        if (this.config.self_report === true) {
+            this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
 
+            for(let item of self_report_questions) {
+                let ud = new UserData(item[0], item[1], '', RESPONSE_POST);
+                this.uds.add(ud);
+            }
+        }
+        if (this.config.pre_post_measurement === true) {
             this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_POST));
 
             for(let item of likert_questions) {
@@ -104,46 +128,44 @@ class DbtWorksheetModelFwd extends Model {
 
     /**
      * Build consent disclosure frames for a DBT worksheet model.
+     * @param consent_questions - list of [question (string), response (bool)]
+     * @return the Frame
      */
-    build_consent_disclosure_frame() {
-        let consent_disclosure = {};
+    build_consent_disclosure_frame(consent_questions) {
+        let consent_frame = {};
 
-        consent_disclosure.title = CONSENT_DISCLOSURE_TITLE;
-        consent_disclosure.response_response_name = RESPONSE_GENERIC;
-        consent_disclosure.template = CONSENT_FRAME_TEMPLATE;
-        consent_disclosure.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
+        consent_frame.title = CONSENT_DISCLOSURE_TITLE;
+        consent_frame.response_name = RESPONSE_GENERIC;
+        consent_frame.template = CONSENT_FRAME_TEMPLATE;
+        consent_frame.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
 
-        let questions = [];
-        for (let each of CONSENT_DISCLOSURE_QUESTIONS) {
-            questions.push([each, false]);
-        }
-        consent_disclosure.questions = questions;
-        return consent_disclosure;
+        consent_frame.questions = consent_questions;
+        return new ConsentDisclosureFrame(consent_frame, this.logger);
     }
 
     /**
      * Build self report frame for a DBT worksheet model.
+     * @param self_report_questions - list of [question (string), response (bool or int)]
+     * @param response_name - disambiguation name
+     * @return the Frame
      */
-    build_self_report_frame(response_name) {
+    build_self_report_frame(self_report_questions, response_name) {
         let self_report = {};
 
         self_report.template = SELF_REPORT_FRAME_TEMPLATE;
         self_report.response_name = response_name;
         self_report.qualifiers = QUALIFIERS;
 
-        let questions = [];
-        questions.push([SELF_REPORT_Q1, '']);
-        questions.push([SELF_REPORT_Q2, '']);
-
-        self_report.questions = questions;
-        return self_report;
+        self_report.questions = self_report_questions;
+        return new SelfReportFrame(self_report, this.logger);
     }
 
     /**
      * Build likert frame for a DBT worksheet model as pre or post measurement frame.
-     * 
+     *
      * @param likert_questions - list of [text (string), default_response (int)]
      * @param response_name - disambiguation name
+     * @return the Frame
      */
     build_likert_frame(likert_questions, response_name) {
         let frame = {};
@@ -155,15 +177,13 @@ class DbtWorksheetModelFwd extends Model {
         
         frame.questions = likert_questions;
 
-        console.log(frame);
-
-        return frame;
+        return new LikertFrame(frame, this.logger);
     }
 
     /**
      * Build intro frames for a DBT worksheet model.
      *
-     * @return a list of intro frames
+     * @return a list of IntroFrames
      */
     build_intro_frames() {
         // only one intro frame so far, but we'll likely add more
@@ -171,14 +191,14 @@ class DbtWorksheetModelFwd extends Model {
         intro_frame.title = INTRO_TITLE[this.config.section];
         intro_frame.text = INTRO_TEXT(this.config.section);
         intro_frame.template = INTRO_FRAME_TEMPLATE;
-        return [intro_frame];
+        return [new IntroFrame(intro_frame, this.logger)];
     }
 
     /**
      * Build body frames for a DBT worksheet model.
      *
      * @param section_statements - list of statements that we will make into frames
-     * @return a list of body frames
+     * @return a list of body Frames
      */
     build_body_frames(section_statements) {
         // copy-in the argument
@@ -221,7 +241,7 @@ class DbtWorksheetModelFwd extends Model {
             for(let statement of page_statements) {
                 frame.statements.push(statement);
             }
-            body_frames.push(frame);
+            body_frames.push(new StatementsBodyFrame(frame, this.logger));
         }
         return body_frames;
     }
@@ -239,7 +259,7 @@ class DbtWorksheetModelFwd extends Model {
         end_frame.completion_text = END_CODE_TEXT
         end_frame.directions = END_DIRECTIONS;
         end_frame.contact = END_CONTACT;
-        return end_frame;
+        return new EndFrame(end_frame, this.logger);
     }
 
     /**
@@ -256,7 +276,7 @@ class DbtWorksheetModelFwd extends Model {
         summary_frame.follow_text = SUMMARY_FOLLOW_TEXT;
         summary_frame.info_sheet_links = this.config.info_sheet_links;
         summary_frame.offer_ideas = this.config.offer_ideas;
-        return summary_frame;
+        return new SummaryFrameCount(summary_frame, this.logger);
     }
 
     /**
@@ -290,7 +310,7 @@ class DbtWorksheetModelFwd extends Model {
     next_frame() {
         this.frame_idx += 1;
         let frame = this.frames[this.frame_idx];
-        this.fill_in_user_data(frame);
+        frame.fill_in_data(this.uds);
         return frame;
     }
 
@@ -315,7 +335,7 @@ class DbtWorksheetModelFwd extends Model {
     back() {
         this.frame_idx -= 1;
         let frame = this.frames[this.frame_idx];
-        this.fill_in_user_data(frame);
+        frame.fill_in_data(this.uds);
         return frame;
     }
 
@@ -336,29 +356,6 @@ class DbtWorksheetModelFwd extends Model {
         return this.nav_functions.get(slug)();
     }
 
-    /**
-     * Update the given frame to reflect user data we have so far in the model.
-     * @param frame - object with properties:
-     *     * frame.statements - list of [stmt (string), response (boolean), emotion (string)]
-     *     * frame.response_name - (string) name associated with this frame
-     * @modifies frame
-     * @effects - possibly updates boolean values within arrays of the frame passed in
-     */
-    fill_in_user_data(frame) {
-        if(!frame.hasOwnProperty('statements')) return;
-
-        let statements = frame.statements;
-        for(let tuple of statements) { // [stmt, response, emotion]
-            //let text = tuple[0];
-            //let known_answer = this.user_data.get(text).response;
-            //tuple[1] = known_answer;
-
-            let text = tuple[0];
-            let name = frame.response_name;
-            let known_response = this.uds.lookup(text, name).response;
-            tuple[1] = known_response;
-        }
-    }
 
     /**
      * Pass user input into the model. [For use by NAV.]
@@ -369,9 +366,6 @@ class DbtWorksheetModelFwd extends Model {
      *    {statement (string): {'name':name (string), 'response':response (boolean or int)} }
      */
     update(input) {
-        console.log('model update');
-        console.log(input);
-
         for(let pair of input.entries()) {
             let question = pair[0];
             let name = pair[1].name;

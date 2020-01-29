@@ -142,4 +142,20 @@ class ConsentDisclosureFrame extends Frame {
         }
         return this.user_input;
     }
+
+    /**
+     * Update this frame to reflect user responses in the data set passed in
+     * @param data (UserDataSet)
+     *
+     * @modifies this
+     * @effects - possibly updates this frame's statement responses
+     */
+    fill_in_data(data) {
+        for(let tuple of this.questions) { // [stmt, response]
+            let text = tuple[0];
+            let name = this.response_name;
+            let known_response = data.lookup(text, name).response;
+            tuple[1] = known_response;
+        }
+    }
 }

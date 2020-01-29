@@ -194,7 +194,7 @@ class SummaryFrameCount extends SummaryFrame {
      *
      * @param frame_data - Object containing the frame's data. Expected fields:
      *    [All fields specified in parent constructor] and the following:
-     *    frame_data.type - the exact string 'count'
+     *    frame_data.template - the exact string 'count'
      */
     constructor(frame_data) {
         super(frame_data);
@@ -281,7 +281,7 @@ class SummaryFrameQualifier extends SummaryFrame {
      *
      * @param frame_data - Object containing the frame's data. Expected fields:
      *    [All fields specified in parent constructor] and the following:
-     *    frame_data.type - the exact string 'qualifier'
+     *    frame_data.template - the exact string 'qualifier'
      */
     constructor(frame_data) {
         super(frame_data);

@@ -84,6 +84,7 @@ class UserDataSet {
             //     console.log('not a match', item);
             // }
         }
+        console.log('failed lookup', question, name);
     }
 
     to_array() {

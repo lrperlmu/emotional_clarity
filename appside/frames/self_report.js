@@ -94,23 +94,65 @@ class SelfReportFrame extends Frame {
         old_frame.replaceWith(frame);
     }
 
+    // DELETE ONCE VERIFIED THAT INPUT IS GOTTEN ACCURATELY IN THE NEW WAY
+    // /**
+    //  * Returns map of user input
+    //  * questions: [
+    //  * 'question_text': 'answer choice',
+    //  * ]
+    //  * @return map of user input
+    //  */
+    // get_user_input() {
+    //     var textbox = document.getElementsByTagName('textarea');
+    //     this.questions[0][1] = $(textbox).val().trim();
+
+    //     var choices = document.getElementsByTagName('input');
+    //     for (let each of choices) {
+    //         if (each.checked) {
+    //             this.questions[1][1] = each.dataset.text;
+    //         }
+    //     }
+    //     return this.questions;
+    // }
+
     /**
      * Returns map of user input
-     * questions: [
-     * 'question_text': 'answer choice',
-     * ]
-     * @return map of user input
+     * @return Map of
+     *    {question (string): {'name':name (string), 'response':response (int or string)} }
      */
     get_user_input() {
-        var textbox = document.getElementsByTagName('textarea');
-        this.questions[0][1] = $(textbox).val().trim();
+        let input = new Map();
+        let textbox = document.getElementsByTagName('textarea');
+        let value = {};
+        value.response = $(textbox).val().trim();
+        value.name = this.response_name;
+        input.set(this.questions[0][0], value);
 
-        var choices = document.getElementsByTagName('input');
-        for (let each of choices) {
-            if (each.checked) {
-                this.questions[1][1] = each.dataset.text;
+        let choices = document.getElementsByTagName('input');
+        for (let choice of choices) {
+            if (choice.checked) {
+                let value = {};
+                value.name = this.response_name;
+                value.response = choice.dataset.text;
+                input.set(this.questions[1][0], value);
             }
         }
-        return this.questions;
+        return input;
+    }
+
+    /**
+     * Update this frame to reflect user responses in the data set passed in
+     * @param data (UserDataSet)
+     *
+     * @modifies this
+     * @effects - possibly updates this frame's question responses
+     */
+    fill_in_data(data) {
+        for(let tuple of this.questions) { // [question, response]
+            let text = tuple[0];
+            let name = this.response_name;
+            let known_response = data.lookup(text, name).response;
+            tuple[1] = known_response;
+        }
     }
 }

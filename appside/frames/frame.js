@@ -10,6 +10,10 @@
  * Renderer (View) for Frame
  *
  * Abstract parent class of the specific types of frame.
+ *
+ * Has some view and some model functionality. Separable if need be, but at the
+ *   time of writing I think it's overkill to have a model class for each frame
+ *   AND a view class for each frame.
  */
 class Frame {
 
@@ -25,6 +29,7 @@ class Frame {
 
     /**
      * Render this frame into the DOM
+     * VIEW functionality
      *
      * @require -- DOM must have a div whose ID is 'frame'
      *
@@ -41,11 +46,26 @@ class Frame {
     }
 
     /**
-     * Returns empty map
+     * Returns map of user input
+     * VIEW functionality (depends on how frame was rendered and how user
+     *  interacted with that rendering to provide input)
      * @return empty map
      */
     get_user_input() {
         return new Map();
+    }
+
+    /**
+     * Get this frame's data from the argument and upate the frame
+     * MODEL functionality
+     *
+     * @param data (UserDataSet)
+     *
+     * @modifies this frame
+     * @effects updates this frame's data
+     */
+    fill_in_data(data) {
+        console.log('fill in user data: noop');
     }
 }
 

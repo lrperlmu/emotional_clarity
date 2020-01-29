@@ -85,8 +85,7 @@ function visual_test_end(variant) {
     while(frame.template !== END_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new EndFrame(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
@@ -103,8 +102,7 @@ function visual_test_intro(variant) {
     while(frame.template !== INTRO_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new IntroFrame(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
@@ -121,8 +119,7 @@ function visual_test_body(variant) {
     while(frame.template !== STATEMENTS_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new StatementsBodyFrame(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
@@ -144,17 +141,19 @@ function visual_test_summary(variant) {
     // submit some answers to the model
     let user_input = new Map();
 
-    for(let pair of frame.statements) {
+    for(let pair of frame.items) {
         let stmt = pair[0];
-        user_input.set(stmt, true);
+        let value = {};
+        value.response = true;
+        value.name = frame.response_name;
+        user_input.set(stmt, value);
     }
     model.update(user_input);
 
     while(frame.template === 'statements') {
         frame = model.get_frame('next');
     }
-    let view = new SummaryFrameCount(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
@@ -168,11 +167,10 @@ function visual_test_pre_measurement() {
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
     let frame = model.get_frame('next');
     while(frame.template !== LIKERT_FRAME_TEMPLATE
-          && frame.response_name !== RESPONSE_NAME_PRE) {
+          && frame.response_name !== RESPONSE_PRE) {
         frame = model.get_frame('next');
     }
-    let view = new LikertFrame(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
@@ -186,11 +184,10 @@ function visual_test_post_measurement() {
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
     let frame = model.get_frame('next');
     while(frame.template !== LIKERT_FRAME_TEMPLATE 
-          && frame.response_name !== RESPONSE_NAME_POST) {
+          && frame.response_name !== RESPONSE_POST) {
         frame = model.get_frame('next');
     }
-    let view = new LikertFrame(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
@@ -207,8 +204,7 @@ function visual_test_self_report() {
         frame = model.get_frame('next');
     }
 
-    let view = new SelfReportFrame(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
@@ -224,6 +220,5 @@ function visual_test_consent_disclosure() {
     while(frame.template !== CONSENT_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new ConsentDisclosureFrame(frame, logger);
-    view.render();
+    frame.render();
 }
