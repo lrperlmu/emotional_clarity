@@ -102,18 +102,36 @@ class LikertFrame extends Frame {
         old_frame.replaceWith(frame);
     }
 
+    // /**
+    //  * Returns map of user input
+    //  * containing keys {
+    //  * 'question_text': int (1-5)
+    //  * }
+    //  * @return map of user input
+    //  */
+    // get_user_input() {
+    //     var choices = document.getElementsByTagName('input');;
+    //     for (let each of choices) {
+    //         if (each.checked) {
+    //             this.user_input.set(each.name, each.dataset.text);
+    //         }
+    //     }
+    //     return this.user_input;
+    // }
+
     /**
      * Returns map of user input
-     * containing keys {
-     * 'question_text': int (1-5)
-     * }
-     * @return map of user input
+     * @return Map of 
+     *    {statement (string): {'name':name (string), 'response':response (int 1-5)} }
      */
     get_user_input() {
         var choices = document.getElementsByTagName('input');;
-        for (let each of choices) {
-            if (each.checked) {
-                this.user_input.set(each.name, each.dataset.text);
+        for (let item of choices) {
+            if(item.checked) {
+                let value = {};
+                value.name = this.response_name;
+                value.response = item.dataset.text;
+                this.user_input.set(item.name, value);
             }
         }
         return this.user_input;

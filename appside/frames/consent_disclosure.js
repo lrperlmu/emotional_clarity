@@ -129,19 +129,16 @@ class ConsentDisclosureFrame extends Frame {
 
     /**
      * Returns map of user input
-     * questions: [
-     * 'question_text': 'answer choice',
-     * ]
-     * @return map of user input
+     * @return Map of 
+     *    {statement (string): {'name':name (string), 'response':response (boolean)} }
      */
     get_user_input() {
         var choices = document.getElementsByTagName('input');;
-        for (let each of choices) {
-            if (each.checked) {
-                this.user_input.set(each.dataset.text, true);
-            } else {
-                this.user_input.set(each.dataset.text, false);
-            }
+        for (let item of choices) {
+            let value = {};
+            value.name = this.response_name;
+            value.response = item.checked;
+            this.user_input.set(item.dataset.text, value);
         }
         return this.user_input;
     }

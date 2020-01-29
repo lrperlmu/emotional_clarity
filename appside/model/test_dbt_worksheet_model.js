@@ -8,6 +8,7 @@ $(document).ready(function() {
         'body': visual_test_body,
         'summary': visual_test_summary,
         'pre_measurement': visual_test_pre_measurement,
+        'post_measurement': visual_test_post_measurement,
         'self_report': visual_test_self_report,
         'consent_disclosure': visual_test_consent_disclosure,
         'end': visual_test_end,
@@ -158,7 +159,7 @@ function visual_test_summary(variant) {
 
 
 /*
- * Integration test that invokes LikertFrame to render the pre and post measurement frame of this app.
+ * Integration test that invokes LikertFrame to render the pre measurement frame of this app.
  * Manually verified.
  */
 function visual_test_pre_measurement() {
@@ -166,7 +167,26 @@ function visual_test_pre_measurement() {
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
     let frame = model.get_frame('next');
-    while(frame.template !== LIKERT_FRAME_TEMPLATE) {
+    while(frame.template !== LIKERT_FRAME_TEMPLATE
+          && frame.response_name !== RESPONSE_NAME_PRE) {
+        frame = model.get_frame('next');
+    }
+    let view = new LikertFrame(frame, logger);
+    view.render();
+}
+
+
+/*
+ * Integration test that invokes LikertFrame to render the post measurement frame of this app.
+ * Manually verified.
+ */
+function visual_test_post_measurement() {
+    FWD_PROMPTING_CONFIG.set_pre_post_measurement(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
+    let frame = model.get_frame('next');
+    while(frame.template !== LIKERT_FRAME_TEMPLATE 
+          && frame.response_name !== RESPONSE_NAME_POST) {
         frame = model.get_frame('next');
     }
     let view = new LikertFrame(frame, logger);
