@@ -89,7 +89,7 @@ class UserDataSet {
 
     to_array() {
         let arr = [];
-        for(let item in this.data) {
+        for(let item of this.data) {
             let value = {};
             value.emotion = item.emotion;
             value.response = item.response;
@@ -100,5 +100,7 @@ class UserDataSet {
         return arr;
     }
 
-
+    [Symbol.iterator]() {
+        return this.data.values();
+    }
 }

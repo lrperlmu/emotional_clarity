@@ -43,18 +43,6 @@ class DbtWorksheetModelFwd extends Model {
         this.summary_frame = this.initialize_summary_frame();
         let body_frames = this.build_body_frames(section_statements);
 
-        // construct user data
-        // {statement: {emotion: ..., response: ...}}
-        // this.user_data = new Map();
-        // for(let stmt of section_statements) {
-        //     let form_entry = {};
-        //     form_entry.emotion = stmt.Emotion;
-        //     // does not differentiate between default and user-supplied response of false
-        //     form_entry.response = false;
-        //     this.user_data.set(stmt.Statement, form_entry);
-        // }
-
-        // NEW
         this.uds = new UserDataSet();
         for (let stmt of section_statements) {
             let ud = new UserData(stmt.Statement, false, stmt.Emotion, RESPONSE_GENERIC);
@@ -366,24 +354,24 @@ class DbtWorksheetModelFwd extends Model {
      *    {statement (string): {'name':name (string), 'response':response (boolean or int)} }
      */
     update(input) {
+        let updated_uds = new UserDataSet();
         for(let pair of input.entries()) {
             let question = pair[0];
             let name = pair[1].name;
             let response = pair[1].response;
             let ud = this.uds.lookup(question, name);
             ud.response = response;
-            //this.user_data.get(question).response = response;
+            updated_uds.add(ud);
         }
         this.compute_summary();
-        this.logger.logResponses(input)
+        this.logger.logUds(updated_uds);
     }
 
     /**
-     * Transfer data from user_data to the summary frame
+     * Transfer data from this.uds to the summary frame
      */
     compute_summary() {
         // entries takes the form [ [statement, {emotion: string, response: boolean}], ...]
-        //let entries = Array.from(this.user_data.entries());
         let entries =  this.uds.to_array();
 
         // filter user data for "true" responses
