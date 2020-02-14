@@ -84,9 +84,6 @@ class DbtWorksheetModelFwd extends Model {
         }
         this.frames.push(this.summary_frame);
         if (this.config.self_report === true) {
-            this.frames.push(this.build_self_report_frame(RESPONSE_POST));
-        }
-        if (this.config.self_report === true) {
             this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
 
             for(let item of self_report_questions) {
@@ -138,14 +135,14 @@ class DbtWorksheetModelFwd extends Model {
      * @return the Frame
      */
     build_self_report_frame(self_report_questions, response_name) {
-        let self_report = {};
+        let frame = {};
 
-        self_report.template = SELF_REPORT_FRAME_TEMPLATE;
-        self_report.response_name = response_name;
-        self_report.qualifiers = QUALIFIERS;
+        frame.template = SELF_REPORT_FRAME_TEMPLATE;
+        frame.response_name = response_name;
+        frame.qualifiers = QUALIFIERS;
 
-        self_report.questions = self_report_questions;
-        return new SelfReportFrame(self_report, this.logger);
+        frame.questions = self_report_questions;
+        return new SelfReportFrame(frame, this.logger);
     }
 
     /**

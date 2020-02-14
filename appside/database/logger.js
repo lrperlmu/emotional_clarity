@@ -49,9 +49,6 @@ class Logger {
      */
     logUds(uds) {
         this.signIn.then(credential => {
-            console.log('logResponses');
-            console.log('data', uds);
-
             for(let ud of uds) {
                 // clean the strings.
                 let name = this.encodeString(ud.name);
