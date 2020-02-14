@@ -33,10 +33,22 @@ $(document).ready(function() {
             ['after', SECTION_AFTER],
         ]);
         variant = variants.get(slug);
+
+        let variant_names = Array.from(variants.keys());
+        if(!variant_names.includes(slug)) {
+            console.error('Valid variant names are: ' + variant_names);
+            throw Error('Unknown variant requested: ' + variant);
+        }
     }
 
-    let test_fcn = test_methods[page_to_show];
-    test_fcn(variant);
+    let test_names = Object.keys(test_methods);
+    if(test_names.includes(page_to_show)) {
+        let test_fcn = test_methods[page_to_show];
+        test_fcn(variant);
+    } else {
+        console.error('Valid test names are: ' + test_names);
+        throw Error('Unknown test requested: ' + page_to_show);
+    }
 });
 
 

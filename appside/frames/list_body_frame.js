@@ -136,9 +136,9 @@ class ListBodyFrame extends Frame {
             this.user_input.set(statement, 'false');
 
             // label that appears when the checkbox is checked
-            let note = document.createElement('note');
+            let note = document.createElement('span');
             $(note).text(` (${note_text})`);
-            statements.appendChild(note);
+            label.appendChild(note);
             function show_hide_note() {
                 if($(input).prop('checked') === true) {
                     $(note).attr('class', 'listbody-note-visible');
