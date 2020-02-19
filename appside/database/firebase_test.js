@@ -5,8 +5,8 @@ $(document).ready(function() {
     let logger = new Logger();
     logger.logTimestamp('logger1_my_event');
 
-    let ud1 = new UserData('How iz?', 'fineook', 'heppy', 'meow');
-    let ud2 = new UserData('Who am?', 'meeee', 'zoomy', 'maow');
+    let ud1 = new UserData('How iz?', 'fineook', ['heppy'], 'meow');
+    let ud2 = new UserData('Who am?', 'meeee', ['zoomy'], 'maow');
 
     let responses = new UserDataSet();
     responses.add(ud1);

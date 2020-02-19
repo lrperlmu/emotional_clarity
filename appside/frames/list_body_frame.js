@@ -112,7 +112,7 @@ class ListBodyFrame extends Frame {
         for (let tuple of this.items) {
             let statement = tuple[0];
             let answer = tuple[1];
-            let note_text = tuple[2];
+            let note_text = tuple[2].join(', ');
 
             let name = 'stmt' + i;
             i += 1;

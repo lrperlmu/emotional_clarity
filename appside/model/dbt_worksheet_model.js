@@ -27,6 +27,45 @@ class DbtWorksheetModelFwd extends Model {
             entry => entry[KB_KEY_SECTION] === section
         );
 
+        // find identical statements with different emotions and merge
+        // first, sort by statement
+        section_statements.sort((a, b) => a.Statement.localeCompare(b.Statement));
+
+        // then, merge identical
+        let merged_section_statements = [];
+        let item = section_statements[0];
+        for(let i = 1; i <= section_statements.length; i++) {
+            // peek a the next item
+            let next;
+            if(i < section_statements.length) {
+                next = section_statements[i];
+            }
+            if(i === section_statements.length || next.Statement !== item.Statement) {
+                // item is the last of a run, make a new entry in the merged list
+                let next_to_push = Object.assign(item);
+                next_to_push.Emotions = next_to_push.Emotion.split(', ');
+                delete next_to_push.Emotion;
+                merged_section_statements.push(next_to_push);
+            } else {
+                // merge this entry into the next entry
+                next.Emotion = item.Emotion.concat(', ',next.Emotion);
+            }
+            item = next;
+        }
+
+        // finally, re-sort by emotion
+        merged_section_statements.sort(
+            (a, b) => a.Emotions[0].localeCompare(b.Emotions[0]));
+
+        this.summary_frame = this.initialize_summary_frame();
+        let body_frames = this.build_body_frames(merged_section_statements);
+
+        this.uds = new UserDataSet();
+        for (let stmt of merged_section_statements) {
+            let ud = new UserData(stmt.Statement, false, stmt.Emotions, RESPONSE_GENERIC);
+            this.uds.add(ud);
+        }
+
         let consent_questions = [];
         for (let question of CONSENT_DISCLOSURE_QUESTIONS) {
             consent_questions.push([question, false]);
@@ -40,15 +79,6 @@ class DbtWorksheetModelFwd extends Model {
         self_report_questions.push([SELF_REPORT_Q1, '']);
         self_report_questions.push([SELF_REPORT_Q2, '']);
 
-        this.summary_frame = this.initialize_summary_frame();
-        let body_frames = this.build_body_frames(section_statements);
-
-        this.uds = new UserDataSet();
-        for (let stmt of section_statements) {
-            let ud = new UserData(stmt.Statement, false, stmt.Emotion, RESPONSE_GENERIC);
-            this.uds.add(ud);
-        }
-
         // make a list of references to all the frames, so we can index into it
         // add userdataset items where applicable
         this.frames = [];
@@ -56,7 +86,7 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(this.build_consent_disclosure_frame(consent_questions));
 
             for(let item of consent_questions) {
-                let ud = new UserData(item[0], item[1], '', RESPONSE_GENERIC);
+                let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
                 this.uds.add(ud);
             }
         }
@@ -64,7 +94,7 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
 
             for(let item of self_report_questions) {
-                let ud = new UserData(item[0], item[1], '', RESPONSE_PRE);
+                let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
                 this.uds.add(ud);
             }
         }
@@ -72,7 +102,7 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_PRE));
 
             for(let item of likert_questions) {
-                let ud = new UserData(item[0], item[1], '', RESPONSE_PRE);
+                let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
                 this.uds.add(ud);
             }
         }
@@ -87,7 +117,7 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
 
             for(let item of self_report_questions) {
-                let ud = new UserData(item[0], item[1], '', RESPONSE_POST);
+                let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
                 this.uds.add(ud);
             }
         }
@@ -95,7 +125,7 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_POST));
 
             for(let item of likert_questions) {
-                let ud = new UserData(item[0], item[1], '', RESPONSE_POST);
+                let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
                 this.uds.add(ud);
             }
         }
@@ -214,7 +244,7 @@ class DbtWorksheetModelFwd extends Model {
         for(let page of pages) {
             let page_statements = [];
             for(let stmt of page) {
-                page_statements.push([stmt.Statement, false, stmt.Emotion]);
+                page_statements.push([stmt.Statement, false, stmt.Emotions]);
             }
 
             let frame = {};
@@ -380,12 +410,13 @@ class DbtWorksheetModelFwd extends Model {
         // {emotion : list of matching statements}
         let summary = new Map();
         for(let response of true_responses) {
-            let res_emotion = response[1].emotion;
-            let res_stmt = response[0];
-            if(!(summary.has(res_emotion))) {
-                summary.set(res_emotion, []);
+            for(let res_emotion of response[1].emotions) {
+                let res_stmt = response[0];
+                if(!(summary.has(res_emotion))) {
+                    summary.set(res_emotion, []);
+                }
+                summary.get(res_emotion).push(res_stmt);
             }
-            summary.get(res_emotion).push(res_stmt);
         }
 
         // spit summary out into the frame (for sending to the user)

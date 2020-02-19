@@ -24,13 +24,13 @@ class UserData {
      * Construct a new UserData object
      * @param question (string) - text of the question
      * @param response (string) - user's response
-     * @param emotion (string) - emotion associated with this question
+     * @param emotion (array of string) - emotions associated with this question
      * @param name (string) - to disambiguate if same question is asked twice
      */
-    constructor(question, response, emotion, name) {
+    constructor(question, response, emotions, name) {
         this.question = question;
         this.response = response;
-        this.emotion = emotion;
+        this.emotions = emotions;
         this.name = name;
     }
 
@@ -91,7 +91,7 @@ class UserDataSet {
         let arr = [];
         for(let item of this.data) {
             let value = {};
-            value.emotion = item.emotion;
+            value.emotions = item.emotions;
             value.response = item.response;
             value.name = item.name;
             let entry = [item.question, value];
