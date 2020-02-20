@@ -100,24 +100,6 @@ class LikertFrame extends Frame {
         old_frame.replaceWith(frame);
     }
 
-    // CAN DELETE ONCE VERIFIED THAT INPUT IS COLLECTED ACCURATELY
-    // /**
-    //  * Returns map of user input
-    //  * containing keys {
-    //  * 'question_text': int (1-5)
-    //  * }
-    //  * @return map of user input
-    //  */
-    // get_user_input() {
-    //     var choices = document.getElementsByTagName('input');;
-    //     for (let each of choices) {
-    //         if (each.checked) {
-    //             this.user_input.set(each.name, each.dataset.text);
-    //         }
-    //     }
-    //     return this.user_input;
-    // }
-
     /**
      * Returns map of user input
      * @return Map of

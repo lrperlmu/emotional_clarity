@@ -67,24 +67,12 @@ class UserDataSet {
     // TODO: check whether the inefficiency of this causes noticeable slowdowns
     // if so, change underlying implementation to something more indexed.
     lookup(question, name) {
-        // console.log('user data lookup');
-        // console.log('looking up', question, name);
-        // console.log(this.data);
-        // for(let item of this.data) {
-        //     console.log(item);
-        // }
-
         for(let item of this.data) {
             if(item.question === question && item.name === name) {
-                //console.log('success', item);
                 return item;
             } 
-            // else {
-            //     console.log('looking for', question, name);
-            //     console.log('not a match', item);
-            // }
         }
-        console.log('failed lookup', question, name);
+        console.error('failed lookup', question, name);
     }
 
     to_array() {

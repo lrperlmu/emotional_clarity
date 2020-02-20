@@ -94,27 +94,6 @@ class SelfReportFrame extends Frame {
         old_frame.replaceWith(frame);
     }
 
-    // DELETE ONCE VERIFIED THAT INPUT IS GOTTEN ACCURATELY IN THE NEW WAY
-    // /**
-    //  * Returns map of user input
-    //  * questions: [
-    //  * 'question_text': 'answer choice',
-    //  * ]
-    //  * @return map of user input
-    //  */
-    // get_user_input() {
-    //     var textbox = document.getElementsByTagName('textarea');
-    //     this.questions[0][1] = $(textbox).val().trim();
-
-    //     var choices = document.getElementsByTagName('input');
-    //     for (let each of choices) {
-    //         if (each.checked) {
-    //             this.questions[1][1] = each.dataset.text;
-    //         }
-    //     }
-    //     return this.questions;
-    // }
-
     /**
      * Returns map of user input
      * @return Map of

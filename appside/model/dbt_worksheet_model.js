@@ -35,17 +35,17 @@ class DbtWorksheetModelFwd extends Model {
         let merged_section_statements = [];
         let item = section_statements[0];
         for(let i = 1; i <= section_statements.length; i++) {
-            // peek a the next item
+            // peek at the next item
             let next;
             if(i < section_statements.length) {
                 next = section_statements[i];
             }
             if(i === section_statements.length || next.Statement !== item.Statement) {
                 // item is the last of a run, make a new entry in the merged list
-                let next_to_push = Object.assign(item);
-                next_to_push.Emotions = next_to_push.Emotion.split(', ');
-                delete next_to_push.Emotion;
-                merged_section_statements.push(next_to_push);
+                let item_to_push = Object.assign(item);
+                item_to_push.Emotions = item_to_push.Emotion.split(', ');
+                delete item_to_push.Emotion;
+                merged_section_statements.push(item_to_push);
             } else {
                 // merge this entry into the next entry
                 next.Emotion = item.Emotion.concat(', ',next.Emotion);

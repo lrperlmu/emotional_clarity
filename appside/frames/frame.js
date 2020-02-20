@@ -77,6 +77,9 @@ class FrameFactory {
     /**
      * Take in a frame template and return the correct type of Frame object,
      * initialized with the given template field from frame.
+     *
+     * @param frame (dumb frame object). Has field 'template' indicating the intended type.
+     * @param logger (Logger)
      */
     static build(frame, logger) {
         if(frame.template === INTRO_FRAME_TEMPLATE) {
