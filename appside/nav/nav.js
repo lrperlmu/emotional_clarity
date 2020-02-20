@@ -36,15 +36,18 @@ class Nav {
     render() {
         // TODO: use FrameFactory instead of constructor
         this.view = FrameFactory.build(this.current_frame);
+        console.log(this.current_frame);
 
         // make a new empty div with id nav, not yet in the dom
         let nav_menu = document.createElement('div');
         $(nav_menu).attr('id', 'nav');
+        $(nav_menu).attr('class', 'text-center align-bottom flex-grow-1 nav-btn');
 
         // make a back button
         // TODO: don't make on first slide
         let back = document.createElement('button');
-        $(back).text('back');
+        $(back).text('< Back');
+        $(back).attr('class', 'btn btn-primary btn-lg mx-2');
         $(back).click(function() {
             this.navigate('back')
         }.bind(this));
@@ -53,7 +56,8 @@ class Nav {
         // make a next button
         // TODO: let frame help with placement, don't make on last slide
         let next = document.createElement('button');
-        $(next).text('next');
+        $(next).text('Next >');
+        $(next).attr('class', 'btn btn-primary btn-lg mx-2');
         $(next).click(function() {
             this.navigate('next');
         }.bind(this));

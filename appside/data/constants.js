@@ -25,7 +25,7 @@ var SUMMARY_TEMPLATE_COUNT = 'count';
 var SUMMARY_TEMPLATE_QUAL = 'qual';
 
 // Body config (all DBT worksheet models)
-var BODY_STATEMENTS_PER_PAGE = 12;
+var BODY_STATEMENTS_PER_PAGE = 8;
 var BODY_FRAME_TEMPLATE = 'statements';
 
 // Intro frame strings
