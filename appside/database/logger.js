@@ -39,29 +39,29 @@ class Logger {
     }
 
     /**
-     * Stores responses from obj into the database. Overwrites any values previously logged
+     * Stores responses into the database. Overwrites any values previously logged
      * using this method in the current session. Keys and values of the input map will
      * be cleaned of illegal characters and stored as strings.
      *
      * Data is stored in app-responses subtree, under current uid
      *
-     * @param data - a map whose keys and values are primitives
+     * @param uds (UserDataSet) - the data to write into firebase
      */
-    logResponses(data) {
+    logUds(uds) {
         this.signIn.then(credential => {
-            for(let pair of data.entries()) {
-                let key = pair[0];
-                let value = pair[1];
-
+            for(let ud of uds) {
                 // clean the strings.
-                key = this.encodeString(key.toString());
-                value = this.encodeString(value.toString());
+                let name = this.encodeString(ud.name);
+                let question = this.encodeString(ud.question);
+                let response = this.encodeString(ud.response.toString());
+
+                // pack them into an object as required by firebase
                 let update_data = {};
-                update_data[key] = value;
+                update_data[question] = response;
 
                 // store them one by one so as not to overwrite existing content.
                 firebase.database()
-                    .ref(`app-responses/${credential.user.uid}`)
+                    .ref(`app-responses/${credential.user.uid}/${name}`)
                     .update(update_data);
             }
         });
@@ -100,6 +100,7 @@ class Logger {
 
     /**
      * Transform a string so it's suitable for storing in firebase
+     * @param str (string)
      */
     encodeString(str) {
         // replace each illegal char with its URI encoding

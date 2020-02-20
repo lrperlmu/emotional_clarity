@@ -1,6 +1,11 @@
 "use strict";
 
 /**
+ * dbt_worksheet_model.js
+ * @author Leah Perlmutter
+ */
+
+/**
  * Forward DBT Worksheet Model
  * Handles the logic and frame-construction of any DBT worksheet model app.
  */
@@ -22,30 +27,84 @@ class DbtWorksheetModelFwd extends Model {
             entry => entry[KB_KEY_SECTION] === section
         );
 
-        this.summary_frame = this.initialize_summary_frame();
-        let body_frames = this.build_body_frames(section_statements);
+        // find identical statements with different emotions and merge
+        // first, sort by statement
+        section_statements.sort((a, b) => a.Statement.localeCompare(b.Statement));
 
-        // construct user data
-        // {statement: {emotion: ..., response: ...}}
-        this.user_data = new Map();
-        for(let stmt of section_statements) {
-            let form_entry = {};
-            form_entry.emotion = stmt.Emotion;
-            // does not differentiate between default and user-supplied response of false
-            form_entry.response = false;
-            this.user_data.set(stmt.Statement, form_entry);
+        // then, merge identical
+        let merged_section_statements = [];
+        let item = section_statements[0];
+        for(let i = 1; i <= section_statements.length; i++) {
+            // peek at the next item
+            let next;
+            if(i < section_statements.length) {
+                next = section_statements[i];
+            }
+            if(i === section_statements.length || next.Statement !== item.Statement) {
+                // item is the last of a run, make a new entry in the merged list
+                let item_to_push = Object.assign(item);
+                item_to_push.Emotions = item_to_push.Emotion.split(', ');
+                delete item_to_push.Emotion;
+                merged_section_statements.push(item_to_push);
+            } else {
+                // merge this entry into the next entry
+                next.Emotion = item.Emotion.concat(', ',next.Emotion);
+            }
+            item = next;
         }
+
+        // finally, re-sort by emotion
+        merged_section_statements.sort(
+            (a, b) => a.Emotions[0].localeCompare(b.Emotions[0]));
+
+        this.summary_frame = this.initialize_summary_frame();
+        let body_frames = this.build_body_frames(merged_section_statements);
+
+        this.uds = new UserDataSet();
+        for (let stmt of merged_section_statements) {
+            let ud = new UserData(stmt.Statement, false, stmt.Emotions, RESPONSE_GENERIC);
+            this.uds.add(ud);
+        }
+
+        let consent_questions = [];
+        for (let question of CONSENT_DISCLOSURE_QUESTIONS) {
+            consent_questions.push([question, false]);
+        }
+
+        let likert_questions = [];
+        likert_questions.push([SDERS_QUESTIONS[0], undefined]);
+        likert_questions.push([SDERS_QUESTIONS[1], undefined]);
+
+        let self_report_questions = [];
+        self_report_questions.push([SELF_REPORT_Q1, '']);
+        self_report_questions.push([SELF_REPORT_Q2, '']);
 
         // make a list of references to all the frames, so we can index into it
+        // add userdataset items where applicable
         this.frames = [];
         if (this.config.consent_disclosure === true) {
-            this.frames.push(this.build_consent_disclosure_frame());
+            this.frames.push(this.build_consent_disclosure_frame(consent_questions));
+
+            for(let item of consent_questions) {
+                let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
+                this.uds.add(ud);
+            }
         }
         if (this.config.self_report === true) {
-            this.frames.push(this.build_self_report_frame());
+            this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
+
+            for(let item of self_report_questions) {
+                let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
+                this.uds.add(ud);
+            }
         }
         if (this.config.pre_post_measurement === true) {
-            this.frames.push(this.build_pre_post_measurement_frame());
+            this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_PRE));
+
+            for(let item of likert_questions) {
+                let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
+                this.uds.add(ud);
+            }
         }
         for(let frame of this.build_intro_frames()) {
             this.frames.push(frame);
@@ -54,8 +113,21 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(frame);
         }
         this.frames.push(this.summary_frame);
+        if (this.config.self_report === true) {
+            this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
+
+            for(let item of self_report_questions) {
+                let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
+                this.uds.add(ud);
+            }
+        }
         if (this.config.pre_post_measurement === true) {
-            this.frames.push(this.build_pre_post_measurement_frame());
+            this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_POST));
+
+            for(let item of likert_questions) {
+                let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
+                this.uds.add(ud);
+            }
         }
         this.frames.push(this.build_end_frame());
         // index into frames
@@ -71,61 +143,62 @@ class DbtWorksheetModelFwd extends Model {
 
     /**
      * Build consent disclosure frames for a DBT worksheet model.
+     * @param consent_questions - list of [question (string), response (bool)]
+     * @return the Frame
      */
-    build_consent_disclosure_frame() {
-        let consent_disclosure = {};
+    build_consent_disclosure_frame(consent_questions) {
+        let consent_frame = {};
 
-        consent_disclosure.title = CONSENT_DISCLOSURE_TITLE;
-        consent_disclosure.template = CONSENT_FRAME_TEMPLATE;
-        consent_disclosure.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
+        consent_frame.title = CONSENT_DISCLOSURE_TITLE;
+        consent_frame.response_name = RESPONSE_GENERIC;
+        consent_frame.template = CONSENT_FRAME_TEMPLATE;
+        consent_frame.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
 
-        let questions = [];
-        for (let each of CONSENT_DISCLOSURE_QUESTIONS) {
-            questions.push([each, false]);
-        }
-        consent_disclosure.questions = questions;
-        return consent_disclosure;
+        consent_frame.questions = consent_questions;
+        return new ConsentDisclosureFrame(consent_frame, this.logger);
     }
 
     /**
      * Build self report frame for a DBT worksheet model.
+     * @param self_report_questions - list of [question (string), response (bool or int)]
+     * @param response_name - disambiguation name
+     * @return the Frame
      */
-    build_self_report_frame() {
-        let self_report = {};
+    build_self_report_frame(self_report_questions, response_name) {
+        let frame = {};
 
-        self_report.template = SELF_REPORT_FRAME_TEMPLATE;
-        self_report.qualifiers = QUALIFIERS;
+        frame.template = SELF_REPORT_FRAME_TEMPLATE;
+        frame.response_name = response_name;
+        frame.qualifiers = QUALIFIERS;
 
-        let questions = [];
-        questions.push([SELF_REPORT_Q1, '']);
-        questions.push([SELF_REPORT_Q2, '']);
-
-        self_report.questions = questions;
-        return self_report;
+        frame.questions = self_report_questions;
+        return new SelfReportFrame(frame, this.logger);
     }
 
     /**
      * Build likert frame for a DBT worksheet model as pre or post measurement frame.
+     *
+     * @param likert_questions - list of [text (string), default_response (int)]
+     * @param response_name - disambiguation name
+     * @return the Frame
      */
-    build_pre_post_measurement_frame() {
-        let pre_post = {};
+    build_likert_frame(likert_questions, response_name) {
+        let frame = {};
 
-        pre_post.template = LIKERT_FRAME_TEMPLATE;
-        pre_post.instructions = LIKERT_INSTRUCTIONS;
-        pre_post.qualifiers = SDERS_QUALIFIERS;
+        frame.template = LIKERT_FRAME_TEMPLATE;
+        frame.response_name = response_name;
+        frame.instructions = LIKERT_INSTRUCTIONS;
+        frame.qualifiers = SDERS_QUALIFIERS;
         
-        let questions = [];
-        questions.push([SDERS_QUESTIONS[0], 5]);
-        questions.push([SDERS_QUESTIONS[1], undefined]);
+        frame.questions = likert_questions;
 
-        pre_post.questions = questions;
-        return pre_post;
+        return new LikertFrame(frame, this.logger);
     }
 
     /**
      * Build intro frames for a DBT worksheet model.
      *
-     * @return a list of intro frames
+     * @return a list of IntroFrames
      */
     build_intro_frames() {
         // only one intro frame so far, but we'll likely add more
@@ -133,14 +206,14 @@ class DbtWorksheetModelFwd extends Model {
         intro_frame.title = INTRO_TITLE[this.config.section];
         intro_frame.text = INTRO_TEXT(this.config.section);
         intro_frame.template = INTRO_FRAME_TEMPLATE;
-        return [intro_frame];
+        return [new IntroFrame(intro_frame, this.logger)];
     }
 
     /**
      * Build body frames for a DBT worksheet model.
      *
      * @param section_statements - list of statements that we will make into frames
-     * @return a list of body frames
+     * @return a list of body Frames
      */
     build_body_frames(section_statements) {
         // copy-in the argument
@@ -171,18 +244,19 @@ class DbtWorksheetModelFwd extends Model {
         for(let page of pages) {
             let page_statements = [];
             for(let stmt of page) {
-                page_statements.push([stmt.Statement, false, stmt.Emotion]);
+                page_statements.push([stmt.Statement, false, stmt.Emotions]);
             }
 
             let frame = {};
             frame.title = BODY_TITLE;
+            frame.response_name = RESPONSE_GENERIC;
             frame.template = STATEMENTS_FRAME_TEMPLATE;
             frame.question = BODY_QUESTION[this.config.section];
             frame.statements = [];
             for(let statement of page_statements) {
                 frame.statements.push(statement);
             }
-            body_frames.push(frame);
+            body_frames.push(new StatementsBodyFrame(frame, this.logger));
         }
         return body_frames;
     }
@@ -200,7 +274,7 @@ class DbtWorksheetModelFwd extends Model {
         end_frame.completion_text = END_CODE_TEXT
         end_frame.directions = END_DIRECTIONS;
         end_frame.contact = END_CONTACT;
-        return end_frame;
+        return new EndFrame(end_frame, this.logger);
     }
 
     /**
@@ -217,7 +291,7 @@ class DbtWorksheetModelFwd extends Model {
         summary_frame.follow_text = SUMMARY_FOLLOW_TEXT;
         summary_frame.info_sheet_links = this.config.info_sheet_links;
         summary_frame.offer_ideas = this.config.offer_ideas;
-        return summary_frame;
+        return new SummaryFrameCount(summary_frame, this.logger);
     }
 
     /**
@@ -251,7 +325,7 @@ class DbtWorksheetModelFwd extends Model {
     next_frame() {
         this.frame_idx += 1;
         let frame = this.frames[this.frame_idx];
-        this.fill_in_user_data(frame);
+        frame.fill_in_data(this.uds);
         return frame;
     }
 
@@ -276,7 +350,7 @@ class DbtWorksheetModelFwd extends Model {
     back() {
         this.frame_idx -= 1;
         let frame = this.frames[this.frame_idx];
-        this.fill_in_user_data(frame);
+        frame.fill_in_data(this.uds);
         return frame;
     }
 
@@ -297,49 +371,35 @@ class DbtWorksheetModelFwd extends Model {
         return this.nav_functions.get(slug)();
     }
 
-    /**
-     * Update the given frame to reflect user data we have so far in the model.
-     * @param frame - object with properties:
-     *     * frame.statements - list of [string, boolean] pairs
-     * @modifies frame
-     * @effects - possibly updates boolean values within arrays of the frame passed in
-     */
-    fill_in_user_data(frame) {
-        if(!frame.hasOwnProperty('statements')) return;
-
-        let statements = frame.statements;
-        for(let tuple of statements) {
-            let text = tuple[0];
-
-            let known_answer = this.user_data.get(text).response;
-            tuple[1] = known_answer;
-        }
-    }
 
     /**
      * Pass user input into the model. [For use by NAV.]
      *
      * Logging: record user responses in database
      * 
-     * @param input - Map of data to be absorbed by the model
-     *            where keys are statements (strings) and values are true/false
+     * @param input - data to be absorbed by the model
+     *    {statement (string): {'name':name (string), 'response':response (boolean or int)} }
      */
     update(input) {
+        let updated_uds = new UserDataSet();
         for(let pair of input.entries()) {
-            let key = pair[0];
-            let response = pair[1];
-            this.user_data.get(key).response = response;
+            let question = pair[0];
+            let name = pair[1].name;
+            let response = pair[1].response;
+            let ud = this.uds.lookup(question, name);
+            ud.response = response;
+            updated_uds.add(ud);
         }
         this.compute_summary();
-        this.logger.logResponses(input)
+        this.logger.logUds(updated_uds);
     }
 
     /**
-     * Transfer data from user_data to the summary frame
+     * Transfer data from this.uds to the summary frame
      */
     compute_summary() {
-        // entries takes the form [statement, {emotion: string, response: boolean}, ...]
-        let entries = Array.from(this.user_data.entries());
+        // entries takes the form [ [statement, {emotion: string, response: boolean}], ...]
+        let entries =  this.uds.to_array();
 
         // filter user data for "true" responses
         let true_responses = entries.filter(
@@ -350,12 +410,13 @@ class DbtWorksheetModelFwd extends Model {
         // {emotion : list of matching statements}
         let summary = new Map();
         for(let response of true_responses) {
-            let res_emotion = response[1].emotion;
-            let res_stmt = response[0];
-            if(!(summary.has(res_emotion))) {
-                summary.set(res_emotion, []);
+            for(let res_emotion of response[1].emotions) {
+                let res_stmt = response[0];
+                if(!(summary.has(res_emotion))) {
+                    summary.set(res_emotion, []);
+                }
+                summary.get(res_emotion).push(res_stmt);
             }
-            summary.get(res_emotion).push(res_stmt);
         }
 
         // spit summary out into the frame (for sending to the user)

@@ -8,6 +8,7 @@ $(document).ready(function() {
         'body': visual_test_body,
         'summary': visual_test_summary,
         'pre_measurement': visual_test_pre_measurement,
+        'post_measurement': visual_test_post_measurement,
         'self_report': visual_test_self_report,
         'consent_disclosure': visual_test_consent_disclosure,
         'end': visual_test_end,
@@ -32,10 +33,22 @@ $(document).ready(function() {
             ['after', SECTION_AFTER],
         ]);
         variant = variants.get(slug);
+
+        let variant_names = Array.from(variants.keys());
+        if(!variant_names.includes(slug)) {
+            console.error('Valid variant names are: ' + variant_names);
+            throw Error('Unknown variant requested: ' + variant);
+        }
     }
 
-    let test_fcn = test_methods[page_to_show];
-    test_fcn(variant);
+    let test_names = Object.keys(test_methods);
+    if(test_names.includes(page_to_show)) {
+        let test_fcn = test_methods[page_to_show];
+        test_fcn(variant);
+    } else {
+        console.error('Valid test names are: ' + test_names);
+        throw Error('Unknown test requested: ' + page_to_show);
+    }
 });
 
 
@@ -84,8 +97,7 @@ function visual_test_end(variant) {
     while(frame.template !== END_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new EndFrame(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
@@ -102,8 +114,7 @@ function visual_test_intro(variant) {
     while(frame.template !== INTRO_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new IntroFrame(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
@@ -120,8 +131,7 @@ function visual_test_body(variant) {
     while(frame.template !== STATEMENTS_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new StatementsBodyFrame(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
@@ -143,22 +153,24 @@ function visual_test_summary(variant) {
     // submit some answers to the model
     let user_input = new Map();
 
-    for(let pair of frame.statements) {
+    for(let pair of frame.items) {
         let stmt = pair[0];
-        user_input.set(stmt, true);
+        let value = {};
+        value.response = true;
+        value.name = frame.response_name;
+        user_input.set(stmt, value);
     }
     model.update(user_input);
 
     while(frame.template === 'statements') {
         frame = model.get_frame('next');
     }
-    let view = new SummaryFrameCount(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
 /*
- * Integration test that invokes LikertFrame to render the pre and post measurement frame of this app.
+ * Integration test that invokes LikertFrame to render the pre measurement frame of this app.
  * Manually verified.
  */
 function visual_test_pre_measurement() {
@@ -166,11 +178,28 @@ function visual_test_pre_measurement() {
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
     let frame = model.get_frame('next');
-    while(frame.template !== LIKERT_FRAME_TEMPLATE) {
+    while(frame.template !== LIKERT_FRAME_TEMPLATE
+          && frame.response_name !== RESPONSE_PRE) {
         frame = model.get_frame('next');
     }
-    let view = new LikertFrame(frame, logger);
-    view.render();
+    frame.render();
+}
+
+
+/*
+ * Integration test that invokes LikertFrame to render the post measurement frame of this app.
+ * Manually verified.
+ */
+function visual_test_post_measurement() {
+    FWD_PROMPTING_CONFIG.set_pre_post_measurement(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
+    let frame = model.get_frame('next');
+    while(frame.template !== LIKERT_FRAME_TEMPLATE 
+          && frame.response_name !== RESPONSE_POST) {
+        frame = model.get_frame('next');
+    }
+    frame.render();
 }
 
 
@@ -187,8 +216,7 @@ function visual_test_self_report() {
         frame = model.get_frame('next');
     }
 
-    let view = new SelfReportFrame(frame, logger);
-    view.render();
+    frame.render();
 }
 
 
@@ -204,6 +232,5 @@ function visual_test_consent_disclosure() {
     while(frame.template !== CONSENT_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    let view = new ConsentDisclosureFrame(frame, logger);
-    view.render();
+    frame.render();
 }

@@ -25,6 +25,9 @@ class SummaryFrame extends Frame {
      *    frame_data.follow_text - text that comes after the list
      *    frame_data.info_sheet_links - true to show 'more info on [emotion]' buttons
      *    frame_data.offer_ideas - true to show 'ideas for dealing with [emotion]' buttons
+     *    frame_data.matched_emotions (object) - list of emotions e, each having these fields:
+     *         e.emotion - the name of the emotion
+     *         e.responses (list of string) - list of matching user responses
      */
     constructor(frame_data) {
         if (new.target == SummaryFrame) {
@@ -191,10 +194,7 @@ class SummaryFrameCount extends SummaryFrame {
      *
      * @param frame_data - Object containing the frame's data. Expected fields:
      *    [All fields specified in parent constructor] and the following:
-     *    frame_data.type - the exact string 'count'
-     *    frame_data.matched_emotions (object) - list of emotions e, each having these fields:
-     *         e.emotion - the name of the emotion
-     *         e.responses (list of string) - list of matching user responses
+     *    frame_data.template - the exact string 'count'
      */
     constructor(frame_data) {
         super(frame_data);
@@ -281,10 +281,7 @@ class SummaryFrameQualifier extends SummaryFrame {
      *
      * @param frame_data - Object containing the frame's data. Expected fields:
      *    [All fields specified in parent constructor] and the following:
-     *    frame_data.type - the exact string 'qualifier'
-     *    frame_data.matched_emotions (object) - list of emotions e, each having these fields:
-     *         e.emotion - the name of the emotion
-     *         e.qualifier - string describing strength of match
+     *    frame_data.template - the exact string 'qualifier'
      */
     constructor(frame_data) {
         super(frame_data);

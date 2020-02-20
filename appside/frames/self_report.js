@@ -21,6 +21,8 @@ class SelfReportFrame extends Frame {
      *    frame_data.questions (Array of map of string) -- 2 key/value pairs
      *    -- formatted as (key: question, value: answer); value is empty string by default
      *    frame_data.qualifiers (Array of string) -- 5 answers for second question
+     *    frame_data.response_name (string) - name this frame will attach to each piece
+     *                 of data in return value of get_user_input
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
@@ -29,6 +31,7 @@ class SelfReportFrame extends Frame {
         this.template = frame_data.template;
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
+        this.response_name = frame_data.response_name;
     }
 
     /**
@@ -93,21 +96,42 @@ class SelfReportFrame extends Frame {
 
     /**
      * Returns map of user input
-     * questions: [
-     * 'question_text': 'answer choice',
-     * ]
-     * @return map of user input
+     * @return Map of
+     *    {question (string): {'name':name (string), 'response':response (int or string)} }
      */
     get_user_input() {
-        var textbox = document.getElementsByTagName('textarea');
-        this.questions[0][1] = $(textbox).val().trim();
+        let input = new Map();
+        let textbox = document.getElementsByTagName('textarea');
+        let value = {};
+        value.response = $(textbox).val().trim();
+        value.name = this.response_name;
+        input.set(this.questions[0][0], value);
 
-        var choices = document.getElementsByTagName('input');
-        for (let each of choices) {
-            if (each.checked) {
-                this.questions[1][1] = each.dataset.text;
+        let choices = document.getElementsByTagName('input');
+        for (let choice of choices) {
+            if (choice.checked) {
+                let value = {};
+                value.name = this.response_name;
+                value.response = choice.dataset.text;
+                input.set(this.questions[1][0], value);
             }
         }
-        return this.questions;
+        return input;
+    }
+
+    /**
+     * Update this frame to reflect user responses in the data set passed in
+     * @param data (UserDataSet)
+     *
+     * @modifies this
+     * @effects - possibly updates this frame's question responses
+     */
+    fill_in_data(data) {
+        for(let tuple of this.questions) { // [question, response]
+            let text = tuple[0];
+            let name = this.response_name;
+            let known_response = data.lookup(text, name).response;
+            tuple[1] = known_response;
+        }
     }
 }

@@ -36,6 +36,7 @@ var SAMPLE_APP = {
             // specify which template to use.
             // depending on what this is, there will be different parameters.
             'template': 'statements',
+            'response_name': 'kittens_1',
             'title': 'Kittens',
             'question': 'What makes a kitten adorable?',
             'graphic': null,
@@ -47,6 +48,7 @@ var SAMPLE_APP = {
         },
         1: {
             'template': 'bodymap_statements',
+            'response_name': 'body_parts_1',
             'title': 'Body map example slide',
             'question': 'What is your favorite body part?',
             'graphic': null,
@@ -60,6 +62,7 @@ var SAMPLE_APP = {
         },
         2: {
             'template': 'bodymap_color',
+            'response_name': 'bodymap_1',
             'title': 'Body map coloring activity',
             'question': 'Research shows this is how sensation levels change for {}. How similar is this to your current state?',
             'emotions': [
@@ -77,6 +80,7 @@ var SAMPLE_APP = {
         },
         3: {
             'template': 'words',
+            'response_name': 'words_1',
             'title': 'Word selection example',
             'question': 'Which words are palindromes?',
             'graphic': null,
@@ -89,6 +93,7 @@ var SAMPLE_APP = {
         },
         4: {
             'template': 'bodymap_color_fwd',
+            'response_name': 'bodymap_color_1',
             'title': 'Body map color forward',
             'texts': [
                 'Select the body parts where you feel increased sensation.',
@@ -103,10 +108,9 @@ var SAMPLE_APP = {
 
     'likert': {
         'template': 'likert',
+        'response_name': 'likert_1',
         'title': 'Measurement form',       
         'instructions': 'Instructions for the user here!',
-        'name': '',
-
         'questions': [          // provided in constructor
             ['Question 1', 2],    // question text, user response 1-5
             ['Question 2', undefined],    // default answer choice = undefined
@@ -115,6 +119,7 @@ var SAMPLE_APP = {
 
     'self_report': {
         'template': 'self_report',
+        'response_name': 'self_report_1',
         'questions': [
             ['Which emotion(s) are you feeling right now after thinking about the Reference Event?', ''],
             ['How certain are you about your answer to the previous question?', 'Disagree'],
@@ -126,6 +131,7 @@ var SAMPLE_APP = {
 
     'consent_disclosure': {
         'title': 'Consent Disclosure Form',
+        'response_name': 'consent_1',
         'template': 'consent_disclosure',
         'instructions': 'Please click on the following link to read the consent disclosure form.',
         'questions': [

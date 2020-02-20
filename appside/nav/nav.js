@@ -36,7 +36,7 @@ class Nav {
      *    Renders the navigation buttons into that div.
      */
     render() {
-        this.view = FrameFactory.build(this.current_frame, this.logger);
+        this.view = this.current_frame;
 
         // make a new empty div with id nav, not yet in the dom
         let nav_menu = document.createElement('div');
@@ -90,34 +90,5 @@ class Nav {
         // TODO: call has_x_frame to verify this is safe
         this.current_frame = this.model.get_frame(slug);
         this.render();
-    }
-}
-
-/**
- * Factory to build various kinds of frame objects polymorphically
- */
-class FrameFactory {
-    /**
-     * Take in a frame template and return the correct type of Frame object,
-     * initialized with the given template field from frame.
-     */
-    static build(frame, logger) {
-        if(frame.template === INTRO_FRAME_TEMPLATE) {
-            return new IntroFrame(frame, logger);
-        } else if(frame.template === STATEMENTS_FRAME_TEMPLATE) {
-            return new StatementsBodyFrame(frame, logger);
-        } else if(frame.template === SUMMARY_COUNT_FRAME_TEMPLATE) {
-            return new SummaryFrameCount(frame, logger);
-        } else if(frame.template === LIKERT_FRAME_TEMPLATE) {
-            return new LikertFrame(frame, logger);
-        } else if(frame.template === SELF_REPORT_FRAME_TEMPLATE) {
-            return new SelfReportFrame(frame, logger);
-        } else if(frame.template === CONSENT_FRAME_TEMPLATE) {
-            return new ConsentDisclosureFrame(frame, logger);
-        } else if (frame.template === END_FRAME_TEMPLATE) {
-            return new EndFrame(frame, logger);
-        } else {
-            throw new Error('Frame template not recognized ' + frame.template);
-        }
     }
 }

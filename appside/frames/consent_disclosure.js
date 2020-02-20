@@ -22,6 +22,8 @@ class ConsentDisclosureFrame extends Frame {
      *    frame_data.instructions (string) -- instructions for user to read pdf
      *    frame_data.questions (Array of map of string) -- question/response pairs
      *    -- formatted as (key: question, value: boolean); value is false by default
+     *    frame_data.response_name (string) - name this frame will attach to each piece
+     *                 of data in return value of get_user_input
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
@@ -31,6 +33,7 @@ class ConsentDisclosureFrame extends Frame {
         this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
         this.user_input = new Map();
+        this.response_name = frame_data.response_name;
     }
 
     /**
@@ -126,20 +129,33 @@ class ConsentDisclosureFrame extends Frame {
 
     /**
      * Returns map of user input
-     * questions: [
-     * 'question_text': 'answer choice',
-     * ]
-     * @return map of user input
+     * @return Map of 
+     *    {statement (string): {'name':name (string), 'response':response (boolean)} }
      */
     get_user_input() {
         var choices = document.getElementsByTagName('input');;
-        for (let each of choices) {
-            if (each.checked) {
-                this.user_input.set(each.dataset.text, true);
-            } else {
-                this.user_input.set(each.dataset.text, false);
-            }
+        for (let item of choices) {
+            let value = {};
+            value.name = this.response_name;
+            value.response = item.checked;
+            this.user_input.set(item.dataset.text, value);
         }
         return this.user_input;
+    }
+
+    /**
+     * Update this frame to reflect user responses in the data set passed in
+     * @param data (UserDataSet)
+     *
+     * @modifies this
+     * @effects - possibly updates this frame's statement responses
+     */
+    fill_in_data(data) {
+        for(let tuple of this.questions) { // [stmt, response]
+            let text = tuple[0];
+            let name = this.response_name;
+            let known_response = data.lookup(text, name).response;
+            tuple[1] = known_response;
+        }
     }
 }
