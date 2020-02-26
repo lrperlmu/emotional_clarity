@@ -67,6 +67,30 @@ class Frame {
     fill_in_data(data) {
         console.log('fill in user data: noop');
     }
+
+    /**
+     * Tell if this is a blocker frame
+     * @return false
+     */
+    is_blocker() {
+        return false;
+    }
+}
+
+
+/**
+ * Placeholder fake frame that can be inserted into a list of frames. It doesn't get
+ * rendered to the user, but once you pass this fame, you can't go back. Cannot be the
+ * last frame in the list.
+ */
+class BlockerFrame extends Frame {
+    /**
+     * Tell if this is a blocker frame
+     * @return false
+     */
+    is_blocker() {
+        return true;
+    }
 }
 
 
