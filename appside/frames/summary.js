@@ -124,7 +124,7 @@ class SummaryFrame extends Frame {
             let match_string = this.build_match_string(item);
             $(list_item).text(match_string);
             $(list_item).attr('class', 'summary_match_list_item');
-            list_item.appendChild(document.createElement('br'));
+            //list_item.appendChild(document.createElement('br'));
 
             // optional content and child-specified content
             list_item.appendChild(this.create_additional_content(item));
@@ -139,6 +139,7 @@ class SummaryFrame extends Frame {
     // Appends each content creator's content, then whitespace.
     create_additional_content(item) {
         let ret = document.createElement('div');
+        $(ret).addClass('summary_additional_content');
         for (let creator of this.additional_content) {
             // need to pass in this in case the method needs to use it, because the way
             //   we're calling these methods makes the 'this' context get lost
@@ -201,18 +202,9 @@ class SummaryFrameCount extends SummaryFrame {
         this.additional_content.unshift(this.create_responses_button);
     }
 
-    // helper method to construct match string using count
+    // helper method to construct match string from item
     build_match_string(item) {
-        let count = item.responses.length;
-        let emotion = item.emotion
-        let ret = '';
-        if (count === 1) {
-            ret = `1 of your responses corresponds with ${emotion}`;
-        }
-        else {
-            ret = `${count} of your responses correspond with ${emotion}`;
-        }
-        return ret;
+        return item.emotion;
     }
 
     // Creates "See which ones" Buttons to display the list of responses
@@ -232,7 +224,12 @@ class SummaryFrameCount extends SummaryFrame {
         // button to make popup appear
         let responses_button = document.createElement('button');
         $(responses_button).attr('type', 'button');
-        $(responses_button).text('see which ones');
+        let count = item.responses.length;
+        if(count === 1) {
+            $(responses_button).text('1 response');
+        } else {
+            $(responses_button).text(`${count} responses`);
+        }
         let responses_popup_id = `responses_popup_${emotion}`;
         $(responses_button).click(function() {
             $('.summary_responses_popup').css('display', 'none');

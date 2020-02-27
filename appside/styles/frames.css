@@ -41,6 +41,15 @@ body {
 .summary_match_list_item {
     margin: 5px 0;
 }
+
+.summary_responses_container {
+    display: inline;
+}
+.summary_additional_content {
+    display: inline;
+    margin-left:20px;
+}
+
 .summary_responses_popup {
     position: absolute;
     display: none;
