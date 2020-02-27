@@ -57,14 +57,7 @@ class Nav {
         // TODO: let frame help with placement
         if(this.fwd_ok) {
             let next = document.createElement('button');
-
-            if(this.fwd_reversible) {
-                $(next).text('next');
-            }
-            else {
-                $(next).text('continue');
-                $(next).addClass('nav_submit_button');
-            }
+            $(next).text('next');
             $(next).click(function() {
                 this.navigate('next');
             }.bind(this));
