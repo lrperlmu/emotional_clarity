@@ -13,6 +13,10 @@ body {
     background: #F8F8F8;
 }
 
+.button_disabled {
+    opacity: 0.5;
+}
+
 .intro_text {
 }
 

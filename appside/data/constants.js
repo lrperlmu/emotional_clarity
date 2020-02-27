@@ -84,7 +84,7 @@ var CONSENT_FRAME_TEMPLATE = 'consent';
 var CONSENT_DISCLOSURE_TITLE = 'Consent';
 var CONSENT_DISCLOSURE_QUESTIONS = ['I have read the information above. I understand the risks of this study and wish to participate.',
     'I am 18 or 19 years old.',
-    'I am not able to read, understand, and respond to a web questionnaire written in English.'];
+    'I am able to read, understand, and respond to a web questionnaire written in English.'];
 var CONSENT_DISCLOSURE_INSTRUCTIONS = 'Please click on the following link to read the consent disclosure form.';
 
 // Summary frame strings (all DBT worksheet models)
