@@ -90,6 +90,7 @@ class DbtWorksheetModelFwd extends Model {
                 this.uds.add(ud);
             }
         }
+        this.frames.push(new BlockerFrame());
         if (this.config.self_report === true) {
             this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
 

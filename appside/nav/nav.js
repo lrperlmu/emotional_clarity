@@ -58,6 +58,7 @@ class Nav {
         if(this.fwd_ok) {
             let next = document.createElement('button');
             $(next).text('next');
+            $(next).addClass('nav_next_button');
             $(next).click(function() {
                 this.navigate('next');
             }.bind(this));
