@@ -106,6 +106,7 @@ class DbtWorksheetModelFwd extends Model {
                 this.uds.add(ud);
             }
         }
+        this.frames.push(new BlockerFrame());
         for(let frame of this.build_intro_frames()) {
             this.frames.push(frame);
         }
@@ -113,6 +114,7 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(frame);
         }
         this.frames.push(this.summary_frame);
+        this.frames.push(new BlockerFrame());
         if (this.config.self_report === true) {
             this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
 
@@ -129,6 +131,7 @@ class DbtWorksheetModelFwd extends Model {
                 this.uds.add(ud);
             }
         }
+        this.frames.push(new BlockerFrame());
         this.frames.push(this.build_end_frame());
         // index into frames
         this.frame_idx = -1;
@@ -311,7 +314,24 @@ class DbtWorksheetModelFwd extends Model {
      * @return true if next frame exists, false if not
      */
     has_next_frame() {
+        console.log('has next');
+        console.log('idx', this.frame_idx);
+        console.log('length', this.frames.length);
+        console.log('frames', this.frames);
+
         if(this.frame_idx >= this.frames.length-1) return false;
+        else return true;
+    }
+
+    /**
+     * If I go to the next frame, can I go back again to this frame?
+     * [For use by NAV.]
+     *
+     * @return true if can go back after advancing
+     */
+    is_next_reversible() {
+        if(this.frames.length > this.frame_idx+1 &&
+            this.frames[this.frame_idx+1].is_blocker()) return false;
         else return true;
     }
 
@@ -324,6 +344,7 @@ class DbtWorksheetModelFwd extends Model {
      */
     next_frame() {
         this.frame_idx += 1;
+        while(this.frames[this.frame_idx].is_blocker()) this.frame_idx += 1;
         let frame = this.frames[this.frame_idx];
         frame.fill_in_data(this.uds);
         return frame;
@@ -333,10 +354,11 @@ class DbtWorksheetModelFwd extends Model {
      * Indicate whether it's safe to call back() or get_frame('back') on this
      * [For use by NAV.]
      *
-     * @return true if previous frame exists, false if not
+     * @return true if previous frame exists and is legal to navigate to, false if not
      */
     has_prev_frame() {
         if(this.frame_idx < 1) return false;
+        else if(this.frames[this.frame_idx-1].is_blocker()) return false;
         else return true;
     }
 

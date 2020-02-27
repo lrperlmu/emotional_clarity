@@ -37,28 +37,32 @@ class Nav {
      */
     render() {
         this.view = this.current_frame;
+        this.set_legal_actions();
 
         // make a new empty div with id nav, not yet in the dom
         let nav_menu = document.createElement('div');
         $(nav_menu).attr('id', 'nav');
 
         // make a back button
-        // TODO: don't make on first slide
-        let back = document.createElement('button');
-        $(back).text('back');
-        $(back).click(function() {
-            this.navigate('back')
-        }.bind(this));
-        nav_menu.appendChild(back);
+        if(this.back_ok) {
+            let back = document.createElement('button');
+            $(back).text('back');
+            $(back).click(function() {
+                this.navigate('back')
+            }.bind(this));
+            nav_menu.appendChild(back);
+        }
 
         // make a next button
-        // TODO: let frame help with placement, don't make on last slide
-        let next = document.createElement('button');
-        $(next).text('next');
-        $(next).click(function() {
-            this.navigate('next');
-        }.bind(this));
-        nav_menu.appendChild(next);
+        // TODO: let frame help with placement
+        if(this.fwd_ok) {
+            let next = document.createElement('button');
+            $(next).text('next');
+            $(next).click(function() {
+                this.navigate('next');
+            }.bind(this));
+            nav_menu.appendChild(next);
+        }
 
         // make an exit button
         // TODO: implement exit navigation.
@@ -90,5 +94,15 @@ class Nav {
         // TODO: call has_x_frame to verify this is safe
         this.current_frame = this.model.get_frame(slug);
         this.render();
+    }
+
+    /**
+     * Query model to set internal fields saying which nav actions are legal
+     * @modifies - this
+     */
+    set_legal_actions() {
+        this.fwd_ok = this.model.has_next_frame();
+        this.back_ok = this.model.has_prev_frame();
+        this.fwd_reversible = this.model.is_next_reversible();
     }
 }
