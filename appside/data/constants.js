@@ -24,6 +24,7 @@ var SECTION_AFTER = 'Aftereffects';
 var RESPONSE_GENERIC = 'response';
 var RESPONSE_PRE = 'pre';
 var RESPONSE_POST = 'post';
+var RESPONSE_INDUCTION = 'induction';
 
 // Body config (all DBT worksheet models)
 var BODY_STATEMENTS_PER_PAGE = 12;
@@ -64,6 +65,17 @@ BODY_QUESTION[SECTION_BIO] = 'What biological changes or experiences you are hav
 BODY_QUESTION[SECTION_ACT] = 'What are your actions and expressions right now in response to the Reference Event?';
 BODY_QUESTION[SECTION_AFTER] = 'What are likely to do, feel, or experience in the near future, now that you have recalled the Reference Event?';
 
+// Mood induction frame strings
+var SHORT_ANSWER_TEMPLATE = 'short_answer';
+var LONG_ANSWER_TEMPLATE = 'long_answer';
+var INDUCTION_TITLE = 'Reference Event';
+var INDUCTION_THINKING_PROMPT = 'Think of an event in your life when someone close to you made you extremely upset. If you can think of more than one upsetting conflict, event, or experience, pick the event that still makes you the most upset and continues to feel the most unresolved. Type a one-line description of the event.';
+var INDUCTION_CHAR_LIMIT = 180;
+var INDUCTION_NOTE = 'This event will be referred to as the "Reference Event"';
+var INDUCTION_WRITING_PROMPT = 'For the next few minutes, try to re-experience the event as vividly as you can. Picture the event happening to you all over again. Picture in your "mind\'s eye" the surroundings as clearly as possible. See the people or objects; hear the sounds; experience the events happening to you. Think the thoughts that this event makes you think. Feel the same feelings that this event makes you feel. Let yourself react as if you were actually in the middle of it right now. While you re-experience the event, write about what is happening in the situation, how the other person or people involved behaved toward you, and what you are thinking. The screen will advance on its own when the time is up. Begin writing now.';
+var INDUCTION_TIME_LIMIT = 130;
+
+
 // Likert frame strings
 var LIKERT_FRAME_TEMPLATE = 'likert';
 var LIKERT_TITLE = 'Likert';
@@ -89,7 +101,7 @@ var CONSENT_DISCLOSURE_INSTRUCTIONS = 'Please click on the following link to rea
 
 // Summary frame strings (all DBT worksheet models)
 var SUMMARY_TITLE = 'Summary';
-var SUMMARY_TEXT = 'Please reflect on this summary to see which emotion(s), if any, resonate most with your experience of the Reference Event.';
+var SUMMARY_TEXT = '<p>This summary shows which emotions your responses are <i>commonly</i> associated with, but they are not the <i>only</i> emotions that may be associated with your responses.</p>Please reflect on this summary to see which emotion(s), if any, resonate most with your experience of the Reference Event.';
 var SUMMARY_FOLLOW_TEXT = 'Thank you for doing this activity.';
 var SUMMARY_COUNT_FRAME_TEMPLATE = 'summary_count';
 

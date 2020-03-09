@@ -17,6 +17,16 @@ body {
     opacity: 0.5;
 }
 
+.short_answer_textbox {
+  width: 100%;
+}
+
+.long_answer_textbox {
+  width: 100%;
+  height: 200px;
+  overflow: scroll;
+}
+
 .intro_text {
 }
 

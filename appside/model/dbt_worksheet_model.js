@@ -82,16 +82,22 @@ class DbtWorksheetModelFwd extends Model {
         // make a list of references to all the frames, so we can index into it
         // add userdataset items where applicable
         this.frames = [];
-        if (this.config.consent_disclosure === true) {
+        if(this.config.mood_induction) {
+            for(let frame of this.build_mood_induction_frames()) {
+                this.frames.push(frame);
+            }
+            this.frames.push(new BlockerFrame());
+        }
+        if(this.config.consent_disclosure) {
             this.frames.push(this.build_consent_disclosure_frame(consent_questions));
 
             for(let item of consent_questions) {
                 let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
                 this.uds.add(ud);
             }
+            this.frames.push(new BlockerFrame());
         }
-        this.frames.push(new BlockerFrame());
-        if (this.config.self_report === true) {
+        if(this.config.self_report) {
             this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
 
             for(let item of self_report_questions) {
@@ -99,7 +105,7 @@ class DbtWorksheetModelFwd extends Model {
                 this.uds.add(ud);
             }
         }
-        if (this.config.pre_post_measurement === true) {
+        if(this.config.pre_post_measurement) {
             this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_PRE));
 
             for(let item of likert_questions) {
@@ -143,6 +149,43 @@ class DbtWorksheetModelFwd extends Model {
             ['next', this.next_frame.bind(this)],
             ['back', this.back.bind(this)],
         ]);
+    }
+
+    /**
+     * Build mood_induction frames for a DBT worksheet model.
+     * @effects - adds some new uds
+     * @modifies - this.uds
+     * @return list of 2 Frames
+     */
+    build_mood_induction_frames() {
+        let short_answer_frame = {};
+        short_answer_frame.template = SHORT_ANSWER_TEMPLATE;
+        short_answer_frame.response_name = RESPONSE_INDUCTION;
+        short_answer_frame.title = INDUCTION_TITLE;
+        short_answer_frame.prompt = INDUCTION_THINKING_PROMPT;
+        short_answer_frame.truncated_prompt = short_answer_frame.prompt.substring(0, 100);
+        short_answer_frame.instruction = INDUCTION_NOTE;
+        short_answer_frame.char_limit = INDUCTION_CHAR_LIMIT;
+        let frame1 = new ShortAnswerFrame(short_answer_frame, this.logger);
+
+        let ud1 = new UserData(
+            short_answer_frame.truncated_prompt, "", [], short_answer_frame.response_name);
+        this.uds.add(ud1);
+
+        let long_answer_frame = {};
+        long_answer_frame.template = LONG_ANSWER_TEMPLATE;
+        long_answer_frame.response_name = RESPONSE_INDUCTION;
+        long_answer_frame.title = INDUCTION_TITLE;
+        long_answer_frame.prompt = INDUCTION_WRITING_PROMPT;
+        long_answer_frame.truncated_prompt = long_answer_frame.prompt.substring(0, 100);
+        long_answer_frame.time_limit = INDUCTION_TIME_LIMIT;
+        let frame2 = new TimedLongAnswerFrame(long_answer_frame, this.logger);
+
+        let ud2 = new UserData(
+            long_answer_frame.truncated_prompt, "", [], long_answer_frame.response_name);
+        this.uds.add(ud2);
+
+        return [frame1, frame2];
     }
 
     /**
@@ -422,7 +465,7 @@ class DbtWorksheetModelFwd extends Model {
      */
     compute_summary() {
         // entries takes the form [ [statement, {emotion: string, response: boolean}], ...]
-        let entries =  this.uds.to_array();
+        let entries = this.uds.to_array();
 
         // filter user data for "true" responses
         let true_responses = entries.filter(
@@ -477,6 +520,17 @@ class DbtWorksheetModelConfig {
         this.pre_post_measurement = false;
         this.self_report = false;
         this.consent_disclosure = false;
+        this.mood_induction = false;
+    }
+
+    /**
+     * Setter for this.mood_induction, tells the model whether to include mood induction
+     * @param value - boolean to set it to
+     * @return this
+     */
+    set_mood_induction(value) {
+        this.mood_induction = value;
+        return this;
     }
 
     /**

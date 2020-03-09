@@ -98,7 +98,8 @@ class SummaryFrame extends Frame {
         flex_div.appendChild(text_col);
 
         // insert at text node for the description
-        let description = document.createTextNode(this.description);
+        let description = document.createElement('div');
+        $(description).html(this.description);
         text_col.appendChild(description);
         text_col.append(document.createElement('br'));
 
@@ -124,7 +125,6 @@ class SummaryFrame extends Frame {
             let match_string = this.build_match_string(item);
             $(list_item).text(match_string);
             $(list_item).attr('class', 'summary_match_list_item');
-            //list_item.appendChild(document.createElement('br'));
 
             // optional content and child-specified content
             list_item.appendChild(this.create_additional_content(item));

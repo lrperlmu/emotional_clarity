@@ -106,6 +106,23 @@ var SAMPLE_APP = {
         }
     },
 
+    'short_answer': {
+        'template': 'short_answer',
+        'response_name': 'induction',
+        'title': 'Reference Event',
+        'prompt': 'Think of the a recent emotional event and type a one line description',
+        'instruction': 'This event will be referred to as the "Reference Event"',
+        'char_limit': 15,
+    },
+
+    'long_answer': {
+        'template': 'long_answer',
+        'response_name': 'induction',
+        'title': 'Reference Event',
+        'prompt': 'For the next few minutes, write about the reference event. The screen will advance on its own when time is up.',
+        'time_limit': 10,
+    },
+
     'likert': {
         'template': 'likert',
         'response_name': 'likert_1',
