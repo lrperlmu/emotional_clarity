@@ -73,15 +73,7 @@ class ConsentDisclosureFrame extends Frame {
         let container = document.createElement('div');
         $(container).attr('class', 'consent_frame');
 
-        let disable_next_button = function() {
-            $('.nav_next_button').prop('disabled', true);
-            $('.nav_next_button').addClass('button_disabled');
-        }
-        let enable_next_button = function() {
-            $('.nav_next_button').prop('disabled', false);
-            $('.nav_next_button').removeClass('button_disabled');
-        }
-        disable_next_button();
+        this.disable_next_button();
 
         for (let question of this.questions) {
             let question_text = question[0];
@@ -95,11 +87,11 @@ class ConsentDisclosureFrame extends Frame {
             $(input).attr('disabled', true);
             // enable next button if all boxes checked. disable if not
             $(input).click(function() {
-                disable_next_button();
+                this.disable_next_button();
                 if($('.consent_input').filter(':not(:checked)').length === 0) {
-                    enable_next_button();
+                    this.enable_next_button();
                 }
-            })
+            }.bind(this))
 
             $(input).prop('checked', answer);
             input.dataset.text = question_text;
@@ -118,7 +110,8 @@ class ConsentDisclosureFrame extends Frame {
             container.appendChild(document.createElement('br'));
         }
 
-        $(pdf).click(function() {   // ONLY when pdf is clicked will checkboxes enable user input
+        // ONLY when pdf is clicked will checkboxes enable user input
+        $(pdf).click(function() {
             container = this.after_form(container);
         }.bind(this));
         frame.appendChild(container);

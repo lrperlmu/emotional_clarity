@@ -7,6 +7,7 @@ $(document).ready(function() {
         'intro': visual_test_intro,
         'body': visual_test_body,
         'summary': visual_test_summary,
+        'induction': visual_test_induction,
         'pre_measurement': visual_test_pre_measurement,
         'post_measurement': visual_test_post_measurement,
         'self_report': visual_test_self_report,
@@ -166,6 +167,33 @@ function visual_test_summary(variant) {
         frame = model.get_frame('next');
     }
     frame.render();
+}
+
+
+/*
+ * Integration test to make sure the induction frame advances by itself.
+ * Timeout set to 2 seconds for this test only.
+ * Introduces a dependency on nav for this test module.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_induction(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_BIO);
+    config.set_mood_induction(true);
+    config.set_self_report(true);
+    config.set_pre_post_measurement(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+
+    let frame = model.get_frame('next');
+    while(frame.template !== LONG_ANSWER_TEMPLATE) {
+        frame = model.get_frame('next');
+    }
+    frame.time_limit = 2;
+    model.back();
+
+    // advance model frame, render nav and frame
+    let nav = new Nav(model, logger);
 }
 
 

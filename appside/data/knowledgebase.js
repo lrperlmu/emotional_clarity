@@ -1,5 +1,6 @@
 // global data structure
-var KNOWLEDGEBASE_DATA = [{"Emotion": "Anger", "Category": "Aftereffects", "Body part": "", "Valence": "Negative", "Statement": "Narrowing of attention."},
+var KNOWLEDGEBASE_DATA = [
+{"Emotion": "Anger", "Category": "Aftereffects", "Body part": "", "Valence": "Negative", "Statement": "Narrowing of attention."},
  {"Emotion": "Anger", "Category": "Aftereffects", "Body part": "", "Valence": "Negative", "Statement": "Attending only to the situation that\u2019s making you angry."},
  {"Emotion": "Anger", "Category": "Aftereffects", "Body part": "", "Valence": "Negative", "Statement": "Ruminating about the situation making you angry or about situations in the past."},
  {"Emotion": "Anger", "Category": "Aftereffects", "Body part": "", "Valence": "Negative", "Statement": "Imagining future situations that will make you angry."},

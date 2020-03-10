@@ -112,7 +112,6 @@ class ListBodyFrame extends Frame {
         for (let tuple of this.items) {
             let statement = tuple[0];
             let answer = tuple[1];
-            let note_text = tuple[2].join(', ');
 
             let name = 'stmt' + i;
             i += 1;
@@ -135,21 +134,6 @@ class ListBodyFrame extends Frame {
             statements.appendChild(label);
             this.user_input.set(statement, 'false');
 
-            // label that appears when the checkbox is checked
-            let note = document.createElement('span');
-            $(note).text(` (${note_text})`);
-            label.appendChild(note);
-            function show_hide_note() {
-                if($(input).prop('checked') === true) {
-                    $(note).attr('class', 'listbody-note-visible');
-                }
-                else {
-                    $(note).attr('class', 'listbody-note-hidden');
-                }
-            };
-            show_hide_note();
-            $(input).change(show_hide_note);
-            
             statements.appendChild(document.createElement('br'));
         }
         text_column.appendChild(statements);
