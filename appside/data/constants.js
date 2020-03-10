@@ -50,10 +50,11 @@ INTRO_MAIN_TEXT[SECTION_INTERP] = 'In the following exercise, you will answer so
 INTRO_MAIN_TEXT[SECTION_BIO] = 'In the following exercise, you will answer some questions about biological changes and experiences you are having right now.';
 INTRO_MAIN_TEXT[SECTION_ACT] = 'In the following exercise, you will answer some questions about your actions and expressions in response to the Reference Event.';
 INTRO_MAIN_TEXT[SECTION_AFTER] = 'In the following exercise, you will answer some questions about things you are likely to do, feel, or experience in the near future, now that you have recalled the Reference Event.';
+var INTRO_TEXT_INFO = 'This exercise may help you reflect on your emotions and gain emotional clarity.'
 var INTRO_TEXT_END = 'Tap NEXT to begin.';
 
 function INTRO_TEXT(section) {
-    return [INTRO_TEXT_START, INTRO_MAIN_TEXT[section], INTRO_TEXT_END];
+    return [INTRO_TEXT_START, INTRO_MAIN_TEXT[section], INTRO_TEXT_INFO, INTRO_TEXT_END];
 }
 
 // Body frame strings

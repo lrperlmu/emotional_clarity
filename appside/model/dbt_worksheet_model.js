@@ -82,18 +82,18 @@ class DbtWorksheetModelFwd extends Model {
         // make a list of references to all the frames, so we can index into it
         // add userdataset items where applicable
         this.frames = [];
-        if(this.config.mood_induction) {
-            for(let frame of this.build_mood_induction_frames()) {
-                this.frames.push(frame);
-            }
-            this.frames.push(new BlockerFrame());
-        }
         if(this.config.consent_disclosure) {
             this.frames.push(this.build_consent_disclosure_frame(consent_questions));
 
             for(let item of consent_questions) {
                 let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
                 this.uds.add(ud);
+            }
+            this.frames.push(new BlockerFrame());
+        }
+        if(this.config.mood_induction) {
+            for(let frame of this.build_mood_induction_frames()) {
+                this.frames.push(frame);
             }
             this.frames.push(new BlockerFrame());
         }
@@ -185,7 +185,7 @@ class DbtWorksheetModelFwd extends Model {
             long_answer_frame.truncated_prompt, "", [], long_answer_frame.response_name);
         this.uds.add(ud2);
 
-        return [frame1, frame2];
+        return [frame1, new BlockerFrame(), frame2];
     }
 
     /**
@@ -358,11 +358,6 @@ class DbtWorksheetModelFwd extends Model {
      * @return true if next frame exists, false if not
      */
     has_next_frame() {
-        console.log('has next');
-        console.log('idx', this.frame_idx);
-        console.log('length', this.frames.length);
-        console.log('frames', this.frames);
-
         if(this.frame_idx >= this.frames.length-1) return false;
         else return true;
     }

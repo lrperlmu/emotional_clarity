@@ -65,7 +65,6 @@ class Frame {
      * @effects updates this frame's data
      */
     fill_in_data(data) {
-        console.log('fill in user data: noop');
     }
 
     /**
@@ -74,6 +73,24 @@ class Frame {
      */
     is_blocker() {
         return false;
+    }
+
+    /**
+     * Disable the next button so user can't advance (nav functionality)
+     * @effects -- disables next button if it was enabled
+     */
+    disable_next_button() {
+        $('.nav_next_button').prop('disabled', true);
+        $('.nav_next_button').addClass('button_disabled');
+    }
+
+    /**
+     * Enable the next button so user can advance (nav functionality)
+     * @effects -- enables next button if it was disabled
+     */
+    enable_next_button() {
+        $('.nav_next_button').prop('disabled', false);
+        $('.nav_next_button').removeClass('button_disabled');
     }
 }
 

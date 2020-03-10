@@ -59,7 +59,6 @@ class TextboxFrame extends Frame {
      */
     fill_in_data(data) {
         let known_response = data.lookup(this.truncated_prompt, this.response_name).response;
-        console.log('known response', known_response);
         this.response = known_response;
     }
 }
@@ -85,6 +84,7 @@ class ShortAnswerFrame extends TextboxFrame {
         super(frame_data, logger);
         this.instruction = frame_data.instruction
         this.char_limit = frame_data.char_limit;
+        this.template = frame_data.template;
     }
 
     /**
@@ -143,6 +143,7 @@ class TimedLongAnswerFrame extends TextboxFrame {
     constructor(frame_data, logger) {
         super(frame_data, logger);
         this.time_limit = frame_data.time_limit;
+        this.template = frame_data.template;
     }
 
     /**
@@ -174,6 +175,14 @@ class TimedLongAnswerFrame extends TextboxFrame {
         $(textbox).addClass('long_answer_textbox');
         $(textbox).val(this.response);
         frame.appendChild(textbox);
+
+        // machinery to prevent advancing until timeout and advance at that time
+        this.disable_next_button();
+        let timeout_millis = this.time_limit * 1000;
+        let auto_advance = function() {
+            $('.nav_next_button').click();
+        }.bind(this);
+        setTimeout(auto_advance, timeout_millis);
 
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
