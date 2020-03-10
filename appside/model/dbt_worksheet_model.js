@@ -155,7 +155,7 @@ class DbtWorksheetModelFwd extends Model {
      * Build mood_induction frames for a DBT worksheet model.
      * @effects - adds some new uds
      * @modifies - this.uds
-     * @return list of 2 Frames
+     * @return list of Frames
      */
     build_mood_induction_frames() {
         let short_answer_frame = {};
