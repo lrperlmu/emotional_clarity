@@ -65,9 +65,8 @@ class TextboxFrame extends Frame {
 
 
 /**
- *
- *
- **/
+ * TextboxFrame with a small text box and a character limit
+ */
 class ShortAnswerFrame extends TextboxFrame {
 
     /**
@@ -130,6 +129,10 @@ class ShortAnswerFrame extends TextboxFrame {
 }
 
 
+/**
+ * TextboxFrame with a large text box and a time limit
+ * Auto-advances after time limit
+ */
 class TimedLongAnswerFrame extends TextboxFrame {
     /**
      * Construct TimedLongAnswerFrame from an object
@@ -181,15 +184,10 @@ class TimedLongAnswerFrame extends TextboxFrame {
         let timeout_millis = this.time_limit * 1000;
         let auto_advance = function() {
             $('.nav_next_button').click();
-        }.bind(this);
+        };
         setTimeout(auto_advance, timeout_millis);
 
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
     }
 }
-
-
-
-
-
