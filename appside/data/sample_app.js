@@ -134,6 +134,17 @@ var SAMPLE_APP = {
         ],
     },
 
+    'postq1': {
+        'template': 'form',
+        'title': 'Feedback',
+        'response_name': 'postq1',
+        'questions': [
+            ['Did the app help?', 'yesno'],
+            ['What parts were helpful?', 'text'],
+        ],
+    },
+
+
     'self_report': {
         'template': 'self_report',
         'response_name': 'self_report_1',

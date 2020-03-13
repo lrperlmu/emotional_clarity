@@ -8,7 +8,7 @@ $(document).ready(function() {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_BIO);
     //config.set_consent_disclosure(true);
     //config.set_mood_induction(true);
-    //config.set_self_report(true);
+    config.set_self_report(true);
     //config.set_pre_post_measurement(true);
 
     let logger = new Logger();
