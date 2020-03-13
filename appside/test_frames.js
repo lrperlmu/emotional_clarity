@@ -220,7 +220,7 @@ function postq1_main() {
     let frame_data = sample_app.postq1;
 
     let frame = new FormFrame(frame_data, new MockLogger());
-    frame.responses[0] = 'No';
+    frame.responses[0] = 'Yes';
     frame.render();
 
 }

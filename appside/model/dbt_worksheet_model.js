@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * dbt_worksheet_model.js
@@ -122,7 +122,7 @@ class DbtWorksheetModelFwd extends Model {
         }
         this.frames.push(this.summary_frame);
         this.frames.push(new BlockerFrame());
-        if (this.config.self_report === true) {
+        if (this.config.self_report) {
             this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
 
             for(let item of self_report_questions) {
@@ -130,7 +130,7 @@ class DbtWorksheetModelFwd extends Model {
                 this.uds.add(ud);
             }
         }
-        if (this.config.pre_post_measurement === true) {
+        if(this.config.pre_post_measurement) {
             this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_POST));
 
             for(let item of likert_questions) {
@@ -139,7 +139,14 @@ class DbtWorksheetModelFwd extends Model {
             }
         }
         this.frames.push(new BlockerFrame());
+        if(this.config.feedback) {
+            for(let frame of this.build_feedback_frames()) {
+                this.frames.push(frame);
+            }
+        }
+        this.frames.push(new BlockerFrame());
         this.frames.push(this.build_end_frame());
+
         // index into frames
         this.frame_idx = -1;
 
@@ -169,7 +176,7 @@ class DbtWorksheetModelFwd extends Model {
         let frame1 = new ShortAnswerFrame(short_answer_frame, this.logger);
 
         let ud1 = new UserData(
-            short_answer_frame.truncated_prompt, "", [], short_answer_frame.response_name);
+            short_answer_frame.truncated_prompt, '', [], short_answer_frame.response_name);
         this.uds.add(ud1);
 
         let long_answer_frame = {};
@@ -182,7 +189,7 @@ class DbtWorksheetModelFwd extends Model {
         let frame2 = new TimedLongAnswerFrame(long_answer_frame, this.logger);
 
         let ud2 = new UserData(
-            long_answer_frame.truncated_prompt, "", [], long_answer_frame.response_name);
+            long_answer_frame.truncated_prompt, '', [], long_answer_frame.response_name);
         this.uds.add(ud2);
 
         return [frame1, new BlockerFrame(), frame2];
@@ -325,6 +332,32 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
+     * Build feedback frames
+     *
+     * @return the list of frames
+     */
+    build_feedback_frames() {
+        let ret = [];
+        for(let idx of [1, 2]) {
+            let page_string = `page_${idx}`;
+            let frame = {};
+            frame.template = FEEDBACK_FRAME_TEMPLATE;
+            frame.title = FEEDBACK_TITLE;
+            frame.questions = FEEDBACK_QUESTIONS[page_string];
+            frame.response_name = RESPONSE_GENERIC;
+            ret.push(new FormFrame(frame, this.logger));
+
+            for(let question of frame.questions) {
+                let text = question[0];
+                let ud = new UserData(text, '', [], RESPONSE_GENERIC);
+                this.uds.add(ud);
+            }
+        }
+        return ret;
+    }
+
+
+    /**
      * Build summary frame for a DBT worksheet model.
      *
      * @return the summary frame
@@ -462,7 +495,7 @@ class DbtWorksheetModelFwd extends Model {
         // entries takes the form [ [statement, {emotion: string, response: boolean}], ...]
         let entries = this.uds.to_array();
 
-        // filter user data for "true" responses
+        // filter user data for 'true' responses
         let true_responses = entries.filter(
             entry => entry[1].response === true
         );
@@ -516,6 +549,17 @@ class DbtWorksheetModelConfig {
         this.self_report = false;
         this.consent_disclosure = false;
         this.mood_induction = false;
+        this.feedback = false;
+    }
+
+    /**
+     * Setter for this.feedback, tells the model whether to include feedback
+     * @param value - boolean to set it to
+     * @return this
+     */
+    set_feedback(value) {
+        this.feedback = value;
+        return this;
     }
 
     /**

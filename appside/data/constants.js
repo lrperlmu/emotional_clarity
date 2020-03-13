@@ -117,3 +117,18 @@ var END_CONTACT = `<p>This study has asked you to recall potentially distressing
 <li>National Suicide Prevention Lifeline: 1-800-273-8255</li>
 </ul>
 `;
+
+// Feedback frames
+var FEEDBACK_FRAME_TEMPLATE = 'feedback';
+var FEEDBACK_TITLE = 'Feedback';
+var FEEDBACK_QUESTIONS = {
+    'page_1': [
+        ['Did the app help you figure out your emotion(s)?', 'yesno'],
+        ['Which specific parts of the app were most helpful and why?', 'text'],
+    ],
+    'page_2': [
+        ['Which features did you like the most?', 'text'],
+        ['Which features did you like the least?', 'text'],
+        ['What would you add or change, and why?', 'text'],
+    ],
+};
