@@ -121,6 +121,10 @@ var END_CONTACT = `<p>This study has asked you to recall potentially distressing
 // Feedback frames
 var FEEDBACK_FRAME_TEMPLATE = 'feedback';
 var FEEDBACK_TITLE = 'Feedback';
+var FEEDBACK_YESNO_OPTIONS = ['Yes', 'No'];
+var FEEDBACK_LIKERT_OPTIONS = [
+    'Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree',
+];
 var FEEDBACK_QUESTIONS = {
     'page_1': [
         ['Did the app help you figure out your emotion(s)?', 'yesno'],
@@ -130,5 +134,10 @@ var FEEDBACK_QUESTIONS = {
         ['Which features did you like the most?', 'text'],
         ['Which features did you like the least?', 'text'],
         ['What would you add or change, and why?', 'text'],
+    ],
+    'page_3': [
+        ['I would use this app in real life.', 'likert'],
+        ['This app would be useful to me in the future.', 'likert'],
+        ['In which future situations or moments would you want to use this app most?', 'text'],
     ],
 };

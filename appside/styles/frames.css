@@ -410,6 +410,10 @@ body {
 
 .form_radio {
     display: inline;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.form_choice_label {
+    margin-left: 5px;
 }

@@ -133,7 +133,9 @@ class FormElement {
         if(type === 'text') {
             return new TextFormElement();
         } else if(type === 'yesno') {
-            return new YesNoFormElement();
+            return new RadioButtonFormElement(FEEDBACK_YESNO_OPTIONS);
+        } else if(type === 'likert') {
+            return new RadioButtonFormElement(FEEDBACK_LIKERT_OPTIONS);
         }
     }
 
@@ -153,10 +155,22 @@ class FormElement {
 }
 
 
-class YesNoFormElement extends FormElement {
+/**
+ * FormElement that makes radio buttons
+ */
+class RadioButtonFormElement extends FormElement {
+    /**
+     * Construct RadioButtonFormElement with the given choices
+     * @param choices (list of string) - choices for the radio buttons
+     */
+    constructor(choices) {
+        super();
+        this.choices = choices;
+    }
 
     /**
-     * Construct html element containing radio buttons for 'Yes' and 'No'
+     * Construct html element containing a radio button for each choice in
+     *   this.choices
      *
      * @param text (string) - ignored
      * @param known_response (string) - response to be checked or empty string
@@ -167,7 +181,7 @@ class YesNoFormElement extends FormElement {
         let ret = document.createElement('div');
 
         // button and label for each possible answer
-        for(let resp of ['Yes', 'No']) {
+        for(let resp of this.choices) {
             let div = document.createElement('div');
             $(div).addClass('form_radio');
 
@@ -182,6 +196,7 @@ class YesNoFormElement extends FormElement {
             div.appendChild(button);
 
             let label = document.createElement('label');
+            $(label).addClass('form_choice_label');
             $(label).attr('for', `q_${q_idx}_${resp}`);
             $(label).text(resp);
             div.appendChild(label);
@@ -200,14 +215,19 @@ class YesNoFormElement extends FormElement {
     get_input(q_idx) {
         // value of checked button with the given question id in its name
         let ret = '';
-        ret = $(`input[name='q_${q_idx}']:checked`).val();
+        let $checked_button = $(`input[name='q_${q_idx}']:checked`);
+        if($checked_button.length !== 0) {
+            ret = $checked_button.val();
+        }
         return ret;
     }
 }
 
 
+/**
+ * FormElement that makes text boxes
+ */
 class TextFormElement extends FormElement {
-
     /**
      * Construct html element containing a text box
      *
@@ -236,5 +256,4 @@ class TextFormElement extends FormElement {
         let ret = $(`#q_${q_idx}_input`).val();
         return ret;
     }
-
 }

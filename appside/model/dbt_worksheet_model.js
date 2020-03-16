@@ -338,7 +338,7 @@ class DbtWorksheetModelFwd extends Model {
      */
     build_feedback_frames() {
         let ret = [];
-        for(let idx of [1, 2]) {
+        for(let idx of [1, 2, 3]) {
             let page_string = `page_${idx}`;
             let frame = {};
             frame.template = FEEDBACK_FRAME_TEMPLATE;
@@ -353,6 +353,7 @@ class DbtWorksheetModelFwd extends Model {
                 this.uds.add(ud);
             }
         }
+        console.log('feedback frames', ret);
         return ret;
     }
 
