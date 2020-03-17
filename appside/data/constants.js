@@ -141,3 +141,12 @@ var FEEDBACK_QUESTIONS = {
         ['In which future situations or moments would you want to use this app most?', 'text'],
     ],
 };
+
+var FEEDBACK_PLATFORMS = ['Phone', 'Computer', 'Robot'];
+var FEEDBACK_COMPARISON_INSTRUCTION = 'Suppose this app is made available on three different platforms: {}.';
+var FEEDBACK_PLACEHOLDER = '{}';
+var FEEDBACK_COMPARISON_SKELETON = [
+    'How likely are you to use it on {}, and why?',
+    'In which situations would you prefer {} over the others?',
+];
+

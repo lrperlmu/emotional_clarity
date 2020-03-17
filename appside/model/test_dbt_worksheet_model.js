@@ -14,6 +14,8 @@ $(document).ready(function() {
         'end': visual_test_end,
         'noerror': all_wkshts_noerror,
 
+        'shuffle': test_shuffle,
+
         'induction': visual_test_induction,
         'postq': postq,
     }
@@ -56,6 +58,18 @@ $(document).ready(function() {
 
 
 /*
+ * Manual check: Make sure that 6 different lists are output
+ */
+function test_shuffle() {
+    for(let key of [0, 1, 2, 3, 4, 5]) {
+        let src = [0, 1, 2];
+        let out = DbtWorksheetModelFwd.shuffle3(key, src);
+        console.log(out);
+    }
+}
+
+
+/*
  * Flip through all the frames of each config. Manually check console to make sure there's no error
  * @param variant - placeholder arg for consistency w/other tests. ignored
  */
@@ -73,6 +87,7 @@ function all_wkshts_noerror(variant) {
         console.log('ok\n\n');
     }
 }
+
 
 /*
  * Helper method for all_wkshts_noerror
@@ -276,7 +291,9 @@ function postq(variant) {
     while(frame.template !== FEEDBACK_FRAME_TEMPLATE) {
         frame = model.get_frame('next');
     }
-    model.back();
+    model.get_frame('next');
+    model.get_frame('next');
+    //model.back();
 
     let nav = new Nav(model, logger);
 

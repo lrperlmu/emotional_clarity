@@ -353,10 +353,58 @@ class DbtWorksheetModelFwd extends Model {
                 this.uds.add(ud);
             }
         }
+
+        // For the last 3 frames, shuffle order
+        let platforms = FEEDBACK_PLATFORMS.concat(); // shallow copy
+        let key = 0; // TODO: take key from user's start token
+        platforms = DbtWorksheetModelFwd.shuffle3(key, platforms);
+        let order_string = `${platforms[0]}, ${platforms[1]}, and ${platforms[2]}`;
+
+        for(let platform of platforms) {
+            let frame = {};
+            frame.template = FEEDBACK_FRAME_TEMPLATE;
+            frame.title = FEEDBACK_TITLE;
+            frame.instruction = FEEDBACK_COMPARISON_INSTRUCTION.replace(
+                FEEDBACK_PLACEHOLDER, order_string);
+            frame.response_name = RESPONSE_GENERIC;
+
+            let questions = [];
+            for(let q of FEEDBACK_COMPARISON_SKELETON) {
+                let question = q.concat(); // make a copy
+                question = question.replace(FEEDBACK_PLACEHOLDER, platform.toUpperCase());
+                questions.push([question, 'text']);
+                this.uds.add(new UserData(question, '', [], RESPONSE_GENERIC));
+            }
+            frame.questions = questions;
+
+            ret.push(new FormFrame(frame, this.logger));
+        }
+
         console.log('feedback frames', ret);
         return ret;
     }
 
+    /**
+     * Shuffle a list of 3 things. Keys that are different mod 6 will return different
+     * orderings of the list.
+     * @param key (int) - determines shuffled order
+     * @param src (array) - things to shuffle
+     * @return a new array that is a shuffled copy of src
+     */
+    static shuffle3(key, src) {
+        let ret = [];
+
+        let first = key % 3;
+        ret.push(src[first]);
+        src.splice(first, 1);
+
+        let second = key % 2;
+        ret.push(src[second]);
+        src.splice(second, 1);
+
+        ret.push(src[0]);
+        return ret;
+    }
 
     /**
      * Build summary frame for a DBT worksheet model.

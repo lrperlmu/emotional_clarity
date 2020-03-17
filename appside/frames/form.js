@@ -15,6 +15,7 @@ class FormFrame extends Frame {
      * @param frame_data -- Object containing the frame's data. Expected fields:
      *    frame_data.template (string) -- the exact string 'form'
      *    frame_data.title (string) -- title
+     *    frame_data.instruction (string) -- instruction
      *    frame_data.questions (list) -- each entry in the form [question, type]
      *          question (string) -- text to show user
      *          type (string) -- how to render the question: 'text' or 'yesno'
@@ -28,6 +29,7 @@ class FormFrame extends Frame {
 
         this.template = frame_data.template;
         this.title = frame_data.title;
+        this.instruction = frame_data.instruction;
         this.questions = frame_data.questions;
         this.response_name = frame_data.response_name;
         this.logger = logger;
@@ -49,6 +51,11 @@ class FormFrame extends Frame {
         $(title).addClass('font-weight-light mb-4');
         frame.appendChild(title);
 
+        // instructions
+        let instruction = document.createElement('h5');
+        $(instruction).text(this.instruction);
+        //$(instruction).addClass('font-weight-light mb-4');
+        frame.appendChild(instruction);
 
         let q_idx = 0;
         for(let q_info of this.questions) {
@@ -109,6 +116,10 @@ class FormFrame extends Frame {
      */
     fill_in_data(data) {
         let q_idx = 0;
+        console.log('FormFrame fill in data');
+        console.log('questions', this.questions);
+
+
         for(let q_info of this.questions) {
             let text = q_info[0];
             let type = q_info[1];
