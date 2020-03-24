@@ -82,6 +82,8 @@ class DbtWorksheetModelFwd extends Model {
         // make a list of references to all the frames, so we can index into it
         // add userdataset items where applicable
         this.frames = [];
+        this.frames.push(this.build_start_frame());
+        this.frames.push(new BlockerFrame());
         if(this.config.consent_disclosure) {
             this.frames.push(this.build_consent_disclosure_frame(consent_questions));
 
@@ -156,6 +158,31 @@ class DbtWorksheetModelFwd extends Model {
             ['next', this.next_frame.bind(this)],
             ['back', this.back.bind(this)],
         ]);
+    }
+
+    /**
+     * Build start frame that takes in a passcode
+     * @effects - adds a new ud
+     * @modifies - this.uds
+     * @return list of Frames
+     */
+    build_start_frame() {
+        let start_frame = {};
+        start_frame.template = START_FRAME_TEMPLATE;
+        start_frame.title = START_TITLE;
+        start_frame.instruction = START_INSTRUCTION;
+        start_frame.questions = START_QUESTIONS;
+        start_frame.response_name = RESPONSE_GENERIC;
+
+        for(let q of START_QUESTIONS) {
+            console.log('question', q);
+            let ud = new UserData(q[0], '', [], start_frame.response_name);
+            this.uds.add(ud);
+        }
+
+        let ret = new FormFrame(start_frame, this.logger);
+        console.log('ret', ret);
+        return ret;
     }
 
     /**
@@ -380,7 +407,6 @@ class DbtWorksheetModelFwd extends Model {
             ret.push(new FormFrame(frame, this.logger));
         }
 
-        console.log('feedback frames', ret);
         return ret;
     }
 

@@ -13,7 +13,7 @@ class FormFrame extends Frame {
      * Construct FormFrame from an object
      *
      * @param frame_data -- Object containing the frame's data. Expected fields:
-     *    frame_data.template (string) -- the exact string 'form'
+     *    frame_data.template (string) -- name selected by caller
      *    frame_data.title (string) -- title
      *    frame_data.instruction (string) -- instruction
      *    frame_data.questions (list) -- each entry in the form [question, type]
@@ -70,6 +70,7 @@ class FormFrame extends Frame {
 
             // render the input field -- dispatch to proper type of FormElement
             let element = FormElement.generate(type);
+            element.set_parent(this);
             let html_element = element.generate_html(text, response, q_idx);
             frame.appendChild(html_element);
 
@@ -116,10 +117,6 @@ class FormFrame extends Frame {
      */
     fill_in_data(data) {
         let q_idx = 0;
-        console.log('FormFrame fill in data');
-        console.log('questions', this.questions);
-
-
         for(let q_info of this.questions) {
             let text = q_info[0];
             let type = q_info[1];
@@ -147,7 +144,21 @@ class FormElement {
             return new RadioButtonFormElement(FEEDBACK_YESNO_OPTIONS);
         } else if(type === 'likert') {
             return new RadioButtonFormElement(FEEDBACK_LIKERT_OPTIONS);
+        } else if (type === 'entry_code_button') {
+            return new EntryCodeButtonFormElement();
+        } else {
+            console.error('unrecognized form element type', type);
         }
+    }
+
+    /**
+     * Set parent
+     * @param parent - FormFrame
+     * @modifies this
+     * @effects - sets this.parent
+     */
+    set_parent(parent) {
+        this.parent = parent;
     }
 
     /**
@@ -266,5 +277,72 @@ class TextFormElement extends FormElement {
         // contents of textbox with given index
         let ret = $(`#q_${q_idx}_input`).val();
         return ret;
+    }
+}
+
+
+/**
+ * Form element for the specific button that checks the entry code
+ * at the start of the app.
+ */
+class EntryCodeButtonFormElement extends FormElement {
+
+    /**
+     * Construct the button
+     *
+     * @param text (string) - ignored
+     * @param known_response (string) - to be shown in the text box
+     * @param q_idx (int) - question number of this question
+     * @return the button as an html element
+     */
+    generate_html(text, resposne, q_idx) {
+        this.parent.disable_next_button();
+
+        // insert a button
+        let button = document.createElement('button');
+        $(button).attr('id', `q_${q_idx}_input`);
+        $(button).text(START_BUTTON_TEXT);
+        $(button).click(function() {
+            // get the entry code text area
+            let code = $(`#q_0_input`).val();
+
+            // look it up in firebase and wait for the response -- TODO
+            let response = {'type':'demo', 'used': 3}
+            //let response = {'type': 'single_use', 'used': 0};
+            //let response = {'type': 'single_use', 'used': 1};
+
+            let type = response.type;
+            let used = response.used;
+
+            // enable next button if applicable
+            // message to user
+            let message = START_MESSAGE_UNRECOGNIZED;
+            let pass = false;
+            if(type === 'demo') {
+                message = START_MESSAGE_DEMO;
+                pass = true;
+            } else if(type === 'single_use') {
+                if(used === 0) {
+                    message= START_MESSAGE_VALID;
+                    pass = true;
+                } else {
+                    message = START_MESSAGE_USED;
+                }
+            }
+            if(pass) {
+                this.parent.enable_next_button();
+            }
+            alert(message);
+        }.bind(this));
+        return button;
+    }
+
+    /**
+     * Get the input -- placeholder since there is no input here
+     * @param q_idx (int) - question index
+     * @return (string) empty string
+     */
+    get_input(q_idx) {
+        return '';
     }
 }

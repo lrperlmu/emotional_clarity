@@ -18,6 +18,7 @@ $(document).ready(function() {
 
         'induction': visual_test_induction,
         'postq': postq,
+        'entry': test_entry_button,
     }
     let page_types = Object.keys(test_methods);
     let page_to_show = page_types[0];
@@ -281,6 +282,10 @@ function visual_test_induction(variant) {
 }
 
 
+/*
+ * Integration test of the post-quesionnaire
+ * Manually verification: make sure the given answers appear when going fwd and back
+ */
 function postq(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
     config.set_feedback(true);
@@ -298,3 +303,29 @@ function postq(variant) {
     let nav = new Nav(model, logger);
 
 }
+
+
+/*
+ * Integration test of entry code button.
+ * Manually verify:
+ * - invalid code --> invalid message, next disabled
+ * - demo code --> demo code message, next enabled
+ * - valid code --> valid message, next enabled
+ * - used code --> used message, next disabled
+ */
+function test_entry_button(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+
+    // it's the first frame, don't do this. anyway, back is not supported here.
+    // let frame = model.get_frame('next');
+    // while(frame.template !== START_FRAME_TEMPLATE) {
+    //     frame = model.get_frame('next');
+    // }
+    // model.back();
+
+    let nav = new Nav(model, logger);
+}
+
+
