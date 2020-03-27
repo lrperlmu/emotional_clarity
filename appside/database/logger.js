@@ -38,6 +38,14 @@ class Logger {
         this.signIn = auth.signInAnonymously();
     }
 
+
+    checkEntryCode(code) {
+        this.signIn.then(credential => {
+        });
+
+    }
+
+
     /**
      * Stores responses into the database. Overwrites any values previously logged
      * using this method in the current session. Keys and values of the input map will
