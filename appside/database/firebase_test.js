@@ -5,8 +5,17 @@ $(document).ready(function() {
 
     initialize();
 
-    
+    let actionCodeSettings = {
+        url: 'https://lrperlmu.github.io/emotional_clarity/appside/demo.html',
+        //'file:///home/leah/work/emotional_clarity/appside/demo.html',
+        handleCodeInApp: true,
+    }
 
+    let auth = firebase.auth();
+    let promise = auth.sendSignInLinkToEmail('leahp62@gmail.com', actionCodeSettings);
+
+    promise.catch(err => {console.log(err)});
+    promise.then(nothing => {console.log('complete')});
 
 });
 
