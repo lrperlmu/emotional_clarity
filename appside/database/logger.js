@@ -34,15 +34,45 @@ class Logger {
         }
 
         let auth = firebase.auth();
-        // returns a Promise that will store the user credentials when resolved
-        this.signIn = auth.signInAnonymously();
-    }
 
+        // figure out if the link is valid
+        let valid_link = auth.isSignInWithEmailLink(window.location.href);
 
-    checkEntryCode(code) {
-        this.signIn.then(credential => {
-        });
+        //Try skipping this part, make sure that it fails if the link is wrong.
+        //if not, alert with error
+        if(!valid_link) {
+            alert('Invalid link');
+            return;
+        }
+        // TODO: confirm signin from frame before displaying next button
 
+        let count = 0;
+        let email_address_prompt = 'Email address';
+        let signInCallback = function() {
+
+            // prompt for email address
+            let email = prompt(email_address_prompt);
+            if(email === null) {
+                email = '';
+            }
+
+            // attempt to log in
+            // returns a Promise that will store the user credentials when resolved
+            //this.signIn = auth.signInAnonymously();
+            this.signIn = auth.signInWithEmailLink(email, window.location.href);
+
+            // if fail, (signIn.catch) re-prompt for email address, and add a message saying
+            //    to contact the researcher if in error
+            this.signIn.catch(error => {
+                console.log('caught:', error);
+                email_address_prompt = 'Wrong, enter email again';
+                count += 1;
+                if(count < 5) {
+                    signInCallback();
+                }
+            });
+        }.bind(this);
+        signInCallback();
     }
 
 
