@@ -6,7 +6,8 @@ $(document).ready(function() {
     initialize();
 
     let actionCodeSettings = {
-        url: 'https://lrperlmu.github.io/emotional_clarity/appside/demo.html',
+        url: 'http://localhost:1337/appside/demo.html',
+        //url: 'https://lrperlmu.github.io/emotional_clarity/appside/demo.html',
         //'file:///home/leah/work/emotional_clarity/appside/demo.html',
         handleCodeInApp: true,
     }

@@ -152,14 +152,10 @@ var FEEDBACK_COMPARISON_SKELETON = [
 
 // start frame
 var START_FRAME_TEMPLATE = 'start';
-var START_TITLE = 'Welcome';
+var START_TITLE = 'Emotional Clarity Study';
 var START_INSTRUCTION = '';
 var START_QUESTIONS = [
-    ['Enter code to begin', 'text'],
+    ['Enter email address to begin', 'text'],
     [' ', 'entry_code_button'],
 ];
-var START_BUTTON_TEXT = 'Check code';
-var START_MESSAGE_UNRECOGNIZED = 'Unrecognized code.';
-var START_MESSAGE_DEMO = 'Demo code valid for demonstration purposes only. Not eligible for study participation or payment. Click NEXT to continue.';
-var START_MESSAGE_VALID = 'Unique code recognized. Eligible for study participation and payment. Click NEXT to continue.';
-var START_MESSAGE_USED = 'This unique code has already been used.';
+var START_BUTTON_TEXT = 'verify';

@@ -145,7 +145,7 @@ class FormElement {
         } else if(type === 'likert') {
             return new RadioButtonFormElement(FEEDBACK_LIKERT_OPTIONS);
         } else if (type === 'entry_code_button') {
-            return new EntryCodeButtonFormElement();
+            return new ActionButtonFormElement();
         } else {
             console.error('unrecognized form element type', type);
         }
@@ -285,7 +285,7 @@ class TextFormElement extends FormElement {
  * Form element for the specific button that checks the entry code
  * at the start of the app.
  */
-class EntryCodeButtonFormElement extends FormElement {
+class ActionButtonFormElement extends FormElement {
 
     /**
      * Construct the button
@@ -304,35 +304,23 @@ class EntryCodeButtonFormElement extends FormElement {
         $(button).text(START_BUTTON_TEXT);
         $(button).click(function() {
             // get the entry code text area
-            let code = $(`#q_0_input`).val();
+            let email = $(`#q_0_input`).val();
 
-            // look it up in firebase and wait for the response -- TODO
-            let response = {'type':'demo', 'used': 3}
-            //let response = {'type': 'single_use', 'used': 0};
-            //let response = {'type': 'single_use', 'used': 1};
+            // use the logger to log in
+            console.log('parent', this.parent);
+            let signIn = this.parent.logger.signInUser(email);
 
-            let type = response.type;
-            let used = response.used;
+            // if fail, don't enable, alert (start button still works)
+            signIn.catch(error => {
+                alert('failed to sign in');
+            });
 
-            // enable next button if applicable
-            // message to user
-            let message = START_MESSAGE_UNRECOGNIZED;
-            let pass = false;
-            if(type === 'demo') {
-                message = START_MESSAGE_DEMO;
-                pass = true;
-            } else if(type === 'single_use') {
-                if(used === 0) {
-                    message= START_MESSAGE_VALID;
-                    pass = true;
-                } else {
-                    message = START_MESSAGE_USED;
-                }
-            }
-            if(pass) {
+            // if success, enable next button, alert
+            signIn.then(credential => {
                 this.parent.enable_next_button();
-            }
-            alert(message);
+                alert('signed in!');
+            });
+
         }.bind(this));
         return button;
     }
