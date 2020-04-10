@@ -36,12 +36,11 @@ class Logger {
         this.signIn = new Promise(function(resolve, reject) {
             reject(new Error('Not signed in'));
         });
-
-        console.log('end constructor');
+        this.signIn.catch(error => {});
     }
 
     /**
-     * Signs in using the given email address, if the current url is a valid
+     * Sign in using the given email address, if the current url is a valid
      *     email sign-in link and the given email address matches it.
      *
      * @effects - might sign in to firebase
@@ -60,6 +59,18 @@ class Logger {
     }
 
     /**
+     * Sign in anonymously.
+     *
+     * @effects - sign in to firebase
+     * @modifies - this.signIn by setting it to a new promise
+     * @return promise that resolves when signed in, rejects when sign-in fails
+     */
+    signInAnonymously() {
+        this.signIn = firebase.auth().signInAnonymously();
+        return this.signIn;
+    }
+
+    /**
      * Stores responses into the database. Overwrites any values previously logged
      * using this method in the current session. Keys and values of the input map will
      * be cleaned of illegal characters and stored as strings.
@@ -69,6 +80,10 @@ class Logger {
      * @param uds (UserDataSet) - the data to write into firebase
      */
     logUds(uds) {
+        // this should only happen if the user hacked sign-in validation
+        this.signIn.catch(error => {
+            alert(LOGGER_NOT_SIGNED_IN);
+        });
         this.signIn.then(credential => {
             for(let ud of uds) {
                 // clean the strings.

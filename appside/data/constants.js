@@ -159,3 +159,13 @@ var START_QUESTIONS = [
     [' ', 'entry_code_button'],
 ];
 var START_BUTTON_TEXT = 'verify';
+
+var START_ERR = 'Failed to sign in.';
+var START_ERR_EXPIRED = 'Invalid link. Please make sure that you got here by clicking the link in your (most recent) sign-in email and that you have not signed in using this link before. Links expire if not used within a few hours, so you may need to contact the study team for a new one.';
+var START_ERR_INVALID_EMAIL = 'Please enter the email address that your sign-in link was sent to.';
+var START_ERR_DISABLED = 'This user account is not valid.';
+var START_ERR_UNK = 'Please contact the research team to notify us of the error code above and get help signing in.';
+var START_ERR_CONTACT = 'Contact the research team if you think you are receiving this message in error.';
+var START_WARN_DEMO = 'Warning: Data is not being recorded, and you will not be eligible for study compensation. USE THIS APP AT YOUR OWN RISK.';
+
+var LOGGER_NOT_SIGNED_IN = 'Error: User not validated. Data is not being recorded, and you will not be eligible for study compensation. Please close your browser tab and start over.';

@@ -175,13 +175,11 @@ class DbtWorksheetModelFwd extends Model {
         start_frame.response_name = RESPONSE_GENERIC;
 
         for(let q of START_QUESTIONS) {
-            console.log('question', q);
             let ud = new UserData(q[0], '', [], start_frame.response_name);
             this.uds.add(ud);
         }
 
         let ret = new FormFrame(start_frame, this.logger);
-        console.log('ret', ret);
         return ret;
     }
 

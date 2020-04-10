@@ -307,22 +307,45 @@ class ActionButtonFormElement extends FormElement {
             let email = $(`#q_0_input`).val();
 
             // use the logger to log in
-            console.log('parent', this.parent);
-            let signIn = this.parent.logger.signInUser(email);
-
-            // if fail, don't enable, alert (start button still works)
-            signIn.catch(error => {
-                alert('failed to sign in');
-            });
-
-            // if success, enable next button, alert
-            signIn.then(credential => {
-                this.parent.enable_next_button();
-                alert('signed in!');
-            });
+            let signIn;
+            if(email === 'lab-demo-only') {
+                alert(START_WARN_DEMO);
+                signIn = this.parent.logger.signInAnonymously();
+                this.attachHandlers(signIn);
+            } else {
+                signIn = this.parent.logger.signInUser(email);
+	        this.attachHandlers(signIn);
+            }
 
         }.bind(this));
         return button;
+    }
+
+    /**
+     * Define and attach handlers to the sign-in event. Helper method for generate_html.
+     */
+    attachHandlers(signIn) {
+        // if success, enable next button, and alert user to success
+        signIn.then(credential => {
+            this.parent.enable_next_button();
+            alert('Successfully verified!');
+            $('.nav_next_button').click();
+        });
+
+        // if sign-in fails, alert user appropriately
+        signIn.catch(error => {
+            let message = START_ERR;
+            if(error.code === 'auth/invalid-action-code') {
+                message += '\n\n' + START_ERR_EXPIRED;
+            } else if(error.code === 'auth/invalid-email') {
+                message += '\n\n' + START_ERR_INVALID_EMAIL + '\n\n' + START_ERR_CONTACT;
+            } else if(error.code === 'auth/user-disabled') {
+                message += '\n\n' + START_ERR_DISABLED + '\n\n' + START_ERR_CONTACT;
+            } else {
+                message += '\n\n' + 'Error code ' + error.code + '\n\n' + START_ERR_UNK;
+            }
+            alert(message);
+        });
     }
 
     /**
