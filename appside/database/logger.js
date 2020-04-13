@@ -99,6 +99,27 @@ class Logger {
     }
 
     /**
+     * Generate a new participant id and assign it to this user
+     * @return the pid
+     */
+    newPid() {
+        return this.signIn.then(credential => {
+            let ref = firebase.database().ref('pid/counter');
+            let transaction = ref.transaction(
+                // transactionUpdate function
+                function(count) {
+                    // increment or initialize the count, and re-store
+                    let ret = (count || 0) + 1;
+                    console.log('newPid?: pid', ret);
+                    return ret;
+                },
+            );
+        });
+        ///  aaaaah inception. how do I get the data out of this 
+        //// nested nest of promises?
+    }
+
+    /**
      * Transform a string so it's suitable for storing in firebase
      * @param str (string)
      */
