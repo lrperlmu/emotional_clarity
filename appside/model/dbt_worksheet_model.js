@@ -13,6 +13,10 @@ class DbtWorksheetModelFwd extends Model {
 
     /**
      * Construct model from data
+     * NOTE: construction is not finished when this constructor returns
+     *     It is ony done upon resolution of the promise this.initialize.
+     *     Anything to be done after initialization must be wrapped in
+     *     this.initialize.then(...);
      * @param knowledgebase - js object containing the DBT worksheet data
      * @param config - DbtWorksheetModelConfig object with specifics for the model
      */
@@ -20,6 +24,13 @@ class DbtWorksheetModelFwd extends Model {
         super(logger);
 
         this.config = config;
+        this.initialize = this.async_init();
+        this.pid = null;
+
+        this.initialize.then(() => {
+            console.log('participant id', this.pid);
+            logger.logUserPid(this.pid);
+        });
 
         // get all the statements for this section
         let section = config.section;
@@ -81,81 +92,99 @@ class DbtWorksheetModelFwd extends Model {
 
         // make a list of references to all the frames, so we can index into it
         // add userdataset items where applicable
-        this.frames = [];
-        if(this.config.consent_disclosure) {
-            this.frames.push(this.build_consent_disclosure_frame(consent_questions));
+        this.initialize.then(() => {
+            this.frames = [];
+            if(this.config.consent_disclosure) {
+                this.frames.push(this.build_consent_disclosure_frame(consent_questions));
 
-            for(let item of consent_questions) {
-                let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
-                this.uds.add(ud);
+                for(let item of consent_questions) {
+                    let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
+                    this.uds.add(ud);
+                }
+                this.frames.push(new BlockerFrame());
+            }
+            if(this.config.mood_induction) {
+                for(let frame of this.build_mood_induction_frames()) {
+                    this.frames.push(frame);
+                }
+                this.frames.push(new BlockerFrame());
+            }
+            if(this.config.self_report) {
+                this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
+
+                for(let item of self_report_questions) {
+                    let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
+                    this.uds.add(ud);
+                }
+            }
+            if(this.config.pre_post_measurement) {
+                this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_PRE));
+
+                for(let item of likert_questions) {
+                    let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
+                    this.uds.add(ud);
+                }
             }
             this.frames.push(new BlockerFrame());
-        }
-        if(this.config.mood_induction) {
-            for(let frame of this.build_mood_induction_frames()) {
+            for(let frame of this.build_intro_frames()) {
                 this.frames.push(frame);
+            }
+            for(let frame of body_frames) {
+                this.frames.push(frame);
+            }
+            this.frames.push(this.summary_frame);
+            this.frames.push(new BlockerFrame());
+            if (this.config.self_report) {
+                this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
+
+                for(let item of self_report_questions) {
+                    let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
+                    this.uds.add(ud);
+                }
+            }
+            if(this.config.pre_post_measurement) {
+                this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_POST));
+
+                for(let item of likert_questions) {
+                    let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
+                    this.uds.add(ud);
+                }
             }
             this.frames.push(new BlockerFrame());
-        }
-        if(this.config.self_report) {
-            this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
-
-            for(let item of self_report_questions) {
-                let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
-                this.uds.add(ud);
+            if(this.config.feedback) {
+                for(let frame of this.build_feedback_frames()) {
+                    this.frames.push(frame);
+                }
             }
-        }
-        if(this.config.pre_post_measurement) {
-            this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_PRE));
+            this.frames.push(new BlockerFrame());
+            this.frames.push(this.build_end_frame());
 
-            for(let item of likert_questions) {
-                let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
-                this.uds.add(ud);
-            }
-        }
-        this.frames.push(new BlockerFrame());
-        for(let frame of this.build_intro_frames()) {
-            this.frames.push(frame);
-        }
-        for(let frame of body_frames) {
-            this.frames.push(frame);
-        }
-        this.frames.push(this.summary_frame);
-        this.frames.push(new BlockerFrame());
-        if (this.config.self_report) {
-            this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
+            // index into frames
+            this.frame_idx = -1;
 
-            for(let item of self_report_questions) {
-                let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
-                this.uds.add(ud);
-            }
-        }
-        if(this.config.pre_post_measurement) {
-            this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_POST));
+            // function mapping for get_frame. It's initialized here so that child classes
+            //    can optionally add entries
+            this.nav_functions = new Map([
+                ['next', this.next_frame.bind(this)],
+                ['back', this.back.bind(this)],
+            ]);
+        });
+    }
 
-            for(let item of likert_questions) {
-                let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
-                this.uds.add(ud);
-            }
-        }
-        this.frames.push(new BlockerFrame());
-        if(this.config.feedback) {
-            for(let frame of this.build_feedback_frames()) {
-                this.frames.push(frame);
-            }
-        }
-        this.frames.push(new BlockerFrame());
-        this.frames.push(this.build_end_frame());
-
-        // index into frames
-        this.frame_idx = -1;
-
-        // function mapping for get_frame. It's initialized here so that child classes
-        //    can optionally add entries
-        this.nav_functions = new Map([
-            ['next', this.next_frame.bind(this)],
-            ['back', this.back.bind(this)],
-        ]);
+    /**
+     * Do asynchronous initialization stuff such as database reads.
+     * Top level code can use then() to do things after this.
+     * @return promise that resolves when initialization is done
+     */
+    async_init() {
+        let pid_promise = this.logger.incrementPid();
+        pid_promise.then(function(result) {
+            this.pid = result.snapshot.val();
+        }.bind(this));
+        pid_promise.catch(error => {
+            console.error('failed to get participant id');
+        });
+        return pid_promise;
     }
 
     /**
@@ -356,8 +385,7 @@ class DbtWorksheetModelFwd extends Model {
 
         // For the last 3 frames, shuffle order
         let platforms = FEEDBACK_PLATFORMS.concat(); // shallow copy
-        let key = 0; // TODO: take key from user's start token
-        platforms = DbtWorksheetModelFwd.shuffle3(key, platforms);
+        platforms = DbtWorksheetModelFwd.shuffle3(this.pid, platforms);
         let order_string = `${platforms[0]}, ${platforms[1]}, and ${platforms[2]}`;
 
         for(let platform of platforms) {
