@@ -2,13 +2,13 @@
 
 
 /**
- * Rendering (View) code for post activity survey frames
+ * Rendering (View) code for generic frames with a configurable mixture of
+ *   form elements
  * @author Leah Perlmutter
  */
 
 
 class FormFrame extends Frame {
-
     /**
      * Construct FormFrame from an object
      *
@@ -18,7 +18,7 @@ class FormFrame extends Frame {
      *    frame_data.instruction (string) -- instruction
      *    frame_data.questions (list) -- each entry in the form [question, type]
      *          question (string) -- text to show user
-     *          type (string) -- how to render the question: 'text' or 'yesno'
+     *          type (string) -- how to render the question: 'text', 'yesno', or 'likert'
      *    frame_data.response_name (string) - name this frame will attach to each piece
      *                 of data in return value of get_user_input
      *
@@ -40,6 +40,14 @@ class FormFrame extends Frame {
         }
     }
 
+    /**
+     * Render this frame into the DOM
+     *
+     * @require -- DOM must have a div whose ID is 'frame'
+     *
+     * @effects -- Does not preserve former content of <div id="frame">.
+     *    Renders the data from this into that div.
+     */
     render() {
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div');
@@ -54,7 +62,6 @@ class FormFrame extends Frame {
         // instructions
         let instruction = document.createElement('h5');
         $(instruction).text(this.instruction);
-        //$(instruction).addClass('font-weight-light mb-4');
         frame.appendChild(instruction);
 
         let q_idx = 0;
@@ -75,7 +82,6 @@ class FormFrame extends Frame {
 
             q_idx += 1;
         }
-
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
     }
@@ -116,10 +122,6 @@ class FormFrame extends Frame {
      */
     fill_in_data(data) {
         let q_idx = 0;
-        console.log('FormFrame fill in data');
-        console.log('questions', this.questions);
-
-
         for(let q_info of this.questions) {
             let text = q_info[0];
             let type = q_info[1];
@@ -253,7 +255,6 @@ class TextFormElement extends FormElement {
         $(textbox).attr('id', `q_${q_idx}_input`);
         $(textbox).addClass('long_answer_textbox');
         $(textbox).val(response);
-
         return textbox;
     }
 

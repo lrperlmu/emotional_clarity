@@ -101,7 +101,7 @@ class Logger {
     }
 
     /**
-     * Generate a new participant id and assign it to this user
+     * Generate a new participant id
      *
      * @param handle_outcome - function(error, written, data_snapshot)
      *        that will be passed in to transaction as the onComplete callback
