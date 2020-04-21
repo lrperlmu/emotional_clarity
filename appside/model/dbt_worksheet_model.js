@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * dbt_worksheet_model.js
@@ -13,6 +13,10 @@ class DbtWorksheetModelFwd extends Model {
 
     /**
      * Construct model from data
+     * NOTE: construction is not finished when this constructor returns
+     *     It is ony done upon resolution of the promise this.initialize.
+     *     Anything to be done after initialization must be wrapped in
+     *     this.initialize.then(...);
      * @param knowledgebase - js object containing the DBT worksheet data
      * @param config - DbtWorksheetModelConfig object with specifics for the model
      */
@@ -20,6 +24,13 @@ class DbtWorksheetModelFwd extends Model {
         super(logger);
 
         this.config = config;
+        this.initialize = this.async_init();
+        this.pid = null;
+
+        this.initialize.then(() => {
+            console.log('participant id', this.pid);
+            logger.logUserPid(this.pid);
+        });
 
         // get all the statements for this section
         let section = config.section;
@@ -81,74 +92,99 @@ class DbtWorksheetModelFwd extends Model {
 
         // make a list of references to all the frames, so we can index into it
         // add userdataset items where applicable
-        this.frames = [];
-        if(this.config.consent_disclosure) {
-            this.frames.push(this.build_consent_disclosure_frame(consent_questions));
+        this.initialize.then(() => {
+            this.frames = [];
+            if(this.config.consent_disclosure) {
+                this.frames.push(this.build_consent_disclosure_frame(consent_questions));
 
-            for(let item of consent_questions) {
-                let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
-                this.uds.add(ud);
+                for(let item of consent_questions) {
+                    let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
+                    this.uds.add(ud);
+                }
+                this.frames.push(new BlockerFrame());
+            }
+            if(this.config.mood_induction) {
+                for(let frame of this.build_mood_induction_frames()) {
+                    this.frames.push(frame);
+                }
+                this.frames.push(new BlockerFrame());
+            }
+            if(this.config.self_report) {
+                this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
+
+                for(let item of self_report_questions) {
+                    let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
+                    this.uds.add(ud);
+                }
+            }
+            if(this.config.pre_post_measurement) {
+                this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_PRE));
+
+                for(let item of likert_questions) {
+                    let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
+                    this.uds.add(ud);
+                }
             }
             this.frames.push(new BlockerFrame());
-        }
-        if(this.config.mood_induction) {
-            for(let frame of this.build_mood_induction_frames()) {
+            for(let frame of this.build_intro_frames()) {
                 this.frames.push(frame);
             }
+            for(let frame of body_frames) {
+                this.frames.push(frame);
+            }
+            this.frames.push(this.summary_frame);
             this.frames.push(new BlockerFrame());
-        }
-        if(this.config.self_report) {
-            this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
+            if (this.config.self_report) {
+                this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
 
-            for(let item of self_report_questions) {
-                let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
-                this.uds.add(ud);
+                for(let item of self_report_questions) {
+                    let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
+                    this.uds.add(ud);
+                }
             }
-        }
-        if(this.config.pre_post_measurement) {
-            this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_PRE));
+            if(this.config.pre_post_measurement) {
+                this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_POST));
 
-            for(let item of likert_questions) {
-                let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
-                this.uds.add(ud);
+                for(let item of likert_questions) {
+                    let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
+                    this.uds.add(ud);
+                }
             }
-        }
-        this.frames.push(new BlockerFrame());
-        for(let frame of this.build_intro_frames()) {
-            this.frames.push(frame);
-        }
-        for(let frame of body_frames) {
-            this.frames.push(frame);
-        }
-        this.frames.push(this.summary_frame);
-        this.frames.push(new BlockerFrame());
-        if (this.config.self_report === true) {
-            this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
-
-            for(let item of self_report_questions) {
-                let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
-                this.uds.add(ud);
+            this.frames.push(new BlockerFrame());
+            if(this.config.feedback) {
+                for(let frame of this.build_feedback_frames()) {
+                    this.frames.push(frame);
+                }
             }
-        }
-        if (this.config.pre_post_measurement === true) {
-            this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_POST));
+            this.frames.push(new BlockerFrame());
+            this.frames.push(this.build_end_frame());
 
-            for(let item of likert_questions) {
-                let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
-                this.uds.add(ud);
-            }
-        }
-        this.frames.push(new BlockerFrame());
-        this.frames.push(this.build_end_frame());
-        // index into frames
-        this.frame_idx = -1;
+            // index into frames
+            this.frame_idx = -1;
 
-        // function mapping for get_frame. It's initialized here so that child classes
-        //    can optionally add entries
-        this.nav_functions = new Map([
-            ['next', this.next_frame.bind(this)],
-            ['back', this.back.bind(this)],
-        ]);
+            // function mapping for get_frame. It's initialized here so that child classes
+            //    can optionally add entries
+            this.nav_functions = new Map([
+                ['next', this.next_frame.bind(this)],
+                ['back', this.back.bind(this)],
+            ]);
+        });
+    }
+
+    /**
+     * Do asynchronous initialization stuff such as database reads.
+     * Top level code can use then() to do things after this.
+     * @return promise that resolves when initialization is done
+     */
+    async_init() {
+        let pid_promise = this.logger.incrementPid();
+        pid_promise.then(function(result) {
+            this.pid = result.snapshot.val();
+        }.bind(this));
+        pid_promise.catch(error => {
+            console.error('failed to get participant id');
+        });
+        return pid_promise;
     }
 
     /**
@@ -169,7 +205,7 @@ class DbtWorksheetModelFwd extends Model {
         let frame1 = new ShortAnswerFrame(short_answer_frame, this.logger);
 
         let ud1 = new UserData(
-            short_answer_frame.truncated_prompt, "", [], short_answer_frame.response_name);
+            short_answer_frame.truncated_prompt, '', [], short_answer_frame.response_name);
         this.uds.add(ud1);
 
         let long_answer_frame = {};
@@ -182,7 +218,7 @@ class DbtWorksheetModelFwd extends Model {
         let frame2 = new TimedLongAnswerFrame(long_answer_frame, this.logger);
 
         let ud2 = new UserData(
-            long_answer_frame.truncated_prompt, "", [], long_answer_frame.response_name);
+            long_answer_frame.truncated_prompt, '', [], long_answer_frame.response_name);
         this.uds.add(ud2);
 
         return [frame1, new BlockerFrame(), frame2];
@@ -325,6 +361,80 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
+     * Build feedback frames
+     *
+     * @return the list of frames
+     */
+    build_feedback_frames() {
+        let ret = [];
+        for(let idx of [1, 2, 3]) {
+            let page_string = `page_${idx}`;
+            let frame = {};
+            frame.template = FEEDBACK_FRAME_TEMPLATE;
+            frame.title = FEEDBACK_TITLE;
+            frame.questions = FEEDBACK_QUESTIONS[page_string];
+            frame.response_name = RESPONSE_GENERIC;
+            ret.push(new FormFrame(frame, this.logger));
+
+            for(let question of frame.questions) {
+                let text = question[0];
+                let ud = new UserData(text, '', [], RESPONSE_GENERIC);
+                this.uds.add(ud);
+            }
+        }
+
+        // For the last 3 frames, shuffle order
+        let platforms = FEEDBACK_PLATFORMS.concat(); // shallow copy
+        platforms = DbtWorksheetModelFwd.shuffle3(this.pid, platforms);
+        let order_string = `${platforms[0]}, ${platforms[1]}, and ${platforms[2]}`;
+
+        for(let platform of platforms) {
+            let frame = {};
+            frame.template = FEEDBACK_FRAME_TEMPLATE;
+            frame.title = FEEDBACK_TITLE;
+            frame.instruction = FEEDBACK_COMPARISON_INSTRUCTION.replace(
+                FEEDBACK_PLACEHOLDER, order_string);
+            frame.response_name = RESPONSE_GENERIC;
+
+            let questions = [];
+            for(let q of FEEDBACK_COMPARISON_SKELETON) {
+                let question = q.concat(); // make a copy
+                question = question.replace(FEEDBACK_PLACEHOLDER, platform.toUpperCase());
+                questions.push([question, 'text']);
+                this.uds.add(new UserData(question, '', [], RESPONSE_GENERIC));
+            }
+            frame.questions = questions;
+
+            ret.push(new FormFrame(frame, this.logger));
+        }
+
+        console.log('feedback frames', ret);
+        return ret;
+    }
+
+    /**
+     * Shuffle a list of 3 things. Keys that are different mod 6 will return different
+     * orderings of the list.
+     * @param key (int) - determines shuffled order
+     * @param src (array) - things to shuffle
+     * @return a new array that is a shuffled copy of src
+     */
+    static shuffle3(key, src) {
+        let ret = [];
+
+        let first = key % 3;
+        ret.push(src[first]);
+        src.splice(first, 1);
+
+        let second = key % 2;
+        ret.push(src[second]);
+        src.splice(second, 1);
+
+        ret.push(src[0]);
+        return ret;
+    }
+
+    /**
      * Build summary frame for a DBT worksheet model.
      *
      * @return the summary frame
@@ -462,7 +572,7 @@ class DbtWorksheetModelFwd extends Model {
         // entries takes the form [ [statement, {emotion: string, response: boolean}], ...]
         let entries = this.uds.to_array();
 
-        // filter user data for "true" responses
+        // filter user data for 'true' responses
         let true_responses = entries.filter(
             entry => entry[1].response === true
         );
@@ -516,6 +626,17 @@ class DbtWorksheetModelConfig {
         this.self_report = false;
         this.consent_disclosure = false;
         this.mood_induction = false;
+        this.feedback = false;
+    }
+
+    /**
+     * Setter for this.feedback, tells the model whether to include feedback
+     * @param value - boolean to set it to
+     * @return this
+     */
+    set_feedback(value) {
+        this.feedback = value;
+        return this;
     }
 
     /**

@@ -76,7 +76,6 @@ class ShortAnswerFrame extends TextboxFrame {
      *    frame_data.template (string) -- the exact string 'short_answer'
      *    frame_data.instruction (string) -- after text box
      *    frame_data.char_limit (positive int) -- character limit
-     *
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data, logger) {

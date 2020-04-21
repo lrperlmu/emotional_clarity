@@ -24,6 +24,7 @@ $(document).ready(function() {
         'self_report': self_report_main,
         'consent_disclosure': consent_disclosure_main,
         'end': end_main,
+        'postq1': postq1_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -190,7 +191,6 @@ function likert_main() {
     frame.render();
 }
 
-
 function self_report_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.self_report;
@@ -213,4 +213,14 @@ function end_main() {
 
     let frame = new EndFrame(frame_data, new MockLogger());
     frame.render();
+}
+
+function postq1_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.postq1;
+
+    let frame = new FormFrame(frame_data, new MockLogger());
+    frame.responses[0] = 'Yes';
+    frame.render();
+
 }

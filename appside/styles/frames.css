@@ -407,3 +407,13 @@ body {
 .consent_label[grayed=false] {
   color: auto;
 }
+
+.form_radio {
+    display: inline;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.form_choice_label {
+    margin-left: 5px;
+}

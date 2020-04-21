@@ -10,9 +10,12 @@ $(document).ready(function() {
     //config.set_mood_induction(true);
     //config.set_self_report(true);
     //config.set_pre_post_measurement(true);
+    config.set_feedback(true);
 
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
-    let nav = new Nav(model, logger);
-    nav.render();
+    model.initialize.then(() => {
+        let nav = new Nav(model, logger);
+        nav.render();
+    });
 });

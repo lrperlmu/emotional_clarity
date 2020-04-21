@@ -7,13 +7,17 @@ $(document).ready(function() {
         'intro': visual_test_intro,
         'body': visual_test_body,
         'summary': visual_test_summary,
-        'induction': visual_test_induction,
         'pre_measurement': visual_test_pre_measurement,
         'post_measurement': visual_test_post_measurement,
         'self_report': visual_test_self_report,
         'consent_disclosure': visual_test_consent_disclosure,
         'end': visual_test_end,
         'noerror': all_wkshts_noerror,
+
+        'shuffle': test_shuffle,
+
+        'induction': visual_test_induction,
+        'postq': postq,
     }
     let page_types = Object.keys(test_methods);
     let page_to_show = page_types[0];
@@ -54,6 +58,18 @@ $(document).ready(function() {
 
 
 /*
+ * Manual check: Make sure that 6 different lists are output
+ */
+function test_shuffle() {
+    for(let key of [0, 1, 2, 3, 4, 5]) {
+        let src = [0, 1, 2];
+        let out = DbtWorksheetModelFwd.shuffle3(key, src);
+        console.log(out);
+    }
+}
+
+
+/*
  * Flip through all the frames of each config. Manually check console to make sure there's no error
  * @param variant - placeholder arg for consistency w/other tests. ignored
  */
@@ -71,6 +87,7 @@ function all_wkshts_noerror(variant) {
         console.log('ok\n\n');
     }
 }
+
 
 /*
  * Helper method for all_wkshts_noerror
@@ -171,33 +188,6 @@ function visual_test_summary(variant) {
 
 
 /*
- * Integration test to make sure the induction frame advances by itself.
- * Timeout set to 2 seconds for this test only.
- * Introduces a dependency on nav for this test module.
- * Manually verified.
- * @param variant - the variant to test
- */
-function visual_test_induction(variant) {
-    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_BIO);
-    config.set_mood_induction(true);
-    config.set_self_report(true);
-    config.set_pre_post_measurement(true);
-    let logger = new Logger();
-    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
-
-    let frame = model.get_frame('next');
-    while(frame.template !== LONG_ANSWER_TEMPLATE) {
-        frame = model.get_frame('next');
-    }
-    frame.time_limit = 2;
-    model.back();
-
-    // advance model frame, render nav and frame
-    let nav = new Nav(model, logger);
-}
-
-
-/*
  * Integration test that invokes LikertFrame to render the pre measurement frame of this app.
  * Manually verified.
  */
@@ -261,4 +251,51 @@ function visual_test_consent_disclosure() {
         frame = model.get_frame('next');
     }
     frame.render();
+}
+
+
+/*
+ * Integration test to make sure the induction frame advances by itself.
+ * Timeout set to 2 seconds for this test only.
+ * Introduces a dependency on nav for this test module.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_induction(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_mood_induction(true);
+    config.set_self_report(true);
+    config.set_pre_post_measurement(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+
+    let frame = model.get_frame('next');
+    while(frame.template !== LONG_ANSWER_TEMPLATE) {
+        frame = model.get_frame('next');
+    }
+    frame.time_limit = 2;
+    model.back();
+
+    // advance model frame, render nav and frame
+    let nav = new Nav(model, logger);
+}
+
+
+function postq(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_feedback(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+
+        let frame = model.get_frame('next');
+        while(frame.template !== FEEDBACK_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('next');
+        model.get_frame('next');
+        //model.back();
+
+        let nav = new Nav(model, logger);
+    });
 }

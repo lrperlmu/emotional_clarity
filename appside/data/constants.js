@@ -117,3 +117,36 @@ var END_CONTACT = `<p>This study has asked you to recall potentially distressing
 <li>National Suicide Prevention Lifeline: 1-800-273-8255</li>
 </ul>
 `;
+
+// Feedback frames
+var FEEDBACK_FRAME_TEMPLATE = 'feedback';
+var FEEDBACK_TITLE = 'Feedback';
+var FEEDBACK_YESNO_OPTIONS = ['Yes', 'No'];
+var FEEDBACK_LIKERT_OPTIONS = [
+    'Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree',
+];
+var FEEDBACK_QUESTIONS = {
+    'page_1': [
+        ['Did the app help you figure out your emotion(s)?', 'yesno'],
+        ['Which specific parts of the app were most helpful and why?', 'text'],
+    ],
+    'page_2': [
+        ['Which features did you like the most?', 'text'],
+        ['Which features did you like the least?', 'text'],
+        ['What would you add or change, and why?', 'text'],
+    ],
+    'page_3': [
+        ['I would use this app in real life.', 'likert'],
+        ['This app would be useful to me in the future.', 'likert'],
+        ['In which future situations or moments would you want to use this app most?', 'text'],
+    ],
+};
+
+var FEEDBACK_PLATFORMS = ['Phone', 'Computer', 'Robot'];
+var FEEDBACK_COMPARISON_INSTRUCTION = 'Suppose this app is made available on three different platforms: {}.';
+var FEEDBACK_PLACEHOLDER = '{}';
+var FEEDBACK_COMPARISON_SKELETON = [
+    'How likely are you to use it on {}, and why?',
+    'In which situations would you prefer {} over the others?',
+];
+
