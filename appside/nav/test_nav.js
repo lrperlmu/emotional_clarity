@@ -14,6 +14,8 @@ $(document).ready(function() {
 
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
-    let nav = new Nav(model, logger);
-    nav.render();
+    model.initialize.then(() => {
+        let nav = new Nav(model, logger);
+        nav.render();
+    });
 });

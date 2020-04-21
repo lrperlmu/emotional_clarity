@@ -291,17 +291,18 @@ function postq(variant) {
     config.set_feedback(true);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
 
-    let frame = model.get_frame('next');
-    while(frame.template !== FEEDBACK_FRAME_TEMPLATE) {
-        frame = model.get_frame('next');
-    }
-    model.get_frame('next');
-    model.get_frame('next');
-    //model.back();
+        let frame = model.get_frame('next');
+        while(frame.template !== FEEDBACK_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('next');
+        model.get_frame('next');
+        //model.back();
 
-    let nav = new Nav(model, logger);
-
+        let nav = new Nav(model, logger);
+    });
 }
 
 

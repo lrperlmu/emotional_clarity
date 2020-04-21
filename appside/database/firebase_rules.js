@@ -4,23 +4,27 @@
 
 {
     "rules": {
+      	".read": false,
         "measures": {
             "$user_id" : {
                 ".write": "$user_id === auth.uid",
-                ".read": "$user_id === auth.uid",
             },
         },
         "events": {
             "$user_id" : {
                 ".write": "$user_id === auth.uid",
-                ".read": "$user_id === auth.uid",
             },
         },
         "app-responses": {
             "$user_id" : {
                 ".write": "$user_id === auth.uid",
-                ".read": "$user_id === auth.uid",
+            },
+        },
+       "completion_codes": {
+            "$user_id" : {
+                ".write": "$user_id === auth.uid",
             },
         },
     }
 }
+
