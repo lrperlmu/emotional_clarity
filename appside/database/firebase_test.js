@@ -28,6 +28,7 @@ function sendSignInEmail() {
 }
 
 
+// sign in a user
 function sign_in() {
     let auth = firebase.auth();
     let signIn = auth.signInWithEmailAndPassword('leahp62@gmail.com', '123456');
@@ -50,6 +51,7 @@ function reset_pw() {
 }
 
 
+// create a user
 function create_user() {
     // create account with email and pw
     let auth = firebase.auth();

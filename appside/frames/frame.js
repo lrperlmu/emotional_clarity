@@ -76,6 +76,14 @@ class Frame {
     }
 
     /**
+     * Tell if this is a placeholder frame
+     * @return false
+     */
+    is_placeholder() {
+        return false;
+    }
+
+    /**
      * Disable the next button so user can't advance (nav functionality)
      * @effects -- disables next button if it was enabled
      */
@@ -96,16 +104,42 @@ class Frame {
 
 
 /**
- * Placeholder fake frame that can be inserted into a list of frames. It doesn't get
+ * Fake frame that can be inserted into a list of frames. It doesn't get
  * rendered to the user, but once you pass this fame, you can't go back. Cannot be the
  * last frame in the list.
  */
 class BlockerFrame extends Frame {
     /**
      * Tell if this is a blocker frame
-     * @return false
+     * @return true
      */
     is_blocker() {
+        return true;
+    }
+}
+
+
+/**
+ * Placeholder fake frame that can be inserted into a list of frames to hold
+ * the place of frames that will be constructed later. Cannot be rendered to
+ * the user. Must be removed before the model tries to render it.
+ */
+class PlaceholderFrame extends Frame {
+    /**
+     * Construct placeholder frame
+     * @param name (string) - placeholder name so we can find this frame later
+     * @param logger (see parent)
+     */
+    constructor(logger, name) {
+        super(logger);
+        this.placeholder_name = name;
+    }
+
+    /**
+     * Tell if this is a placeholder frame
+     * @return true
+     */
+    is_placeholder() {
         return true;
     }
 }
