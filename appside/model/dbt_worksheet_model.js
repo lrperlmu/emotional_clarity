@@ -133,8 +133,8 @@ class DbtWorksheetModelFwd extends Model {
                 this.frames.push(frame);
             }
             this.frames.push(this.summary_frame);
-            this.frames.push(new BlockerFrame());
             if (this.config.self_report) {
+                this.frames.push(new BlockerFrame());
                 this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
 
                 for(let item of self_report_questions) {
@@ -150,14 +150,16 @@ class DbtWorksheetModelFwd extends Model {
                     this.uds.add(ud);
                 }
             }
-            this.frames.push(new BlockerFrame());
             if(this.config.feedback) {
+                this.frames.push(new BlockerFrame());
                 for(let frame of this.build_feedback_frames()) {
                     this.frames.push(frame);
                 }
             }
-            this.frames.push(new BlockerFrame());
-            this.frames.push(this.build_end_frame());
+            if(this.config.end) {
+                this.frames.push(new BlockerFrame());
+                this.frames.push(this.build_end_frame());
+            }
 
             // index into frames
             this.frame_idx = -1;
@@ -627,7 +629,20 @@ class DbtWorksheetModelConfig {
         this.consent_disclosure = false;
         this.mood_induction = false;
         this.feedback = false;
+        this.end = false;
     }
+
+
+    /**
+     * Setter for this.end, tells the model whether to include end
+     * @param value - boolean to set it to
+     * @return this
+     */
+    set_end(value) {
+        this.end = value;
+        return this;
+    }
+
 
     /**
      * Setter for this.feedback, tells the model whether to include feedback
