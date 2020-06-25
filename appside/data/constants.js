@@ -33,6 +33,16 @@ var EMOTION_TYPE = ['anger', 'disgust', 'envy', 'fear', 'guilt', 'happiness', 'l
 var BODY_PART = ['head', 'neck', 'arms', 'chest', 'belly', 'legs'];
 var SVG_URL = 'http://www.w3.org/2000/svg';
 
+// Welcome frame (study)
+var SW_FRAME_TEMPLATE = 'study-welcome';
+var SW_TITLE = 'Welcome to the Emotional Clarity Study';
+var SW_TEXT = 'Thank you for volunteering for this study.';
+
+// Browser check frame
+var BC_FRAME_TEMPLATE = 'browser-check';
+var BC_TITLE = 'Please use a desktop browser';
+var BC_TEXT = 'We didn\'t test this app on small screens or touch screens, you might not be able to complete the study on a mobile device. Please use google chrome browser on a laptop or desktop.';
+
 // Intro frame strings
 var the_title = 'Emotional Clarity App';
 var INTRO_FRAME_TEMPLATE = 'intro';

@@ -94,6 +94,12 @@ class DbtWorksheetModelFwd extends Model {
         // add userdataset items where applicable
         this.initialize.then(() => {
             this.frames = [];
+            if(this.config.study) {
+                this.frames.push(this.build_study_welcome_frame());
+                this.frames.push(new BlockerFrame());
+                this.frames.push(this.build_browser_check_frame());
+                this.frames.push(new BlockerFrame());
+            }
             if(this.config.consent_disclosure) {
                 this.frames.push(this.build_consent_disclosure_frame(consent_questions));
 
@@ -185,6 +191,36 @@ class DbtWorksheetModelFwd extends Model {
             console.error('failed to get participant id');
         });
         return pid_promise;
+    }
+
+    /**
+     * Build welcome frame
+     * @return welcome frame
+     */
+    build_study_welcome_frame() {
+        let frame = {};
+        frame.template = SW_FRAME_TEMPLATE;
+        frame.title = SW_TITLE;
+        frame.instruction = SW_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    /**
+     * Build browser check frame
+     * @return browser check frame
+     */
+    build_browser_check_frame() {
+        let frame = {};
+        frame.template = BC_FRAME_TEMPLATE;
+        frame.title = BC_TITLE;
+        frame.instruction = BC_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
     }
 
     /**
@@ -627,6 +663,20 @@ class DbtWorksheetModelConfig {
         this.consent_disclosure = false;
         this.mood_induction = false;
         this.feedback = false;
+        this.study = false;
+    }
+
+    /**
+     * Setter for this.study, tells the model whether we're doing the study
+     * - affects wording on start frame (and possibly others)
+     * - could potentially be used as master switch to toggle lots of other options, but
+     *   at the time of writing it's not.
+     * @param value - boolean to set it to
+     * @return this
+     */
+    set_study(value) {
+        this.study = value;
+        return this;
     }
 
     /**
