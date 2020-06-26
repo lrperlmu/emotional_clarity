@@ -109,6 +109,12 @@ class DbtWorksheetModelFwd extends Model {
                 }
                 this.frames.push(new BlockerFrame());
             }
+            if(this.config.study) {
+                for(let frame of this.build_phq_frames()) {
+                    this.frames.push(frame);
+                }
+                this.frames.push(new BlockerFrame());
+            }
             if(this.config.mood_induction) {
                 for(let frame of this.build_mood_induction_frames()) {
                     this.frames.push(frame);
@@ -205,6 +211,45 @@ class DbtWorksheetModelFwd extends Model {
         frame.questions = [];
         frame.response_name = RESPONSE_GENERIC;
         let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    /**
+     * Build phq frames
+     * @return the question frame and the results frame
+     */
+    build_phq_frames() {
+        let ret = [];
+
+        // the frame with the questions
+        let q_frame = {};
+        q_frame.template = PHQ_FRAME_TEMPLATE;
+        q_frame.title = PHQ_TITLE;
+        q_frame.instruction = PHQ_TEXT;
+        q_frame.questions = PHQ_QUESTIONS;
+        q_frame.response_name = RESPONSE_PHQ;
+        ret.push(new FormFrame(q_frame, this.logger));
+
+        for(let question of q_frame.questions) {
+            let text = question[0];
+            let ud = new UserData(text, '', [], q_frame.response_name);
+            this.uds.add(ud);
+        }
+        ret.push(new BlockerFrame());
+
+        // the frame with the results
+        let r_frame = {};
+        r_frame.template = PHQR_FRAME_TEMPLATE;
+        r_frame.title = PHQR_TITLE;
+        //////  TODO: set this based on result //////////
+        r_frame.instruction = PHQR_TEXT_YES;
+        r_frame.questions = [];
+        ret.push(new FormFrame(r_frame, this.logger));
+
+        // note: need a hook for nav to execute the phq evaluation code
+        // and then modify future frames if applicable
+
+
         return ret;
     }
 

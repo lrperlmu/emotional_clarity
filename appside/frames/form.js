@@ -149,6 +149,8 @@ class FormElement {
             return new RadioButtonFormElement(FEEDBACK_YESNO_OPTIONS);
         } else if(type === 'likert') {
             return new RadioButtonFormElement(FEEDBACK_LIKERT_OPTIONS);
+        } else if(type === 'phq') {
+            return new RadioButtonFormElement(PHQ_OPTIONS);
         }
     }
 
