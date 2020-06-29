@@ -34,9 +34,8 @@ class Nav {
      *    Renders the navigation buttons into that div.
      */
     render() {
-        // TODO: use FrameFactory instead of constructor
-        this.view = FrameFactory.build(this.current_frame);
-        console.log(this.current_frame);
+        this.view = this.current_frame;
+        this.set_legal_actions();
 
         // make a new empty div with id nav, not yet in the dom
         let nav_menu = document.createElement('div');
@@ -44,24 +43,26 @@ class Nav {
         $(nav_menu).attr('class', 'text-center align-bottom flex-grow-1 nav-btn');
 
         // make a back button
-        // TODO: don't make on first slide
-        let back = document.createElement('button');
-        $(back).text('< Back');
-        $(back).attr('class', 'btn btn-primary btn-lg mx-2');
-        $(back).click(function() {
-            this.navigate('back')
-        }.bind(this));
-        nav_menu.appendChild(back);
+        if(this.back_ok) {
+            let back = document.createElement('button');
+            $(back).text('back');
+            $(back).click(function() {
+                this.navigate('back')
+            }.bind(this));
+            nav_menu.appendChild(back);
+        }
 
         // make a next button
-        // TODO: let frame help with placement, don't make on last slide
-        let next = document.createElement('button');
-        $(next).text('Next >');
-        $(next).attr('class', 'btn btn-primary btn-lg mx-2');
-        $(next).click(function() {
-            this.navigate('next');
-        }.bind(this));
-        nav_menu.appendChild(next);
+        // TODO: let frame help with placement
+        if(this.fwd_ok) {
+            let next = document.createElement('button');
+            $(next).text('next');
+            $(next).addClass('nav_next_button');
+            $(next).click(function() {
+                this.navigate('next');
+            }.bind(this));
+            nav_menu.appendChild(next);
+        }
 
         // make an exit button
         // TODO: implement exit navigation.
@@ -85,27 +86,15 @@ class Nav {
         this.current_frame = this.model.get_frame(slug);
         this.render();
     }
-}
 
-
-class FrameFactory {
     /**
-     * Take in a frame struct and return the correct type of Frame object,
-     * initialized with the given frame struct
+     * Query model to set internal fields saying which nav actions are legal
+     * @modifies - this
      */
-    static build(frame) {
-        // TODO: more sane identification of frame type (type property)
-        if(frame.hasOwnProperty('text')) {
-            return new IntroFrame(frame);
-        }
-        else if(frame.hasOwnProperty('statements')) {
-            // TODO: identify when a different subtype of body frame is needed
-            return new StatementsBodyFrame(frame);
-        }
-        else if(frame.hasOwnProperty('matched_emotions')) {
-            // TODO: identify when this should be qualifier
-            return new SummaryFrameCount(frame);
-        }
+    set_legal_actions() {
+        this.fwd_ok = this.model.has_next_frame();
+        this.back_ok = this.model.has_prev_frame();
+        this.fwd_reversible = this.model.is_next_reversible();
     }
 }
 

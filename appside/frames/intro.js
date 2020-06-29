@@ -11,6 +11,7 @@ class IntroFrame extends Frame {
 
     /** Constructs Intro frame template
      * @param frame_data -- Object containing the frame's data. Expected fields:
+     *      frame_data.template -- The exact string 'intro'
      *      frame_data.title (string)
      *      frame_data.text (array of string) -- content of each paragraph of introduction
      *      frame_data.graphic (string) -- URL link to graphic
@@ -22,6 +23,7 @@ class IntroFrame extends Frame {
         this.title = frame_data.title;
         this.text = frame_data.text;
         this.graphic = frame_data.graphic;
+        this.template = frame_data.template;
     }
 
     /** Render the Intro frame template

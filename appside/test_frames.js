@@ -18,10 +18,13 @@ $(document).ready(function() {
         'bodymap_color_fwd': bodymap_color_fwd_main,
         'bodymap_color': bodymap_color_main,    // requires 2 parameters [emotion, bodypart]
         'bodymap': bodymap_main,
+        'short_answer': short_answer_main,
+        'long_answer': long_answer_main,
         'likert': likert_main,
         'self_report': self_report_main,
         'consent_disclosure': consent_disclosure_main,
         'end': end_main,
+        'postq1': postq1_main,
     };
 
     let page_types = Object.keys(test_methods);
@@ -164,6 +167,22 @@ function bodymap_color_fwd_main() {
     frame.render();
 }
 
+function short_answer_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.short_answer;
+
+    let frame = new ShortAnswerFrame(frame_data, new MockLogger());
+    frame.render();
+}
+
+function long_answer_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.long_answer;
+
+    let frame = new TimedLongAnswerFrame(frame_data, new MockLogger());
+    frame.render();
+}
+
 function likert_main() {
     let sample_app = SAMPLE_APP;
     let frame_data = sample_app.likert;
@@ -194,4 +213,14 @@ function end_main() {
 
     let frame = new EndFrame(frame_data, new MockLogger());
     frame.render();
+}
+
+function postq1_main() {
+    let sample_app = SAMPLE_APP;
+    let frame_data = sample_app.postq1;
+
+    let frame = new FormFrame(frame_data, new MockLogger());
+    frame.responses[0] = 'Yes';
+    frame.render();
+
 }

@@ -34,6 +34,20 @@ body {
     font-size: 1rem !important;
 }
 
+.button_disabled {
+    opacity: 0.5;
+}
+
+.short_answer_textbox {
+  width: 100%;
+}
+
+.long_answer_textbox {
+  width: 100%;
+  height: 200px;
+  overflow: scroll;
+}
+
 .intro_text {
 }
 
@@ -58,6 +72,15 @@ body {
 .summary_match_list_item {
     margin: 5px 0;
 }
+
+.summary_responses_container {
+    display: inline;
+}
+.summary_additional_content {
+    display: inline;
+    margin-left:20px;
+}
+
 .summary_responses_popup {
     position: absolute;
     display: none;
@@ -404,4 +427,14 @@ body {
 
 .consent_label[grayed=false] {
   color: auto;
+}
+
+.form_radio {
+    display: inline;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.form_choice_label {
+    margin-left: 5px;
 }

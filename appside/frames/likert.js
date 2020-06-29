@@ -21,6 +21,8 @@ class LikertFrame extends Frame {
      *    frame_data.questions (array) -- list of question/response pair
      *    -- Question (String): Response (int 1-5 or undefined)
      *    frame_data.qualifiers (array of string) -- Text for answer choices
+     *    frame_data.response_name (string) - name this frame will attach to each piece
+     *                 of data in return value of get_user_input
      *
      *  Behavior undefined if frame does not have these properties.
      */
@@ -30,7 +32,7 @@ class LikertFrame extends Frame {
         this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
-        this.user_input = new Map();
+        this.response_name = frame_data.response_name;
     }
 
     /**
@@ -66,7 +68,6 @@ class LikertFrame extends Frame {
             $(question_text).attr('class', 'likert_question_text');
             $(question_text).text(question);
             statements.appendChild(question_text);
-            this.user_input.set(question, answer);
 
             // the actual radio buttons
             for (let j = 1; j <= 5; j++) {
@@ -101,18 +102,36 @@ class LikertFrame extends Frame {
 
     /**
      * Returns map of user input
-     * containing keys {
-     * 'question_text': int (1-5)
-     * }
-     * @return map of user input
+     * @return Map of
+     *    {statement (string): {'name':name (string), 'response':response (int 1-5)} }
      */
     get_user_input() {
+        let input = new Map();
         var choices = document.getElementsByTagName('input');;
-        for (let each of choices) {
-            if (each.checked) {
-                this.user_input.set(each.name, each.dataset.text);
+        for (let item of choices) {
+            if(item.checked) {
+                let value = {};
+                value.name = this.response_name;
+                value.response = item.dataset.text;
+                input.set(item.name, value);
             }
         }
-        return this.user_input;
+        return input;
+    }
+
+    /**
+     * Update this frame to reflect user responses in the data set passed in
+     * @param data (UserDataSet)
+     *
+     * @modifies this
+     * @effects - possibly updates this frame's statement responses
+     */
+    fill_in_data(data) {
+        for(let tuple of this.questions) { // [stmt, response]
+            let text = tuple[0];
+            let name = this.response_name;
+            let known_response = data.lookup(text, name).response;
+            tuple[1] = known_response;
+        }
     }
 }

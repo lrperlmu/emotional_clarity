@@ -22,6 +22,8 @@ class ConsentDisclosureFrame extends Frame {
      *    frame_data.instructions (string) -- instructions for user to read pdf
      *    frame_data.questions (Array of map of string) -- question/response pairs
      *    -- formatted as (key: question, value: boolean); value is false by default
+     *    frame_data.response_name (string) - name this frame will attach to each piece
+     *                 of data in return value of get_user_input
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
@@ -31,6 +33,7 @@ class ConsentDisclosureFrame extends Frame {
         this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
         this.user_input = new Map();
+        this.response_name = frame_data.response_name;
     }
 
     /**
@@ -70,9 +73,11 @@ class ConsentDisclosureFrame extends Frame {
         let container = document.createElement('div');
         $(container).attr('class', 'consent_frame');
 
-        for (let each_question of this.questions) {
-            let question_text = each_question[0];
-            let answer = each_question[1];
+        this.disable_next_button();
+
+        for (let question of this.questions) {
+            let question_text = question[0];
+            let answer = question[1];
 
             let input = document.createElement('input');
             $(input).attr('class', 'form-check-input');
@@ -80,6 +85,13 @@ class ConsentDisclosureFrame extends Frame {
             $(input).attr('type', 'checkbox');
             $(input).attr('id', question_text);
             $(input).attr('disabled', true);
+            // enable next button if all boxes checked. disable if not
+            $(input).click(function() {
+                this.disable_next_button();
+                if($('.consent_input').filter(':not(:checked)').length === 0) {
+                    this.enable_next_button();
+                }
+            }.bind(this))
 
             $(input).prop('checked', answer);
             input.dataset.text = question_text;
@@ -98,7 +110,8 @@ class ConsentDisclosureFrame extends Frame {
             container.appendChild(document.createElement('br'));
         }
 
-        $(pdf).click(function() {   // ONLY when pdf is clicked will checkboxes enable user input
+        // ONLY when pdf is clicked will checkboxes enable user input
+        $(pdf).click(function() {
             container = this.after_form(container);
         }.bind(this));
         frame.appendChild(container);
@@ -126,20 +139,33 @@ class ConsentDisclosureFrame extends Frame {
 
     /**
      * Returns map of user input
-     * questions: [
-     * 'question_text': 'answer choice',
-     * ]
-     * @return map of user input
+     * @return Map of 
+     *    {statement (string): {'name':name (string), 'response':response (boolean)} }
      */
     get_user_input() {
         var choices = document.getElementsByTagName('input');;
-        for (let each of choices) {
-            if (each.checked) {
-                this.user_input.set(each.dataset.text, true);
-            } else {
-                this.user_input.set(each.dataset.text, false);
-            }
+        for (let item of choices) {
+            let value = {};
+            value.name = this.response_name;
+            value.response = item.checked;
+            this.user_input.set(item.dataset.text, value);
         }
         return this.user_input;
+    }
+
+    /**
+     * Update this frame to reflect user responses in the data set passed in
+     * @param data (UserDataSet)
+     *
+     * @modifies this
+     * @effects - possibly updates this frame's statement responses
+     */
+    fill_in_data(data) {
+        for(let tuple of this.questions) { // [stmt, response]
+            let text = tuple[0];
+            let name = this.response_name;
+            let known_response = data.lookup(text, name).response;
+            tuple[1] = known_response;
+        }
     }
 }

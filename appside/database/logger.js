@@ -39,29 +39,29 @@ class Logger {
     }
 
     /**
-     * Stores responses from obj into the database. Overwrites any values previously logged
+     * Stores responses into the database. Overwrites any values previously logged
      * using this method in the current session. Keys and values of the input map will
      * be cleaned of illegal characters and stored as strings.
      *
      * Data is stored in app-responses subtree, under current uid
      *
-     * @param data - a map whose keys and values are primitives
+     * @param uds (UserDataSet) - the data to write into firebase
      */
-    logResponses(data) {
+    logUds(uds) {
         this.signIn.then(credential => {
-            for(let pair of data.entries()) {
-                let key = pair[0];
-                let value = pair[1];
-
+            for(let ud of uds) {
                 // clean the strings.
-                key = this.encodeString(key.toString());
-                value = this.encodeString(value.toString());
+                let name = this.encodeString(ud.name);
+                let question = this.encodeString(ud.question);
+                let response = this.encodeString(ud.response.toString());
+
+                // pack them into an object as required by firebase
                 let update_data = {};
-                update_data[key] = value;
+                update_data[question] = response;
 
                 // store them one by one so as not to overwrite existing content.
                 firebase.database()
-                    .ref(`app-responses/${credential.user.uid}`)
+                    .ref(`app-responses/${credential.user.uid}/${name}`)
                     .update(update_data);
             }
         });
@@ -88,6 +88,8 @@ class Logger {
      * Log the given user's competion code. Overwrites the last one logged for this user.
      * 
      * Data is stored in completion_codes subtree, as {uid: completion_code}
+     *
+     * @param code - the code to log
      */
     logCompletionCode(code) {
         this.signIn.then(credential => {
@@ -99,7 +101,59 @@ class Logger {
     }
 
     /**
+     * Generate a new participant id
+     *
+     * @param handle_outcome - function(error, written, data_snapshot)
+     *        that will be passed in to transaction as the onComplete callback
+     *        (see firebase transaction docs)
+     * @return promise that will reject with an error or
+     *  resolve with a transaction result `tr` with these properties:
+     *      tr.committed - boolean true if committed, false otherwise
+     *      tr.snapshot - data snapshot at end of transaction
+     *   (note: ^ this return value is not well documented in the firebase docs
+     *    I've inferred these properties experimentally)
+     */
+    incrementPid() {
+        let increment_counter = count => {
+            // increment or initialize the count, and re-store
+            let ret = (count || 0) + 1;
+            return ret;
+        };
+
+        let transaction = credential => {
+            return firebase.database().ref('pid/counter').transaction(
+                increment_counter,
+            );
+        };
+
+        return this.signIn.then(transaction);
+    }
+
+    // return promise that contains the data snapshot
+    // Using this with incrementPid is subject to race conditions.
+    // Instead, use the snapshot in the return value from incrementPid
+    getPid() {
+        let promise = firebase.database().ref('pid/counter').once('value');
+        return promise;
+    }
+
+    /**
+     * Record the current user's user id and pid
+     * Data is stored in pid subtree, as {uid: pid}
+     * @param pid - participant id to record
+     */
+    logUserPid(pid) {
+        this.signIn.then(credential => {
+            let ref = firebase.database().ref('pid');
+            let data = {};
+            data[credential.user.uid] = pid;
+            ref.update(data);
+        });
+    }
+
+    /**
      * Transform a string so it's suitable for storing in firebase
+     * @param str (string)
      */
     encodeString(str) {
         // replace each illegal char with its URI encoding
