@@ -97,6 +97,3 @@ class Nav {
         this.fwd_reversible = this.model.is_next_reversible();
     }
 }
-
-
-
