@@ -13,10 +13,11 @@
  */
 class Frame {
 
-    constructor() {
+    constructor(logger) {
         if (new.target == Frame) {
             throw new TypeError('cannot construct Frame directly (use child)');
         }
+        this.logger = logger;
     }
 
     /**

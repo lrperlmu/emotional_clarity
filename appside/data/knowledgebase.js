@@ -171,7 +171,7 @@ var KNOWLEDGEBASE_DATA = [{"Emotion": "Anger", "Category": "Aftereffects", "Body
  {"Emotion": "Fear", "Category": "Interpretations of events", "Body part": "", "Valence": "Negative", "Statement": "Believing that you might lose something valuable."},
  {"Emotion": "Fear", "Category": "Interpretations of events", "Body part": "", "Valence": "Negative", "Statement": "Believing that someone might reject, criticize, or dislike you."},
  {"Emotion": "Fear", "Category": "Interpretations of events", "Body part": "", "Valence": "Negative", "Statement": "Believing that you will embarrass yourself."},
- {"Emotion": "Fear", "Category": "Interpretations of events", "Body part": "", "Valence": "Negative", "Statement": "Failure is possible; expecting to fail."},
+ {"Emotion": "Fear", "Category": "Interpretations of events", "Body part": "", "Valence": "Negative", "Statement": "Believing that failure is possible; expecting to fail."},
  {"Emotion": "Fear", "Category": "Interpretations of events", "Body part": "", "Valence": "Negative", "Statement": "Believing that you will not get help you want or need. You might lose help you already have."},
  {"Emotion": "Fear", "Category": "Interpretations of events", "Body part": "", "Valence": "Negative", "Statement": "Believing that you might lose someone important."},
  {"Emotion": "Fear", "Category": "Interpretations of events", "Body part": "", "Valence": "Negative", "Statement": "Believing that you might lose something you want."},
