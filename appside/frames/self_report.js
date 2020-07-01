@@ -29,6 +29,7 @@ class SelfReportFrame extends Frame {
         super();
         
         this.template = frame_data.template;
+        this.title = frame_data.title;
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
         this.response_name = frame_data.response_name;
@@ -48,9 +49,15 @@ class SelfReportFrame extends Frame {
         let frame = document.createElement('div'); 
         $(frame).attr('id', 'frame');
 
-        let question1 = document.createElement('h3');
+        let title = document.createElement('h4');
+        $(title).text(this.title);
+        $(title).addClass('text-primary text-uppercase mb-4');
+        frame.appendChild(title);
+
+        let question1 = document.createElement('h5');
         $(question1).text(this.questions[0][0]);
-        $(question1).attr('class', 'font-weight-light mb-4');
+        $(question1).attr('class', 'font-weight-light mb-2');
+
         frame.appendChild(question1);
 
         let textbox = document.createElement('textarea');    // input for first question
@@ -61,15 +68,16 @@ class SelfReportFrame extends Frame {
         let container = document.createElement('div');
         $(container).attr('class', 'self_report_frame');
 
-        let question2 = document.createElement('h3');
+        let question2 = document.createElement('h5');
         $(question2).text(this.questions[1][0]);
-        $(question2).attr('class', 'font-weight-light mb-4');
+        $(question2).attr('class', 'font-weight-light mb-2 mt-4');
         container.appendChild(question2);
 
         for (let answer of this.qualifiers) {
+            let choice = document.createElement('div');
             let input = document.createElement('input');
             $(input).attr('class', 'form-check-input');
-            $(input).attr('class', 'self_report_input');
+            $(input).attr('class', 'mr-1');
             $(input).attr('type', 'radio');
             $(input).attr('name', this.questions[1][0]);    // question text
             $(input).attr('id', this.questions[1][0] + answer);
@@ -81,12 +89,13 @@ class SelfReportFrame extends Frame {
             input.dataset.text = answer;             // answer choice
 
             let input_text = document.createElement('label');
-            $(input_text).attr('class', 'self_report_input_text');
+            $(input_text).attr('class', 'font-weight-light mr-2');
             $(input_text).attr('for', this.questions[1][0] + answer);
             $(input_text).text(answer);
 
             container.appendChild(input);
             container.appendChild(input_text);
+            // container.appendChild(choice);
         }
         frame.appendChild(container);
         

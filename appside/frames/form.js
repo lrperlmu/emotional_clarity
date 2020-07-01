@@ -54,14 +54,15 @@ class FormFrame extends Frame {
         $(frame).attr('id', 'frame');
 
         // frame title
-        let title = document.createElement('h3');
+        let title = document.createElement('h4');
         $(title).text(this.title);
-        $(title).addClass('font-weight-light mb-4');
+        $(title).addClass('text-primary text-uppercase mb-4');
         frame.appendChild(title);
 
         // instructions
-        let instruction = document.createElement('h5');
+        let instruction = document.createElement('div');
         $(instruction).text(this.instruction);
+        $(instruction).addClass('font-weight-light mb-4');
         frame.appendChild(instruction);
 
         let q_idx = 0;

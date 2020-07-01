@@ -44,7 +44,7 @@ var BC_TITLE = 'Please use a desktop browser';
 var BC_TEXT = 'We didn\'t test this app on small screens or touch screens, you might not be able to complete the study on a mobile device. Please use google chrome browser on a laptop or desktop.';
 
 // Intro frame strings
-var the_title = 'Emotional Clarity App';
+var the_title = 'The App';
 var INTRO_FRAME_TEMPLATE = 'intro';
 var INTRO_TITLE = {};
 INTRO_TITLE[SECTION_PROMPTING] = the_title;
@@ -52,6 +52,14 @@ INTRO_TITLE[SECTION_INTERP] = the_title;
 INTRO_TITLE[SECTION_BIO] = the_title;
 INTRO_TITLE[SECTION_ACT] = the_title;
 INTRO_TITLE[SECTION_AFTER] = the_title;
+
+var the_intruction = 'Welcome to the Emotional Clarity App!';
+var INTRO_INSTRUCTION = {};
+INTRO_INSTRUCTION[SECTION_PROMPTING] = the_intruction;
+INTRO_INSTRUCTION[SECTION_INTERP] = the_intruction;
+INTRO_INSTRUCTION[SECTION_BIO] = the_intruction;
+INTRO_INSTRUCTION[SECTION_ACT] = the_intruction;
+INTRO_INSTRUCTION[SECTION_AFTER] = the_intruction;
 
 var INTRO_TEXT_START = 'Consider the Reference Event that you just wrote about.';
 var INTRO_MAIN_TEXT = {};
@@ -68,7 +76,7 @@ function INTRO_TEXT(section) {
 }
 
 // Body frame strings
-var BODY_TITLE = 'Questions';
+var BODY_TITLE = 'Question';
 var BODY_QUESTION = {}
 BODY_QUESTION[SECTION_PROMPTING] = 'Which of these are components of the Reference Event?';
 BODY_QUESTION[SECTION_INTERP] = 'Which of these describe your interpretations of the Reference Event or thoughts you are having right now as a result?';
@@ -89,6 +97,7 @@ var INDUCTION_TIME_LIMIT = 130;
 
 // Likert frame strings
 var LIKERT_FRAME_TEMPLATE = 'likert';
+var LIKERT_FRAME_TITLE = 'Self Assessment';
 var LIKERT_TITLE = 'Likert';
 var LIKERT_INSTRUCTIONS = 'Please indicate how much each statement applies to you right now.';
 
@@ -98,9 +107,10 @@ var SDERS_QUALIFIERS = ['not all all', 'somewhat', 'moderately', 'very much', 'c
 
 // Self report strings
 var SELF_REPORT_FRAME_TEMPLATE = 'self_report';
+var SELF_REPORT_TITLE = 'Identify your emotions';
 var SELF_REPORT_Q1 = 'Which emotion(s) are you feeling right now after thinking about the Reference Event?';
 var SELF_REPORT_Q2 = 'How certain are you about your answer to the previous question?';
-var QUALIFIERS = ['Very uncertain', 'Somewhat uncertain', 'Neutral', 'Somewhat certain', 'Very certain'];
+var QUALIFIERS = ['very uncertain', 'somewhat uncertain', 'neutral', 'somewhat certain', 'very certain'];
 
 // Consent disclosure frame strings
 var CONSENT_FRAME_TEMPLATE = 'consent';

@@ -11,7 +11,10 @@ html,
 body {
     height: 100%;
     width: 100%;
-    /*background: #F8F8F8;*/
+    background: #F8F8F8;
+}
+
+body.doodle {
     background: linear-gradient(rgba(255, 250, 250, 0.75), rgba(255, 250, 250, 0.75)), url(../images/doodles.png);
 }
 
@@ -46,9 +49,6 @@ body {
   width: 100%;
   height: 200px;
   overflow: scroll;
-}
-
-.intro_text {
 }
 
 .summary_flex {
@@ -401,8 +401,7 @@ body {
     display: none;
 }
 
-.likert_input, .likert_input_text {
-  display: inline;
+.likert_input_text {
   padding: 10px;
 }
 

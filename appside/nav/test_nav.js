@@ -6,10 +6,10 @@ $(document).ready(function() {
     //let config = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_PROMPTING);
     //let config = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_AFTER);
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, SECTION_BIO);
-    config.set_study(true);
-    config.set_consent_disclosure(true);
-    config.set_mood_induction(true);
-    config.set_self_report(true);
+    config.set_study(false);
+    config.set_consent_disclosure(false);
+    config.set_mood_induction(false);
+    config.set_self_report(false);
     config.set_pre_post_measurement(true);
     config.set_feedback(true);
 

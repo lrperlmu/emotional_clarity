@@ -61,7 +61,7 @@ class ListBodyFrame extends Frame {
         // insert a h2 node for the title
         let title = document.createElement('h5');
         $(title).text(this.title);
-        $(title).attr('class', 'text-info text-uppercase mb-2');
+        $(title).attr('class', 'text-info text-uppercase');
         frame.appendChild(title);
 
         let container = document.createElement('div');  // flexbox for content
@@ -99,7 +99,7 @@ class ListBodyFrame extends Frame {
         }
 
         // insert a p node for the question
-        let question = document.createElement('h2');
+        let question = document.createElement('h3');
         $(question).text(this.question);
         $(question).attr('class', 'font-weight-light mb-4');
         text_column.appendChild(question);
@@ -128,7 +128,7 @@ class ListBodyFrame extends Frame {
 
             // label that can also be clicked to select the checkbox
             let label = document.createElement('label');
-            $(label).attr('class', 'form-check-label');
+            $(label).attr('class', 'form-check-label font-weight-light');
             $(label).attr('for', name);
             $(label).text(statement);
             statements.appendChild(label);
