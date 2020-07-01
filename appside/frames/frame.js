@@ -25,6 +25,7 @@ class Frame {
             throw new TypeError('cannot construct Frame directly (use FrameFactory)');
         }
         this.logger = logger;
+        this.is_app = false;
     }
 
     /**
