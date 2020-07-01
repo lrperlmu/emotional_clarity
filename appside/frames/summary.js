@@ -139,8 +139,8 @@ class SummaryFrame extends Frame {
 
             // optional content and child-specified content
             emotion_name.appendChild(this.create_additional_content(item));
+            $(emotion_name).attr('class', 'font-weight-light summary_match_list_item');
             list_item.appendChild(emotion_name);
-            $(list_item).attr('class', 'font-weight-light summary_match_list_item');
 
             match_list.appendChild(list_item);
         }
@@ -154,6 +154,7 @@ class SummaryFrame extends Frame {
     create_additional_content(item) {
         let ret = document.createElement('div');
         $(ret).addClass('summary_additional_content');
+
         for (let creator of this.additional_content) {
             // need to pass in this in case the method needs to use it, because the way
             //   we're calling these methods makes the 'this' context get lost
@@ -239,42 +240,28 @@ class SummaryFrameCount extends SummaryFrame {
         let responses_button = document.createElement('button');
         $(responses_button).attr('class', 'btn btn-outline-info px-1 py-0');
         $(responses_button).attr('type', 'button');
+        
         let count = item.responses.length;
         if(count === 1) {
             $(responses_button).text('1 response');
         } else {
             $(responses_button).text(`${count} responses`);
         }
-        let responses_popup_id = `responses_popup_${emotion}`;
-        $(responses_button).click(function() {
-            $('.summary_responses_popup').css('display', 'none');
-            $(`#${responses_popup_id}`).css('display', 'block');
-        });
 
-        // Popup is a hidden floating div with the list of responses
-        let responses_popup = document.createElement('div');
-        $(responses_popup).attr('class', 'summary_responses_popup');
-        $(responses_popup).attr('id', responses_popup_id);
-        let description = self.build_match_string(item);
-        responses_popup.appendChild(document.createTextNode(description));
+        $(responses_button).attr('data-toggle', 'popover');
+        $(responses_button).attr('title', 'Responses consistent with ' + self.build_match_string(item));
+        
         let response_list = document.createElement('ul');
         for (let response of item.responses) {
             let list_item = document.createElement('li');
             list_item.appendChild(document.createTextNode(response));
             response_list.appendChild(list_item);
         }
-        responses_popup.appendChild(response_list);
-
-        // close button to make popup disappear
-        let responses_popup_close = document.createElement('button');
-        responses_popup_close.appendChild(document.createTextNode('close'));
-        $(responses_popup_close).click(function() {
-            $(`#${responses_popup_id}`).css('display', 'none');
-        });
-        responses_popup.appendChild(responses_popup_close);
+        
+        $(responses_button).attr('data-html', 'true');
+        $(responses_button).popover({container: 'body', content: response_list});
 
         responses_container.appendChild(responses_button);
-        responses_container.appendChild(responses_popup);
         return responses_container;
     }
 }
