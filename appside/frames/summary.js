@@ -36,6 +36,7 @@ class SummaryFrame extends Frame {
 
         super(frame_data);
         this.title = frame_data.title;
+        this.instruction = frame_data.instruction;
         this.description = frame_data.description;
         this.has_graphic = false;
         if ('graphic' in frame_data) {
@@ -73,8 +74,9 @@ class SummaryFrame extends Frame {
         $(frame).attr('id', 'frame');
 
         // insert a h2 node for the title
-        let title = document.createElement('h2');
+        let title = document.createElement('h5');
         $(title).text(this.title);
+        $(title).attr('class', 'text-info text-uppercase');
         frame.appendChild(title);
 
         let flex_div = document.createElement('div');
@@ -97,16 +99,23 @@ class SummaryFrame extends Frame {
         $(text_col).attr('class', 'summary_body');
         flex_div.appendChild(text_col);
 
+        let instruction = document.createElement('h2');
+        $(instruction).text(this.instruction);
+        $(instruction).attr('class', 'font-weight-light mb-4');
+        text_col.appendChild(instruction);
+
         // insert at text node for the description
         let description = document.createElement('div');
         $(description).html(this.description);
+        $(description).attr('class', 'font-weight-light mb-4');
         text_col.appendChild(description);
-        text_col.append(document.createElement('br'));
 
         let emotion_list = this.render_emotion_list();
         text_col.appendChild(emotion_list);
 
-        let follow_text = document.createTextNode(this.follow_text);
+        let follow_text = document.createElement('div');
+        $(follow_text).text(this.follow_text);
+        $(follow_text).attr('class', 'font-weight-light');
         text_col.appendChild(follow_text);
 
         let old_frame = $('#frame')[0];
@@ -115,6 +124,8 @@ class SummaryFrame extends Frame {
 
     // Helper method to render the list of emotions
     render_emotion_list() {
+        let listDiv = document.createElement('div');
+        $(listDiv).attr('class', 'font-weight-light mb-4');
         let match_list = document.createElement('ul');
         for (let item of this.matched_emotions) {
 
@@ -123,15 +134,18 @@ class SummaryFrame extends Frame {
 
             // build match string
             let match_string = this.build_match_string(item);
-            $(list_item).text(match_string);
-            $(list_item).attr('class', 'summary_match_list_item');
+            let emotion_name = document.createElement('h5');
+            $(emotion_name).text(match_string);
 
             // optional content and child-specified content
-            list_item.appendChild(this.create_additional_content(item));
+            emotion_name.appendChild(this.create_additional_content(item));
+            list_item.appendChild(emotion_name);
+            $(list_item).attr('class', 'font-weight-light summary_match_list_item');
 
             match_list.appendChild(list_item);
         }
-        return match_list;
+        listDiv.appendChild(match_list);
+        return listDiv;
     }
 
 
@@ -223,6 +237,7 @@ class SummaryFrameCount extends SummaryFrame {
 
         // button to make popup appear
         let responses_button = document.createElement('button');
+        $(responses_button).attr('class', 'btn btn-outline-info px-1 py-0');
         $(responses_button).attr('type', 'button');
         let count = item.responses.length;
         if(count === 1) {

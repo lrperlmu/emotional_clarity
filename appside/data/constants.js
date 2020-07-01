@@ -122,6 +122,7 @@ var CONSENT_DISCLOSURE_INSTRUCTIONS = 'Please click on the following link to rea
 
 // Summary frame strings (all DBT worksheet models)
 var SUMMARY_TITLE = 'Summary';
+var SUMMARY_INSTRUCTION = 'That\'s it!';
 var SUMMARY_TEXT = '<p>This summary shows which emotions your responses are <i>commonly</i> associated with, but they are not the <i>only</i> emotions that may be associated with your responses.</p>Please reflect on this summary to see which emotion(s), if any, resonate most with your experience of the Reference Event.';
 var SUMMARY_FOLLOW_TEXT = 'Thank you for doing this activity.';
 var SUMMARY_COUNT_FRAME_TEMPLATE = 'summary_count';

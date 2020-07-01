@@ -483,6 +483,7 @@ class DbtWorksheetModelFwd extends Model {
         let summary_frame = {};
         summary_frame.template = SUMMARY_COUNT_FRAME_TEMPLATE;
         summary_frame.title = SUMMARY_TITLE;
+        summary_frame.instruction = SUMMARY_INSTRUCTION;
         summary_frame.description = SUMMARY_TEXT;
         summary_frame.matched_emotions = [];
         summary_frame.follow_text = SUMMARY_FOLLOW_TEXT;
