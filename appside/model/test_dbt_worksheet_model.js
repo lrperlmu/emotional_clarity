@@ -1,22 +1,34 @@
 "use strict";
 
+// Most of these tests are "manually verified"
+// That means you have to either read the test output and verify that it looks right
+//   OR click around in the app and verify that behavior is as intended.
+
+// This testbench saves you from having to start the app at the beginning and
+//   click all the way through to the part you want to test
+
 let knowledgebase = KNOWLEDGEBASE_DATA;
 
 $(document).ready(function() {
     let test_methods = {
-        'intro': visual_test_intro,
-        'body': visual_test_body,
-        'summary': visual_test_summary,
-        'pre_measurement': visual_test_pre_measurement,
-        'post_measurement': visual_test_post_measurement,
-        'self_report': visual_test_self_report,
-        'consent_disclosure': visual_test_consent_disclosure,
-        'end': visual_test_end,
+        // automated -- throws an error if there is a problem
         'noerror': all_wkshts_noerror,
 
+        // unit tests
         'shuffle': test_shuffle,
 
+        // integ tests
+        'intro': visual_test_intro,
+        'consent_disclosure': visual_test_consent_disclosure,
+        'self_report': visual_test_self_report,
+        'pre_measurement': visual_test_pre_measurement,
+        'body': visual_test_body,
+        'post_measurement': visual_test_post_measurement,
+        'end': visual_test_end,
+
+        // integ tests with nav
         'induction': visual_test_induction,
+        'summary': visual_test_summary,
         'postq': postq,
     }
     let page_types = Object.keys(test_methods);
@@ -106,6 +118,11 @@ function wksht_noerror(config, logger) {
 }
 
 
+////////////////////  INTEGRATION TESTS  ////////////////////
+// These tests build and run a model, using some automation to flip
+// directly to the frame we want to test
+
+
 /*
  * Integration test that constructs an EndFrame to render the end frame of this app.
  * Manually verified.
@@ -159,46 +176,6 @@ function visual_test_body(variant) {
             frame = model.get_frame('next');
         }
         frame.render();
-    });
-}
-
-
-/*
- * Integration test that invokes SummaryFrameCount to render a summary frame generated
- * by this app.
- * Manually verified.
- * @param variant - the variant to test
- */
-function visual_test_summary(variant) {
-    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
-    config.set_self_report(true);
-    config.set_pre_post_measurement(true);
-    let logger = new Logger();
-    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
-    model.initialize.then(() => {
-        let frame = model.get_frame('next');
-
-        while(frame.template !== 'statements') {
-            frame = model.get_frame('next');
-        }
-        // submit some answers to the model
-        let user_input = new Map();
-
-        for(let pair of frame.items) {
-            let stmt = pair[0];
-            let value = {};
-            value.response = true;
-            value.name = frame.response_name;
-            user_input.set(stmt, value);
-        }
-        model.update(user_input);
-
-        while(frame.template === 'statements') {
-            frame = model.get_frame('next');
-        }
-
-        model.get_frame('back');
-        let nav = new Nav(model, logger);
     });
 }
 
@@ -274,6 +251,54 @@ function visual_test_consent_disclosure() {
             frame = model.get_frame('next');
         }
         frame.render();
+    });
+}
+
+
+
+////////////////////  INTEGRATION TESTS WITH NAV  ////////////////////
+// These tests build and run a model, using some automation to flip
+//   directly to the frame we want to test.
+// Additionally, we use a nav object to render the frame, so navigation
+//   actions (next, back) are available within the test.
+
+
+/*
+ * Integration test that invokes SummaryFrameCount to render a summary frame generated
+ * by this app.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_summary(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_self_report(true);
+    config.set_pre_post_measurement(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+
+        while(frame.template !== 'statements') {
+            frame = model.get_frame('next');
+        }
+        // submit some answers to the model
+        let user_input = new Map();
+
+        for(let pair of frame.items) {
+            let stmt = pair[0];
+            let value = {};
+            value.response = true;
+            value.name = frame.response_name;
+            user_input.set(stmt, value);
+        }
+        model.update(user_input);
+
+        while(frame.template === 'statements') {
+            frame = model.get_frame('next');
+        }
+
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
     });
 }
 
