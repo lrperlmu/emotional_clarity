@@ -81,9 +81,10 @@ function all_wkshts_noerror(variant) {
         FWD_ACT_CONFIG,
         FWD_AFTER_CONFIG,
     ];
+    let logger = new Logger();
     for(let config of configs) {
         console.log('section', config.section);
-        wksht_noerror(config);
+        wksht_noerror(config, logger);
         console.log('ok\n\n');
     }
 }
@@ -92,13 +93,16 @@ function all_wkshts_noerror(variant) {
 /*
  * Helper method for all_wkshts_noerror
  * @param config -- which config to run
+ * @param logger -- logger
  */
-function wksht_noerror(config) {
-    let model = new DbtWorksheetModelFwd(knowledgebase, config);
-    let frame = model.get_frame('next');
-    while(model.has_next_frame()) {
-        model.get_frame('next');
-    }
+function wksht_noerror(config, logger) {
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(model.has_next_frame()) {
+            model.get_frame('next');
+        }
+    });
 }
 
 
@@ -111,11 +115,13 @@ function visual_test_end(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
-    let frame = model.get_frame('next');
-    while(frame.template !== END_FRAME_TEMPLATE) {
-        frame = model.get_frame('next');
-    }
-    frame.render();
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== END_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        frame.render();
+    });
 }
 
 
@@ -128,11 +134,13 @@ function visual_test_intro(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
-    let frame = model.get_frame('next');
-    while(frame.template !== INTRO_FRAME_TEMPLATE) {
-        frame = model.get_frame('next');
-    }
-    frame.render();
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== INTRO_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        frame.render();
+    });
 }
 
 
@@ -145,11 +153,13 @@ function visual_test_body(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
-    let frame = model.get_frame('next');
-    while(frame.template !== STATEMENTS_FRAME_TEMPLATE) {
-        frame = model.get_frame('next');
-    }
-    frame.render();
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== STATEMENTS_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        frame.render();
+    });
 }
 
 
@@ -161,29 +171,35 @@ function visual_test_body(variant) {
  */
 function visual_test_summary(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_self_report(true);
+    config.set_pre_post_measurement(true);
     let logger = new Logger();
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_AFTER_CONFIG, logger);
-    let frame = model.get_frame('next');
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
 
-    while(frame.template !== 'statements') {
-        frame = model.get_frame('next');
-    }
-    // submit some answers to the model
-    let user_input = new Map();
+        while(frame.template !== 'statements') {
+            frame = model.get_frame('next');
+        }
+        // submit some answers to the model
+        let user_input = new Map();
 
-    for(let pair of frame.items) {
-        let stmt = pair[0];
-        let value = {};
-        value.response = true;
-        value.name = frame.response_name;
-        user_input.set(stmt, value);
-    }
-    model.update(user_input);
+        for(let pair of frame.items) {
+            let stmt = pair[0];
+            let value = {};
+            value.response = true;
+            value.name = frame.response_name;
+            user_input.set(stmt, value);
+        }
+        model.update(user_input);
 
-    while(frame.template === 'statements') {
-        frame = model.get_frame('next');
-    }
-    frame.render();
+        while(frame.template === 'statements') {
+            frame = model.get_frame('next');
+        }
+
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
 }
 
 
@@ -195,12 +211,14 @@ function visual_test_pre_measurement() {
     FWD_PROMPTING_CONFIG.set_pre_post_measurement(true);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
-    let frame = model.get_frame('next');
-    while(frame.template !== LIKERT_FRAME_TEMPLATE
-          && frame.response_name !== RESPONSE_PRE) {
-        frame = model.get_frame('next');
-    }
-    frame.render();
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== LIKERT_FRAME_TEMPLATE
+              && frame.response_name !== RESPONSE_PRE) {
+            frame = model.get_frame('next');
+        }
+        frame.render();
+    });
 }
 
 
@@ -212,12 +230,14 @@ function visual_test_post_measurement() {
     FWD_PROMPTING_CONFIG.set_pre_post_measurement(true);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
-    let frame = model.get_frame('next');
-    while(frame.template !== LIKERT_FRAME_TEMPLATE 
-          && frame.response_name !== RESPONSE_POST) {
-        frame = model.get_frame('next');
-    }
-    frame.render();
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== LIKERT_FRAME_TEMPLATE 
+              && frame.response_name !== RESPONSE_POST) {
+            frame = model.get_frame('next');
+        }
+        frame.render();
+    });
 }
 
 
@@ -229,12 +249,14 @@ function visual_test_self_report() {
     FWD_PROMPTING_CONFIG.set_self_report(true);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
-    let frame = model.get_frame('next');
-    while(frame.template !== SELF_REPORT_FRAME_TEMPLATE) {
-        frame = model.get_frame('next');
-    }
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== SELF_REPORT_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
 
-    frame.render();
+        frame.render();
+    });
 }
 
 
@@ -246,11 +268,13 @@ function visual_test_consent_disclosure() {
     FWD_PROMPTING_CONFIG.set_consent_disclosure(true);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
-    let frame = model.get_frame('next');
-    while(frame.template !== CONSENT_FRAME_TEMPLATE) {
-        frame = model.get_frame('next');
-    }
-    frame.render();
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== CONSENT_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        frame.render();
+    });
 }
 
 
@@ -268,16 +292,18 @@ function visual_test_induction(variant) {
     config.set_pre_post_measurement(true);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
 
-    let frame = model.get_frame('next');
-    while(frame.template !== LONG_ANSWER_TEMPLATE) {
-        frame = model.get_frame('next');
-    }
-    frame.time_limit = 2;
-    model.back();
+        let frame = model.get_frame('next');
+        while(frame.template !== LONG_ANSWER_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        frame.time_limit = 2;
+        model.back();
 
-    // advance model frame, render nav and frame
-    let nav = new Nav(model, logger);
+        // advance model frame, render nav and frame
+        let nav = new Nav(model, logger);
+    });
 }
 
 
