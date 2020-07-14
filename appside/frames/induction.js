@@ -94,6 +94,8 @@ class ShortAnswerFrame extends TextboxFrame {
      *    Renders the data from this into that div.
      */
     render() {
+        this.setBackground();
+
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
         $(frame).attr('id', 'frame');
@@ -159,6 +161,8 @@ class TimedLongAnswerFrame extends TextboxFrame {
      *    Renders the data from this into that div.
      */
     render() {
+        this.setBackground();
+
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
         $(frame).attr('id', 'frame');

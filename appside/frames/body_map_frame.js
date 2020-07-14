@@ -43,6 +43,8 @@ class BodyMapColorFrame extends Frame {
      *
      **/
     render() {
+        this.setBackground();
+
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div');
         $(frame).attr('id', 'frame');
@@ -209,6 +211,8 @@ class BodyMapColorFwdFrame extends Frame {
      **/
 
     render() {
+        this.setBackground();
+
         this.image = new Image();
         this.image.src = 'images/outline.png';
 

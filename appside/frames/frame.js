@@ -47,6 +47,23 @@ class Frame {
     }
 
     /**
+     * Set the background based on whether the frame is
+     * part of the app or not.
+     *
+     * @effects -- Changes class definitions of body
+     */
+    setBackground() {
+        if (this.is_app){
+            let body = document.getElementsByTagName('body'); 
+            $(body[0]).addClass('doodle');
+        }
+        else {
+            let body = document.getElementsByTagName('body'); 
+            $(body[0]).removeClass('doodle');
+        }
+    }
+
+    /**
      * Returns map of user input
      * VIEW functionality (depends on how frame was rendered and how user
      *  interacted with that rendering to provide input)

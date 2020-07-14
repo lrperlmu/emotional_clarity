@@ -24,6 +24,8 @@ class EmotionSelectionFrame extends Frame {
      *    Renders the data from this into that div.
      */
     render() {
+        this.setBackground();
+
         let title_text = 'Emotion Selection';
         let description_text = 'Which emotions do you think you might be feeling now?';
         let emotions = [

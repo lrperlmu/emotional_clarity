@@ -45,6 +45,7 @@ class ConsentDisclosureFrame extends Frame {
      *    Renders the data from this into that div.
      */
     render() {
+        this.setBackground();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
