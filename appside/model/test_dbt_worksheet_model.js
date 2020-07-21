@@ -19,7 +19,6 @@ $(document).ready(function() {
 
         // integ tests
         'intro': visual_test_intro,
-        'consent_disclosure': visual_test_consent_disclosure,
         'self_report': visual_test_self_report,
         'pre_measurement': visual_test_pre_measurement,
         'body': visual_test_body,
@@ -27,6 +26,7 @@ $(document).ready(function() {
         'end': visual_test_end,
 
         // integ tests with nav
+        'consent': visual_test_consent_disclosure,
         'induction': visual_test_induction,
         'summary': visual_test_summary,
         'postq': postq,
@@ -237,30 +237,32 @@ function visual_test_self_report() {
 }
 
 
-/*
- * Integration test that invokes ConsentDisclosureFrame to render the consent disclosure frame of this app.
- * Manually verified.
- */
-function visual_test_consent_disclosure() {
-    FWD_PROMPTING_CONFIG.set_consent_disclosure(true);
-    let logger = new Logger();
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
-    model.initialize.then(() => {
-        let frame = model.get_frame('next');
-        while(frame.template !== CONSENT_FRAME_TEMPLATE) {
-            frame = model.get_frame('next');
-        }
-        frame.render();
-    });
-}
-
-
-
 ////////////////////  INTEGRATION TESTS WITH NAV  ////////////////////
 // These tests build and run a model, using some automation to flip
 //   directly to the frame we want to test.
 // Additionally, we use a nav object to render the frame, so navigation
 //   actions (next, back) are available within the test.
+
+
+/*
+ * Integration test that invokes ConsentDisclosureFrame to render the consent disclosure frame of this app.
+ * Manually verified.
+ */
+function visual_test_consent_disclosure(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
+    config.set_consent_disclosure(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== CONSENT_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
 
 
 /*

@@ -129,10 +129,9 @@ var QUALIFIERS = ['Very uncertain', 'Somewhat uncertain', 'Neutral', 'Somewhat c
 // Consent disclosure frame strings
 var CONSENT_FRAME_TEMPLATE = 'consent';
 var CONSENT_DISCLOSURE_TITLE = 'Consent';
-var CONSENT_DISCLOSURE_QUESTIONS = ['I have read the information above. I understand the risks of this study and wish to participate.',
-    'I am 18 or 19 years old.',
-    'I am able to read, understand, and respond to a web questionnaire written in English.'];
-var CONSENT_DISCLOSURE_INSTRUCTIONS = 'Please click on the following link to read the consent disclosure form.';
+var CONSENT_DISCLOSURE_QUESTIONS = ['I have electronically signed the consent form.',];
+var CONSENT_DISCLOSURE_INSTRUCTIONS = 'After volunteering for the study, you should have received an email to record your electronic consent using DocuSign. If you have not had a chance to electronically sign the consent form, please email Leah Perlmutter <leahperl@uw.edu>.';
+
 
 // Summary frame strings (all DBT worksheet models)
 var SUMMARY_TITLE = 'Summary';
