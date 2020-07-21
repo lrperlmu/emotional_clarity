@@ -27,6 +27,7 @@ $(document).ready(function() {
 
         // integ tests with nav
         'consent': visual_test_consent_disclosure,
+        'phq': visual_test_phq,
         'induction': visual_test_induction,
         'summary': visual_test_summary,
         'postq': postq,
@@ -257,6 +258,26 @@ function visual_test_consent_disclosure(variant) {
     model.initialize.then(() => {
         let frame = model.get_frame('next');
         while(frame.template !== CONSENT_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
+
+
+/*
+ * Integration test that invokes ConsentDisclosureFrame to render the consent disclosure frame of this app.
+ * Manually verified.
+ */
+function visual_test_phq(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== PHQ_FRAME_TEMPLATE) {
             frame = model.get_frame('next');
         }
         model.get_frame('back');

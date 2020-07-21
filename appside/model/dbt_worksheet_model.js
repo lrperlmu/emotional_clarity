@@ -712,10 +712,13 @@ class DbtWorksheetModelConfig {
     }
 
     /**
-     * Setter for this.study, tells the model whether we're doing the study
-     * - affects wording on start frame (and possibly others)
-     * - could potentially be used as master switch to toggle lots of other options, but
-     *   at the time of writing it's not.
+     * Setter for this.study, tells the model whether we're doing the study.
+     * This flag affects:
+     *   - study welcome frame
+     *   - browser check frame
+     *   - phq frame
+     *   - we could potentially bundle more of the config items under the study flag
+     *     to reduce the number of config options
      * @param value - boolean to set it to
      * @return this
      */
