@@ -91,7 +91,7 @@ class Nav {
      */
     navigate(slug) {
         let input = this.view.get_user_input();
-        this.model.update(input)
+        this.model.update(input);
         // TODO: call has_x_frame to verify this is safe
         this.current_frame = this.model.get_frame(slug);
         this.render();

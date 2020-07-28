@@ -14,7 +14,7 @@ class DbtWorksheetModelFwd extends Model {
     /**
      * Construct model from data
      * NOTE: construction is not finished when this constructor returns
-     *     It is ony done upon resolution of the promise this.initialize.
+     *     It is only done upon resolution of the promise this.initialize.
      *     Anything to be done after initialization must be wrapped in
      *     this.initialize.then(...);
      * @param knowledgebase - js object containing the DBT worksheet data
@@ -32,55 +32,8 @@ class DbtWorksheetModelFwd extends Model {
             logger.logUserPid(this.pid);
         });
 
-        // get all the statements for this section
-        let section = config.section;
-        let section_statements = knowledgebase.filter(
-            entry => entry[KB_KEY_SECTION] === section
-        );
-
-        // find identical statements with different emotions and merge
-        // first, sort by statement
-        section_statements.sort((a, b) => a.Statement.localeCompare(b.Statement));
-
-        // then, merge identical
-        let merged_section_statements = [];
-        let item = section_statements[0];
-        for(let i = 1; i <= section_statements.length; i++) {
-            // peek at the next item
-            let next;
-            if(i < section_statements.length) {
-                next = section_statements[i];
-            }
-            if(i === section_statements.length || next.Statement !== item.Statement) {
-                // item is the last of a run, make a new entry in the merged list
-                let item_to_push = Object.assign(item);
-                item_to_push.Emotions = item_to_push.Emotion.split(', ');
-                delete item_to_push.Emotion;
-                merged_section_statements.push(item_to_push);
-            } else {
-                // merge this entry into the next entry
-                next.Emotion = item.Emotion.concat(', ',next.Emotion);
-            }
-            item = next;
-        }
-
-        // finally, re-sort by emotion
-        merged_section_statements.sort(
-            (a, b) => a.Emotions[0].localeCompare(b.Emotions[0]));
-
-        this.summary_frame = this.initialize_summary_frame();
-        let body_frames = this.build_body_frames(merged_section_statements);
-
         this.uds = new UserDataSet();
-        for (let stmt of merged_section_statements) {
-            let ud = new UserData(stmt.Statement, false, stmt.Emotions, RESPONSE_GENERIC);
-            this.uds.add(ud);
-        }
-
-        let consent_questions = [];
-        for (let question of CONSENT_DISCLOSURE_QUESTIONS) {
-            consent_questions.push([question, false]);
-        }
+        this.summary_frame = this.initialize_summary_frame();
 
         let likert_questions = [];
         likert_questions.push([SDERS_QUESTIONS[0], undefined]);
@@ -101,12 +54,7 @@ class DbtWorksheetModelFwd extends Model {
                 this.frames.push(new BlockerFrame());
             }
             if(this.config.consent_disclosure) {
-                this.frames.push(this.build_consent_disclosure_frame(consent_questions));
-
-                for(let item of consent_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
-                    this.uds.add(ud);
-                }
+                this.frames.push(this.build_consent_disclosure_frame());
                 this.frames.push(new BlockerFrame());
             }
             if(this.config.study) {
@@ -141,7 +89,7 @@ class DbtWorksheetModelFwd extends Model {
             for(let frame of this.build_intro_frames()) {
                 this.frames.push(frame);
             }
-            for(let frame of body_frames) {
+            for(let frame of this.build_body_frames(knowledgebase)) {
                 this.frames.push(frame);
             }
             this.frames.push(this.summary_frame);
@@ -306,11 +254,15 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
-     * Build consent disclosure frames for a DBT worksheet model.
-     * @param consent_questions - list of [question (string), response (bool)]
+     * Build consent frame for a DBT worksheet model.
      * @return the Frame
      */
-    build_consent_disclosure_frame(consent_questions) {
+    build_consent_disclosure_frame() {
+        let consent_questions = [];
+        for (let question of CONSENT_DISCLOSURE_QUESTIONS) {
+            consent_questions.push([question, false]);
+        }
+
         let consent_frame = {};
 
         consent_frame.title = CONSENT_DISCLOSURE_TITLE;
@@ -319,6 +271,12 @@ class DbtWorksheetModelFwd extends Model {
         consent_frame.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
 
         consent_frame.questions = consent_questions;
+
+        for(let item of consent_questions) {
+            let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
+            this.uds.add(ud);
+        }
+
         return new ConsentDisclosureFrame(consent_frame, this.logger);
     }
 
@@ -376,12 +334,52 @@ class DbtWorksheetModelFwd extends Model {
     /**
      * Build body frames for a DBT worksheet model.
      *
-     * @param section_statements - list of statements that we will make into frames
+     * @param knowledgebase - all the statements
      * @return a list of body Frames
      */
-    build_body_frames(section_statements) {
-        // copy-in the argument
-        let statements = section_statements.concat();
+    build_body_frames(knowledgebase) {
+        //// Pre-process statements
+
+        // get all the statements for this section
+        let section = this.config.section;
+        let section_statements = knowledgebase.filter(
+            entry => entry[KB_KEY_SECTION] === section
+        );
+
+        // find identical statements with different emotions and merge
+        // first, sort by statement
+        section_statements.sort((a, b) => a.Statement.localeCompare(b.Statement));
+
+        // then, merge identical
+        let merged_section_statements = [];
+        let item = section_statements[0];
+        for(let i = 1; i <= section_statements.length; i++) {
+            // peek at the next item
+            let next;
+            if(i < section_statements.length) {
+                next = section_statements[i];
+            }
+            if(i === section_statements.length || next.Statement !== item.Statement) {
+                // item is the last of a run, make a new entry in the merged list
+                let item_to_push = Object.assign(item);
+                item_to_push.Emotions = item_to_push.Emotion.split(', ');
+                delete item_to_push.Emotion;
+                merged_section_statements.push(item_to_push);
+            } else {
+                // merge this entry into the next entry
+                next.Emotion = item.Emotion.concat(', ',next.Emotion);
+            }
+            item = next;
+        }
+
+        // finally, re-sort by emotion
+        merged_section_statements.sort(
+            (a, b) => a.Emotions[0].localeCompare(b.Emotions[0]));
+
+        //// Create frames
+
+        // copy the list (we'll use 1st copy to create uds later, 2nd copy to create frames now)
+        let statements = merged_section_statements.concat();
 
         // divide them into pages
         let num_stmts = statements.length;
@@ -422,6 +420,13 @@ class DbtWorksheetModelFwd extends Model {
             }
             body_frames.push(new StatementsBodyFrame(frame, this.logger));
         }
+
+        //// Create uds
+        for (let stmt of merged_section_statements) {
+            let ud = new UserData(stmt.Statement, false, stmt.Emotions, RESPONSE_GENERIC);
+            this.uds.add(ud);
+        }
+
         return body_frames;
     }
 
@@ -622,7 +627,6 @@ class DbtWorksheetModelFwd extends Model {
     get_frame(slug) {
         return this.nav_functions.get(slug)();
     }
-
 
     /**
      * Pass user input into the model. [For use by NAV.]
