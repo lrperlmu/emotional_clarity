@@ -35,14 +35,6 @@ class DbtWorksheetModelFwd extends Model {
         this.uds = new UserDataSet();
         this.summary_frame = this.initialize_summary_frame();
 
-        let likert_questions = [];
-        likert_questions.push([SDERS_QUESTIONS[0], undefined]);
-        likert_questions.push([SDERS_QUESTIONS[1], undefined]);
-
-        let self_report_questions = [];
-        self_report_questions.push([SELF_REPORT_Q1, '']);
-        self_report_questions.push([SELF_REPORT_Q2, '']);
-
         // make a list of references to all the frames, so we can index into it
         // add userdataset items where applicable
         this.initialize.then(() => {
@@ -70,20 +62,10 @@ class DbtWorksheetModelFwd extends Model {
                 this.frames.push(new BlockerFrame());
             }
             if(this.config.self_report) {
-                this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
-
-                for(let item of self_report_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
-                    this.uds.add(ud);
-                }
+                this.frames.push(this.build_self_report_frame(RESPONSE_PRE));
             }
             if(this.config.pre_post_measurement) {
-                this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_PRE));
-
-                for(let item of likert_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
-                    this.uds.add(ud);
-                }
+                this.frames.push(this.build_likert_frame(RESPONSE_PRE));
             }
             this.frames.push(new BlockerFrame());
             for(let frame of this.build_intro_frames()) {
@@ -95,20 +77,10 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(this.summary_frame);
             this.frames.push(new BlockerFrame());
             if (this.config.self_report) {
-                this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
-
-                for(let item of self_report_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
-                    this.uds.add(ud);
-                }
+                this.frames.push(this.build_self_report_frame(RESPONSE_POST));
             }
             if(this.config.pre_post_measurement) {
-                this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_POST));
-
-                for(let item of likert_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
-                    this.uds.add(ud);
-                }
+                this.frames.push(this.build_likert_frame(RESPONSE_POST));
             }
             this.frames.push(new BlockerFrame());
             if(this.config.feedback) {
@@ -282,11 +254,14 @@ class DbtWorksheetModelFwd extends Model {
 
     /**
      * Build self report frame for a DBT worksheet model.
-     * @param self_report_questions - list of [question (string), response (bool or int)]
      * @param response_name - disambiguation name
      * @return the Frame
      */
-    build_self_report_frame(self_report_questions, response_name) {
+    build_self_report_frame(response_name) {
+        let self_report_questions = [];
+        self_report_questions.push([SELF_REPORT_Q1, '']);
+        self_report_questions.push([SELF_REPORT_Q2, '']);
+
         let frame = {};
 
         frame.template = SELF_REPORT_FRAME_TEMPLATE;
@@ -294,17 +269,26 @@ class DbtWorksheetModelFwd extends Model {
         frame.qualifiers = QUALIFIERS;
 
         frame.questions = self_report_questions;
+
+        for(let item of self_report_questions) {
+            let ud = new UserData(item[0], item[1], [], response_name);
+            this.uds.add(ud);
+        }
+
         return new SelfReportFrame(frame, this.logger);
     }
 
     /**
      * Build likert frame for a DBT worksheet model as pre or post measurement frame.
      *
-     * @param likert_questions - list of [text (string), default_response (int)]
      * @param response_name - disambiguation name
      * @return the Frame
      */
-    build_likert_frame(likert_questions, response_name) {
+    build_likert_frame(response_name) {
+        let likert_questions = [];
+        likert_questions.push([SDERS_QUESTIONS[0], undefined]);
+        likert_questions.push([SDERS_QUESTIONS[1], undefined]);
+
         let frame = {};
 
         frame.template = LIKERT_FRAME_TEMPLATE;
@@ -313,6 +297,11 @@ class DbtWorksheetModelFwd extends Model {
         frame.qualifiers = SDERS_QUALIFIERS;
         
         frame.questions = likert_questions;
+
+        for(let item of likert_questions) {
+            let ud = new UserData(item[0], item[1], [], response_name);
+            this.uds.add(ud);
+        }
 
         return new LikertFrame(frame, this.logger);
     }
