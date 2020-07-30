@@ -29,6 +29,7 @@ $(document).ready(function() {
 
     let page_types = Object.keys(test_methods);
     let page_to_show = page_types[0];
+    // let page_to_show = 'postq1';
 
     // see if a frame type was written in the query string, otherwise use default
     // query format: ?frame=TEST_METHODS

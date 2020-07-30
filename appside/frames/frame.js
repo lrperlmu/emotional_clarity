@@ -25,6 +25,7 @@ class Frame {
             throw new TypeError('cannot construct Frame directly (use FrameFactory)');
         }
         this.logger = logger;
+        this.is_app = false;
     }
 
     /**
@@ -43,6 +44,23 @@ class Frame {
         $(frame).text('I don\'t know how to render this type of frame');
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
+    }
+
+    /**
+     * Set the background based on whether the frame is
+     * part of the app or not.
+     *
+     * @effects -- Changes class definitions of body
+     */
+    setBackground() {
+        if (this.is_app){
+            let body = document.getElementsByTagName('body'); 
+            $(body[0]).addClass('doodle');
+        }
+        else {
+            let body = document.getElementsByTagName('body'); 
+            $(body[0]).removeClass('doodle');
+        }
     }
 
     /**

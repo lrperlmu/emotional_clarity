@@ -45,33 +45,35 @@ class ConsentDisclosureFrame extends Frame {
      *    Renders the data from this into that div.
      */
     render() {
+        this.setBackground();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
         $(frame).attr('id', 'frame');
         
         // insert a h2 node for the title
-        let title = document.createElement('h5');
+        let title = document.createElement('h4');
         $(title).text(this.title);
-        $(title).attr('class', 'text-info text-uppercase mb-2');
+        $(title).addClass('text-primary text-uppercase mb-4');
         frame.appendChild(title);
 
-        let instructions = document.createElement('h5');
-        $(instructions).attr('class', 'text-info text-uppercase mb-2');
-
-        $(instructions).attr('class', 'consent_instructions');
+        let instructions = document.createElement('div');
+        $(instructions).addClass('font-weight-light mb-2');
+        // $(instructions).attr('class', 'consent_instructions'); <- Not defined anywhere
         $(instructions).text(this.instructions);
         frame.appendChild(instructions);
 
         let pdf = document.createElement('a');
         $(pdf).attr('href', 'images/consent.pdf');
         $(pdf).attr('target', '_blank');    // opens pdf in new window/tab
-        $(pdf).attr('class', 'consent_pdf');
+        // $(pdf).attr('class', 'consent_pdf'); <- Not defined or referenced
+        $(pdf).addClass('font-weight-light');
         $(pdf).text('Consent Disclosure Form');
         frame.appendChild(pdf);
 
         let container = document.createElement('div');
-        $(container).attr('class', 'consent_frame');
+        // $(container).attr('class', 'consent_frame'); <- Not defined or referenced
+        $(container).addClass('mt-4');
 
         this.disable_next_button();
 

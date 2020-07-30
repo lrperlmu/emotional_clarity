@@ -49,19 +49,22 @@ class FormFrame extends Frame {
      *    Renders the data from this into that div.
      */
     render() {
+        this.setBackground();
+
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div');
         $(frame).attr('id', 'frame');
 
         // frame title
-        let title = document.createElement('h3');
+        let title = document.createElement('h4');
         $(title).text(this.title);
-        $(title).addClass('font-weight-light mb-4');
+        $(title).addClass('text-primary text-uppercase mb-4');
         frame.appendChild(title);
 
         // instructions
-        let instruction = document.createElement('h5');
+        let instruction = document.createElement('div');
         $(instruction).text(this.instruction);
+        $(instruction).addClass('font-weight-light mb-4');
         frame.appendChild(instruction);
 
         let q_idx = 0;
@@ -71,7 +74,8 @@ class FormFrame extends Frame {
             let response = this.responses[q_idx];
 
             // insert a h5 node for the question
-            let qtext = document.createElement('h5');
+            let qtext = document.createElement('div');
+            $(qtext).attr('class', 'font-weight-light mb-2');
             $(qtext).text(text);
             frame.appendChild(qtext);
 
@@ -192,6 +196,7 @@ class RadioButtonFormElement extends FormElement {
      */
     generate_html(text, known_response, q_idx) {
         let ret = document.createElement('div');
+        $(ret).addClass('mb-4');
 
         // button and label for each possible answer
         for(let resp of this.choices) {
@@ -199,6 +204,7 @@ class RadioButtonFormElement extends FormElement {
             $(div).addClass('form_radio');
 
             let button = document.createElement('input');
+            $(button).addClass('form-check-input mr-1');
             $(button).attr('type', 'radio');
             $(button).attr('value', resp);
             $(button).attr('name', `q_${q_idx}`);
@@ -206,10 +212,11 @@ class RadioButtonFormElement extends FormElement {
             if(known_response === resp) {
                 $(button).attr('checked', 'checked');
             }
+
             div.appendChild(button);
 
             let label = document.createElement('label');
-            $(label).addClass('form_choice_label');
+            $(label).addClass('form_choice_label font-weight-light mr-2');
             $(label).attr('for', `q_${q_idx}_${resp}`);
             $(label).text(resp);
             div.appendChild(label);
@@ -250,12 +257,16 @@ class TextFormElement extends FormElement {
      * @return the textbox as an html element
      */
     generate_html(text, response, q_idx) {
+        let ret = document.createElement('div');
+        $(ret).addClass('mb-4');
         // insert a text box
         let textbox = document.createElement('textarea');
         $(textbox).attr('id', `q_${q_idx}_input`);
         $(textbox).addClass('long_answer_textbox');
         $(textbox).val(response);
-        return textbox;
+
+        ret.appendChild(textbox);
+        return ret;
     }
 
     /**

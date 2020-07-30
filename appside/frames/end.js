@@ -44,12 +44,16 @@ class EndFrame extends Frame {
      *      Renders the data from this frame into that div.
      */
     render() {
+        this.setBackground();
+
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div');
         $(frame).attr('id', 'frame');
+        $(frame).addClass('font-weight-light');
 
         // insert a h2 node for the title
-        let title = document.createElement('h2');
+        let title = document.createElement('h4');
+        $(title).addClass('text-primary text-uppercase mb-4');
         $(title).text(this.title);
         frame.appendChild(title);
 

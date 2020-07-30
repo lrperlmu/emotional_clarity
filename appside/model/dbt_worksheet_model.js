@@ -94,6 +94,12 @@ class DbtWorksheetModelFwd extends Model {
         // add userdataset items where applicable
         this.initialize.then(() => {
             this.frames = [];
+            if(this.config.study) {
+                this.frames.push(this.build_study_welcome_frame());
+                this.frames.push(new BlockerFrame());
+                this.frames.push(this.build_browser_check_frame());
+                this.frames.push(new BlockerFrame());
+            }
             if(this.config.consent_disclosure) {
                 this.frames.push(this.build_consent_disclosure_frame(consent_questions));
 
@@ -190,6 +196,36 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
+     * Build welcome frame
+     * @return welcome frame
+     */
+    build_study_welcome_frame() {
+        let frame = {};
+        frame.template = SW_FRAME_TEMPLATE;
+        frame.title = SW_TITLE;
+        frame.instruction = SW_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    /**
+     * Build browser check frame
+     * @return browser check frame
+     */
+    build_browser_check_frame() {
+        let frame = {};
+        frame.template = BC_FRAME_TEMPLATE;
+        frame.title = BC_TITLE;
+        frame.instruction = BC_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    /**
      * Build mood_induction frames for a DBT worksheet model.
      * @effects - adds some new uds
      * @modifies - this.uds
@@ -252,6 +288,7 @@ class DbtWorksheetModelFwd extends Model {
     build_self_report_frame(self_report_questions, response_name) {
         let frame = {};
 
+        frame.title = SELF_REPORT_TITLE;
         frame.template = SELF_REPORT_FRAME_TEMPLATE;
         frame.response_name = response_name;
         frame.qualifiers = QUALIFIERS;
@@ -270,6 +307,7 @@ class DbtWorksheetModelFwd extends Model {
     build_likert_frame(likert_questions, response_name) {
         let frame = {};
 
+        frame.title = LIKERT_FRAME_TITLE;
         frame.template = LIKERT_FRAME_TEMPLATE;
         frame.response_name = response_name;
         frame.instructions = LIKERT_INSTRUCTIONS;
@@ -289,6 +327,7 @@ class DbtWorksheetModelFwd extends Model {
         // only one intro frame so far, but we'll likely add more
         let intro_frame = {};
         intro_frame.title = INTRO_TITLE[this.config.section];
+        intro_frame.instruction = INTRO_INSTRUCTION[this.config.section];
         intro_frame.text = INTRO_TEXT(this.config.section);
         intro_frame.template = INTRO_FRAME_TEMPLATE;
         return [new IntroFrame(intro_frame, this.logger)];
@@ -326,14 +365,15 @@ class DbtWorksheetModelFwd extends Model {
 
         // make a frame for each page
         let body_frames = [];
-        for(let page of pages) {
+        for(let idx of Array(pages.length).keys()) {
+            let page = pages[idx];
             let page_statements = [];
             for(let stmt of page) {
                 page_statements.push([stmt.Statement, false, stmt.Emotions]);
             }
 
             let frame = {};
-            frame.title = BODY_TITLE;
+            frame.title = BODY_TITLE + ' ' + (idx+1);
             frame.response_name = RESPONSE_GENERIC;
             frame.template = STATEMENTS_FRAME_TEMPLATE;
             frame.question = BODY_QUESTION[this.config.section];
@@ -445,6 +485,7 @@ class DbtWorksheetModelFwd extends Model {
         let summary_frame = {};
         summary_frame.template = SUMMARY_COUNT_FRAME_TEMPLATE;
         summary_frame.title = SUMMARY_TITLE;
+        summary_frame.instruction = SUMMARY_INSTRUCTION;
         summary_frame.description = SUMMARY_TEXT;
         summary_frame.matched_emotions = [];
         summary_frame.follow_text = SUMMARY_FOLLOW_TEXT;
@@ -629,9 +670,9 @@ class DbtWorksheetModelConfig {
         this.consent_disclosure = false;
         this.mood_induction = false;
         this.feedback = false;
+        this.study = false;
         this.end = false;
     }
-
 
     /**
      * Setter for this.end, tells the model whether to include end
@@ -640,9 +681,20 @@ class DbtWorksheetModelConfig {
      */
     set_end(value) {
         this.end = value;
-        return this;
     }
 
+    /**
+     * Setter for this.study, tells the model whether we're doing the study
+     * - affects wording on start frame (and possibly others)
+     * - could potentially be used as master switch to toggle lots of other options, but
+     *   at the time of writing it's not.
+     * @param value - boolean to set it to
+     * @return this
+     */
+    set_study(value) {
+        this.study = value;
+        return this;
+    }
 
     /**
      * Setter for this.feedback, tells the model whether to include feedback
