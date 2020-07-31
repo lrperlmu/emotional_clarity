@@ -84,6 +84,7 @@ var PHQ_QUESTIONS = [
     ['Thoughts that you would be better off dead, or of hurting yourself in some way?', 'phq'],
 ];
 var PHQ_OPTIONS = ['Not at all', 'Several days', 'More than half the days', 'Nearly every day'];
+var PHQ_OPTION_VALUES = [0, 1, 2, 3];
 
 // phq result frame strings
 var PHQR_FRAME_TEMPLATE = 'phq_result';
@@ -155,9 +156,11 @@ var END_CONTACT = `<p>This study has asked you to recall potentially distressing
 var FEEDBACK_FRAME_TEMPLATE = 'feedback';
 var FEEDBACK_TITLE = 'Feedback';
 var FEEDBACK_YESNO_OPTIONS = ['Yes', 'No'];
+var FEEDBACK_YESNO_VALUES = [1, 0];
 var FEEDBACK_LIKERT_OPTIONS = [
     'Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree',
 ];
+var FEEDBACK_LIKERT_VALUES = [5, 4, 3, 2, 1];
 var FEEDBACK_QUESTIONS = {
     'page_1': [
         ['Did the app help you figure out your emotion(s)?', 'yesno'],
