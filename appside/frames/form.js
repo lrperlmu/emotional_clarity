@@ -146,11 +146,11 @@ class FormElement {
         if(type === 'text') {
             return new TextFormElement();
         } else if(type === 'yesno') {
-            return new RadioButtonFormElement(FEEDBACK_YESNO_OPTIONS);
+            return new RadioButtonFormElement(FEEDBACK_YESNO_OPTIONS, FEEDBACK_YESNO_VALUES);
         } else if(type === 'likert') {
-            return new RadioButtonFormElement(FEEDBACK_LIKERT_OPTIONS);
+            return new RadioButtonFormElement(FEEDBACK_LIKERT_OPTIONS, FEEDBACK_LIKERT_VALUES);
         } else if(type === 'phq') {
-            return new RadioButtonFormElement(PHQ_OPTIONS);
+            return new RadioButtonFormElement(PHQ_OPTIONS, PHQ_OPTION_VALUES);
         }
     }
 
@@ -176,11 +176,17 @@ class FormElement {
 class RadioButtonFormElement extends FormElement {
     /**
      * Construct RadioButtonFormElement with the given choices
-     * @param choices (list of string) - choices for the radio buttons
+     * @param choices (list of string) - choices to be displayed for the radio buttons
+     * @param values (list of string) - values to be stored for each choice
      */
-    constructor(choices) {
+    constructor(choices, values) {
         super();
         this.choices = choices;
+        if(values === undefined) {
+            this.values = choices;
+        } else {
+            this.values = values;
+        }
     }
 
     /**
@@ -196,24 +202,28 @@ class RadioButtonFormElement extends FormElement {
         let ret = document.createElement('div');
 
         // button and label for each possible answer
-        for(let resp of this.choices) {
+        //for(let resp of this.choices) {
+        for(let i = 0; i < this.choices.length; i++) {
+            let resp = this.choices[i];
+            let val = this.values[i].toString();
+
             let div = document.createElement('div');
             $(div).addClass('form_radio');
 
             let button = document.createElement('input');
             $(button).attr('type', 'radio');
-            $(button).attr('value', resp);
-            $(button).attr('name', `q_${q_idx}`);
-            $(button).attr('id', `q_${q_idx}_${resp}`);
-            if(known_response === resp) {
+            $(button).attr('value', val); // storage value
+            $(button).attr('name', `q_${q_idx}`); // radio button group
+            $(button).attr('id', `q_${q_idx}_${resp}`); // for matching the label
+            if(known_response === val) {
                 $(button).attr('checked', 'checked');
             }
             div.appendChild(button);
 
             let label = document.createElement('label');
             $(label).addClass('form_choice_label');
-            $(label).attr('for', `q_${q_idx}_${resp}`);
-            $(label).text(resp);
+            $(label).attr('for', `q_${q_idx}_${resp}`); // matches with id of button
+            $(label).text(resp); // display value
             div.appendChild(label);
 
             ret.appendChild(div);

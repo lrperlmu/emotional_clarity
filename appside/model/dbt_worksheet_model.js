@@ -149,8 +149,16 @@ class DbtWorksheetModelFwd extends Model {
      * Read uds from this.uds and compute the phq-9 score
      */
     phq_compute() {
-        console.log('phq_compute');
-        console.log('uds', this.uds);
+        // console.log('phq_compute');
+
+        // get the phq uds
+        let phq_uds = this.uds.get_all(RESPONSE_PHQ);
+        let score = 0;
+        for(let ud of phq_uds) {
+            score += Number(ud.response);
+        }
+        console.log('score', score);
+
     }
 
     /**
@@ -499,8 +507,6 @@ class DbtWorksheetModelFwd extends Model {
 
             ret.push(new FormFrame(frame, this.logger));
         }
-
-        console.log('feedback frames', ret);
         return ret;
     }
 

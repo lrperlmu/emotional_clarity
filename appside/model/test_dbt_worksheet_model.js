@@ -367,9 +367,7 @@ function postq(variant) {
         while(frame.template !== FEEDBACK_FRAME_TEMPLATE) {
             frame = model.get_frame('next');
         }
-        model.get_frame('next');
-        model.get_frame('next');
-        //model.back();
+        model.back();
 
         let nav = new Nav(model, logger);
     });
