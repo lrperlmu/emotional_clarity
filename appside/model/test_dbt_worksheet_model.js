@@ -272,6 +272,7 @@ function visual_test_consent_disclosure(variant) {
  */
 function visual_test_phq(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_consent_disclosure(true);
     config.set_study(true);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);

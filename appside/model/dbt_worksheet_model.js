@@ -34,6 +34,7 @@ class DbtWorksheetModelFwd extends Model {
 
         this.uds = new UserDataSet();
         this.summary_frame = this.initialize_summary_frame();
+        this.frame_callbacks = new Map();
 
         // make a list of references to all the frames, so we can index into it
         // add userdataset items where applicable
@@ -120,6 +121,16 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
+     * Register a callback to be called by the model when
+     *   navigating forward after a frame with the given template name.
+     * @param template_name - name of the frame's template
+     * @callback - the method that should be called
+     */
+    register_frame_callback(template_name, callback) {
+        this.frame_callbacks.set(template_name, callback);
+    }
+
+    /**
      * Build welcome frame
      * @return welcome frame
      */
@@ -132,6 +143,14 @@ class DbtWorksheetModelFwd extends Model {
         frame.response_name = RESPONSE_GENERIC;
         let ret = new FormFrame(frame, this.logger);
         return ret;
+    }
+
+    /**
+     * Read uds from this.uds and compute the phq-9 score
+     */
+    phq_compute() {
+        console.log('phq_compute');
+        console.log('uds', this.uds);
     }
 
     /**
@@ -166,9 +185,7 @@ class DbtWorksheetModelFwd extends Model {
         r_frame.questions = [];
         ret.push(new FormFrame(r_frame, this.logger));
 
-        // note: need a hook for nav to execute the phq evaluation code
-        // and then modify future frames if applicable
-
+        this.register_frame_callback(q_frame.template, this.phq_compute);
 
         return ret;
     }
@@ -560,13 +577,23 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
-     * Get next frame from the model.
+     * Execute callback registered to the current frame.
+     * Get and return next frame from the model.
      * It is the caller's responsibility to make sure that the next frame exists before calling.
      * Behavior undefined for nonexistent frames.
      * @return an object containing data for the next frame. based on
      *     the model's internal structure, and input passed in so far
      */
     next_frame() {
+        // execute current frame's callback, if applicable
+        if(this.frame_idx >= 0) {
+            let template = this.frames[this.frame_idx].template;
+            let callback = this.frame_callbacks.get(template);
+            if (callback !== undefined) {
+                callback.bind(this)();
+            }
+        }
+
         this.frame_idx += 1;
         while(this.frames[this.frame_idx].is_blocker()) this.frame_idx += 1;
         let frame = this.frames[this.frame_idx];
