@@ -159,6 +159,40 @@ class DbtWorksheetModelFwd extends Model {
         }
         console.log('score', score);
 
+        // if pass, don't change anything
+
+        // if fail, change the text on the phqr frame and delete frames we won't be using
+        if(score >= PHQ_LOWEST_FAIL) {
+            console.log('finding phq frame');
+            let i;
+            for(i=0; i<this.frames.length; i++){
+                console.log('i', i);
+                //for(frame of this.frames) {
+                let frame = this.frames[i];
+                // change phq result frame text
+                if(frame.template === PHQR_FRAME_TEMPLATE) {
+                    frame.instruction = PHQR_TEXT_NO;
+                    console.log('changed phqr frame');
+                    break;
+                }
+            }
+            console.log('exited loop');
+            console.log('now deleting extraneous frames');
+            // delete study and app frames, leaving only the end frame
+            let start_deleting_idx = i + 3;
+            for(; i<this.frames.length; i++) {
+                let frame = this.frames[i];
+                if(frame.template === END_FRAME_TEMPLATE) {
+                    break;
+                }
+            }
+            let num_to_delete = i - start_deleting_idx;
+            this.frames.splice(start_deleting_idx, num_to_delete);
+
+
+        }
+        console.log('frames', this.frames);
+
     }
 
     /**
