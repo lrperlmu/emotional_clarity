@@ -149,35 +149,23 @@ class DbtWorksheetModelFwd extends Model {
      * Read uds from this.uds and compute the phq-9 score
      */
     phq_compute() {
-        // console.log('phq_compute');
-
-        // get the phq uds
+        // get the phq uds and tally the score
         let phq_uds = this.uds.get_all(RESPONSE_PHQ);
         let score = 0;
         for(let ud of phq_uds) {
             score += Number(ud.response);
         }
-        console.log('score', score);
 
-        // if pass, don't change anything
-
-        // if fail, change the text on the phqr frame and delete frames we won't be using
         if(score >= PHQ_LOWEST_FAIL) {
-            console.log('finding phq frame');
             let i;
             for(i=0; i<this.frames.length; i++){
-                console.log('i', i);
-                //for(frame of this.frames) {
                 let frame = this.frames[i];
                 // change phq result frame text
                 if(frame.template === PHQR_FRAME_TEMPLATE) {
                     frame.instruction = PHQR_TEXT_NO;
-                    console.log('changed phqr frame');
                     break;
                 }
             }
-            console.log('exited loop');
-            console.log('now deleting extraneous frames');
             // delete study and app frames, leaving only the end frame
             let start_deleting_idx = i + 3;
             for(; i<this.frames.length; i++) {
@@ -188,11 +176,7 @@ class DbtWorksheetModelFwd extends Model {
             }
             let num_to_delete = i - start_deleting_idx;
             this.frames.splice(start_deleting_idx, num_to_delete);
-
-
         }
-        console.log('frames', this.frames);
-
     }
 
     /**
@@ -222,7 +206,7 @@ class DbtWorksheetModelFwd extends Model {
         let r_frame = {};
         r_frame.template = PHQR_FRAME_TEMPLATE;
         r_frame.title = PHQR_TITLE;
-        //////  TODO: set this based on result //////////
+        // this field will be changed after the fact if participant fails the screen
         r_frame.instruction = PHQR_TEXT_YES;
         r_frame.questions = [];
         ret.push(new FormFrame(r_frame, this.logger));

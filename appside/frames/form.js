@@ -16,9 +16,11 @@ class FormFrame extends Frame {
      *    frame_data.template (string) -- the exact string 'form'
      *    frame_data.title (string) -- title
      *    frame_data.instruction (string) -- instruction
-     *    frame_data.questions (list) -- each entry in the form [question, type]
+     *    frame_data.questions (list) -- each entry in the form [question, type, [required]]
      *          question (string) -- text to show user
      *          type (string) -- how to render the question: 'text', 'yesno', or 'likert'
+     *          required (boolean, optional) -- whether the question must be answered
+     *                                          undefined/missing means not required
      *    frame_data.response_name (string) - name this frame will attach to each piece
      *                 of data in return value of get_user_input
      *
@@ -76,7 +78,7 @@ class FormFrame extends Frame {
             frame.appendChild(qtext);
 
             // render the input field -- dispatch to proper type of FormElement
-            let element = FormElement.generate(type);
+            let element = FormElement.generate(type, this);
             let html_element = element.generate_html(text, response, q_idx);
             frame.appendChild(html_element);
 
@@ -84,6 +86,45 @@ class FormFrame extends Frame {
         }
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
+        this.check_required_questions();
+    }
+
+    /**
+     * Check if all required questions in this form have been answered.
+     * @effects enables "next" button if all complete, othewise disables it
+     */
+    check_required_questions() {
+        let all_complete = true;
+
+        // for each required question
+        let q_idx = 0;
+        for(let question of this.questions) {
+            let type = question[1];
+            // if question[2] is missing, this will get set to undefined, which is falsy
+            let required = question[2];
+            if(required) {
+                // case for radio button. TODO: magic strings
+                if(type === 'yesno' || type === 'likert' || type ===  'phq') {
+                    // is at least one radio button of the group filled in?
+                    let radio_button_group_name = `q_${q_idx}`;
+                    let $checked = $(`input[type=radio][name=${radio_button_group_name}]:checked`);
+                    let num_checked = $checked.length;
+                    if(num_checked === 0) {
+                        all_complete = false;
+                    }
+                }
+                else if(type === 'text') {
+                    // case for text, if we want to require textboxes
+                }
+            }
+            q_idx += 1;
+        }
+        if(all_complete) {
+            this.enable_next_button();
+        }
+        else {
+            this.disable_next_button();
+        }
     }
 
     /**
@@ -100,7 +141,7 @@ class FormFrame extends Frame {
             let type = q_info[1];
 
             // dispatch to proper type of FormElement
-            let element = FormElement.generate(type);
+            let element = FormElement.generate(type, this);
             let user_response = element.get_input(q_idx);
 
             let value = {};
@@ -140,18 +181,22 @@ class FormElement {
     /**
      * Generate the proper type of element given type as a string
      * @param type (string)
+     * @param parent (FormFrame)
      * @return instance of a subclass of FormElement
      */
-    static generate(type) {
+    static generate(type, parent) {
+        let ret;
         if(type === 'text') {
-            return new TextFormElement();
+            ret = new TextFormElement();
         } else if(type === 'yesno') {
-            return new RadioButtonFormElement(FEEDBACK_YESNO_OPTIONS, FEEDBACK_YESNO_VALUES);
+            ret = new RadioButtonFormElement(FEEDBACK_YESNO_OPTIONS, FEEDBACK_YESNO_VALUES);
         } else if(type === 'likert') {
-            return new RadioButtonFormElement(FEEDBACK_LIKERT_OPTIONS, FEEDBACK_LIKERT_VALUES);
+            ret = new RadioButtonFormElement(FEEDBACK_LIKERT_OPTIONS, FEEDBACK_LIKERT_VALUES);
         } else if(type === 'phq') {
-            return new RadioButtonFormElement(PHQ_OPTIONS, PHQ_OPTION_VALUES);
+            ret = new RadioButtonFormElement(PHQ_OPTIONS, PHQ_OPTION_VALUES);
         }
+        ret.parent = parent;
+        return ret;
     }
 
     /**
@@ -218,6 +263,9 @@ class RadioButtonFormElement extends FormElement {
             if(known_response === val) {
                 $(button).attr('checked', 'checked');
             }
+            $(button).click(function() {
+                this.parent.check_required_questions();
+            }.bind(this));
             div.appendChild(button);
 
             let label = document.createElement('label');

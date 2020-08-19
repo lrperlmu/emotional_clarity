@@ -73,15 +73,15 @@ var PHQ_FRAME_TEMPLATE = 'phq';
 var PHQ_TITLE = 'Screening questionnaire: PHQ-9';
 var PHQ_TEXT = 'Over the last two weeks, how often have you been bothered by any of the following problems?';
 var PHQ_QUESTIONS = [
-    ['Little interest or pleasure in doing things?', 'phq'],
-    ['Feeling down, depressed, or hopeless?', 'phq'],
-    ['Trouble falling or staying asleep, or sleeping too much?', 'phq'],
-    ['Feeling tired or having little energy?', 'phq'],
-    ['Poor appetite or overeating?', 'phq'],
-    ['Feeling bad about yourself - or that you are a failure or have let yourself or your family down?', 'phq'],
-    ['Trouble concentrating on things, such as reading the newspaper or watching television?', 'phq'],
-    ['Moving or speaking so slowly that other people would have noticed? Or the opposite - being so fidgety or restless that you have been moving around a lot more than usual?', 'phq'],
-    ['Thoughts that you would be better off dead, or of hurting yourself in some way?', 'phq'],
+    ['Little interest or pleasure in doing things?', 'phq', true],
+    ['Feeling down, depressed, or hopeless?', 'phq', true],
+    ['Trouble falling or staying asleep, or sleeping too much?', 'phq', true],
+    ['Feeling tired or having little energy?', 'phq', true],
+    ['Poor appetite or overeating?', 'phq', true],
+    ['Feeling bad about yourself - or that you are a failure or have let yourself or your family down?', 'phq', true],
+    ['Trouble concentrating on things, such as reading the newspaper or watching television?', 'phq', true],
+    ['Moving or speaking so slowly that other people would have noticed? Or the opposite - being so fidgety or restless that you have been moving around a lot more than usual?', 'phq', true],
+    ['Thoughts that you would be better off dead, or of hurting yourself in some way?', 'phq', true],
 ];
 var PHQ_OPTIONS = ['Not at all', 'Several days', 'More than half the days', 'Nearly every day'];
 var PHQ_OPTION_VALUES = [0, 1, 2, 3];
@@ -91,6 +91,7 @@ var PHQR_FRAME_TEMPLATE = 'phq_result';
 var PHQR_TITLE = 'Results of PHQ-9 Screening Questionnaire';
 var PHQR_TEXT_NO = 'This study presents unnecessary risk to people experiencing moderate to severe depression because it asks participants to relive a negative emotional experience. Your PHQ-9 result indicates that you may be experiencing moderate to severe depression and should not participate in the study.';
 var PHQR_TEXT_YES = 'Your PHQ-9 result indicates that you may continue with the study.';
+var PHQ_LOWEST_FAIL = 10;
 
 // Body frame strings
 var BODY_TITLE = 'Questions';
