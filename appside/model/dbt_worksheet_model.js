@@ -171,6 +171,7 @@ class DbtWorksheetModelFwd extends Model {
             for(; i<this.frames.length; i++) {
                 let frame = this.frames[i];
                 if(frame.template === END_FRAME_TEMPLATE) {
+                    frame.set_passed_phq(false);
                     break;
                 }
             }
@@ -477,6 +478,7 @@ class DbtWorksheetModelFwd extends Model {
         end_frame.contact = END_CONTACT;
         return new EndFrame(end_frame, this.logger);
     }
+
 
     /**
      * Build feedback frames

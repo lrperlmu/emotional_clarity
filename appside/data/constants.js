@@ -146,11 +146,35 @@ var END_FRAME_TEMPLATE = 'end';
 var END_TITLE = 'End';
 var END_CODE_TEXT = 'Your unique completion code is';
 var END_DIRECTIONS = `<p>Make sure to record your code before leaving this page. To receive your $12 amazon gift code, please contact the research team by emailing Leah at <a href=mailto:leahperl@uw.edu>leahperl@uw.edu</a> using the subject line "Completed Emotional Clarity Study" and write your completion code in the body of the email.</p>`;
-var END_CONTACT = `<p>This study has asked you to recall potentially distressing life events. If you feel distressed after completing this study, please consider utilizing the following resources:</p>
+
+var END_CONTACT = `<p>Please be aware that your responses will not be checked in real time. Here are some resources that can help if you're feeling distressed.</p>
 <ul>
-<li>UW Counseling Center: 206-543-1240</li>
-<li>National Suicide Prevention Lifeline: 1-800-273-8255</li>
+<li>People you know
+  <ul>
+    <li>Your treatment providers and other supportive people you know</li>
+  </ul>
+</li>
+<li>Now Matters Now
+  <ul>
+    <li>Website with videos for managing the most painful moments of life, based on Dialectical Behavior Therapy (DBT)</li>
+    <li><a href="https://www.nowmattersnow.org">nowmattersnow.org</a></li>
+  </ul>
+</li>
+<li>King County Crisis Hotline
+  <ul>
+    <li> Provides immediate help to individuals, families, and friends of people in emotional crisis </li>
+    <li>(206) 461-3222</li>
+  </ul>
+</li>
+<li>UW Mental Health Resources (only available to UW students)
+  <ul>
+    <li>Two options for mental health care on campus</li>
+    <li><a href=
+https://wellbeing.uw.edu/topic/mental-health">wellbeing.uw.edu/topic/mental-health</a></li>
+  </ul>
+</li>
 </ul>
+<p>If you have questions or concerns about this research, please contact the research team by emailing Leah at <a href=mailto:leahperl@uw.edu>leahperl@uw.edu</a>.
 `;
 
 // Feedback frames

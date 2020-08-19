@@ -24,6 +24,7 @@ $(document).ready(function() {
         'body': visual_test_body,
         'post_measurement': visual_test_post_measurement,
         'end': visual_test_end,
+        'end2': visual_test_end2,
 
         // integ tests with nav
         'consent': visual_test_consent_disclosure,
@@ -126,6 +127,7 @@ function wksht_noerror(config, logger) {
 
 /*
  * Integration test that constructs an EndFrame to render the end frame of this app.
+ * This is ending frame 1.
  * Manually verified.
  * @param variant - the variant to test
  */
@@ -138,6 +140,27 @@ function visual_test_end(variant) {
         while(frame.template !== END_FRAME_TEMPLATE) {
             frame = model.get_frame('next');
         }
+        frame.render();
+    });
+}
+
+
+/*
+ * Integration test that constructs an EndFrame to render the end frame of this app.
+ * This is ending frame 2.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_end2(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== END_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        frame.set_passed_phq(false);
         frame.render();
     });
 }
