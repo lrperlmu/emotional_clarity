@@ -14,7 +14,7 @@ class DbtWorksheetModelFwd extends Model {
     /**
      * Construct model from data
      * NOTE: construction is not finished when this constructor returns
-     *     It is ony done upon resolution of the promise this.initialize.
+     *     It is only done upon resolution of the promise this.initialize.
      *     Anything to be done after initialization must be wrapped in
      *     this.initialize.then(...);
      * @param knowledgebase - js object containing the DBT worksheet data
@@ -32,63 +32,9 @@ class DbtWorksheetModelFwd extends Model {
             logger.logUserPid(this.pid);
         });
 
-        // get all the statements for this section
-        let section = config.section;
-        let section_statements = knowledgebase.filter(
-            entry => entry[KB_KEY_SECTION] === section
-        );
-
-        // find identical statements with different emotions and merge
-        // first, sort by statement
-        section_statements.sort((a, b) => a.Statement.localeCompare(b.Statement));
-
-        // then, merge identical
-        let merged_section_statements = [];
-        let item = section_statements[0];
-        for(let i = 1; i <= section_statements.length; i++) {
-            // peek at the next item
-            let next;
-            if(i < section_statements.length) {
-                next = section_statements[i];
-            }
-            if(i === section_statements.length || next.Statement !== item.Statement) {
-                // item is the last of a run, make a new entry in the merged list
-                let item_to_push = Object.assign(item);
-                item_to_push.Emotions = item_to_push.Emotion.split(', ');
-                delete item_to_push.Emotion;
-                merged_section_statements.push(item_to_push);
-            } else {
-                // merge this entry into the next entry
-                next.Emotion = item.Emotion.concat(', ',next.Emotion);
-            }
-            item = next;
-        }
-
-        // finally, re-sort by emotion
-        merged_section_statements.sort(
-            (a, b) => a.Emotions[0].localeCompare(b.Emotions[0]));
-
-        this.summary_frame = this.initialize_summary_frame();
-        let body_frames = this.build_body_frames(merged_section_statements);
-
         this.uds = new UserDataSet();
-        for (let stmt of merged_section_statements) {
-            let ud = new UserData(stmt.Statement, false, stmt.Emotions, RESPONSE_GENERIC);
-            this.uds.add(ud);
-        }
-
-        let consent_questions = [];
-        for (let question of CONSENT_DISCLOSURE_QUESTIONS) {
-            consent_questions.push([question, false]);
-        }
-
-        let likert_questions = [];
-        likert_questions.push([SDERS_QUESTIONS[0], undefined]);
-        likert_questions.push([SDERS_QUESTIONS[1], undefined]);
-
-        let self_report_questions = [];
-        self_report_questions.push([SELF_REPORT_Q1, '']);
-        self_report_questions.push([SELF_REPORT_Q2, '']);
+        this.summary_frame = this.initialize_summary_frame();
+        this.frame_callbacks = new Map();
 
         // make a list of references to all the frames, so we can index into it
         // add userdataset items where applicable
@@ -101,11 +47,12 @@ class DbtWorksheetModelFwd extends Model {
                 this.frames.push(new BlockerFrame());
             }
             if(this.config.consent_disclosure) {
-                this.frames.push(this.build_consent_disclosure_frame(consent_questions));
-
-                for(let item of consent_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
-                    this.uds.add(ud);
+                this.frames.push(this.build_consent_disclosure_frame());
+                this.frames.push(new BlockerFrame());
+            }
+            if(this.config.study) {
+                for(let frame of this.build_phq_frames()) {
+                    this.frames.push(frame);
                 }
                 this.frames.push(new BlockerFrame());
             }
@@ -116,45 +63,25 @@ class DbtWorksheetModelFwd extends Model {
                 this.frames.push(new BlockerFrame());
             }
             if(this.config.self_report) {
-                this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
-
-                for(let item of self_report_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
-                    this.uds.add(ud);
-                }
+                this.frames.push(this.build_self_report_frame(RESPONSE_PRE));
             }
             if(this.config.pre_post_measurement) {
-                this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_PRE));
-
-                for(let item of likert_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
-                    this.uds.add(ud);
-                }
+                this.frames.push(this.build_likert_frame(RESPONSE_PRE));
             }
             this.frames.push(new BlockerFrame());
             for(let frame of this.build_intro_frames()) {
                 this.frames.push(frame);
             }
-            for(let frame of body_frames) {
+            for(let frame of this.build_body_frames(knowledgebase)) {
                 this.frames.push(frame);
             }
             this.frames.push(this.summary_frame);
             this.frames.push(new BlockerFrame());
             if (this.config.self_report) {
-                this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
-
-                for(let item of self_report_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
-                    this.uds.add(ud);
-                }
+                this.frames.push(this.build_self_report_frame(RESPONSE_POST));
             }
             if(this.config.pre_post_measurement) {
-                this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_POST));
-
-                for(let item of likert_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
-                    this.uds.add(ud);
-                }
+                this.frames.push(this.build_likert_frame(RESPONSE_POST));
             }
             this.frames.push(new BlockerFrame());
             if(this.config.feedback) {
@@ -194,6 +121,16 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
+     * Register a callback to be called by the model when
+     *   navigating forward after a frame with the given template name.
+     * @param template_name - name of the frame's template
+     * @callback - the method that should be called
+     */
+    register_frame_callback(template_name, callback) {
+        this.frame_callbacks.set(template_name, callback);
+    }
+
+    /**
      * Build welcome frame
      * @return welcome frame
      */
@@ -205,6 +142,78 @@ class DbtWorksheetModelFwd extends Model {
         frame.questions = [];
         frame.response_name = RESPONSE_GENERIC;
         let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    /**
+     * Read uds from this.uds and compute the phq-9 score
+     */
+    phq_compute() {
+        // get the phq uds and tally the score
+        let phq_uds = this.uds.get_all(RESPONSE_PHQ);
+        let score = 0;
+        for(let ud of phq_uds) {
+            score += Number(ud.response);
+        }
+
+        if(score >= PHQ_LOWEST_FAIL) {
+            let i;
+            for(i=0; i<this.frames.length; i++){
+                let frame = this.frames[i];
+                // change phq result frame text
+                if(frame.template === PHQR_FRAME_TEMPLATE) {
+                    frame.instruction = PHQR_TEXT_NO;
+                    break;
+                }
+            }
+            // delete study and app frames, leaving only the end frame
+            let start_deleting_idx = i + 3;
+            for(; i<this.frames.length; i++) {
+                let frame = this.frames[i];
+                if(frame.template === END_FRAME_TEMPLATE) {
+                    frame.set_passed_phq(false);
+                    break;
+                }
+            }
+            let num_to_delete = i - start_deleting_idx;
+            this.frames.splice(start_deleting_idx, num_to_delete);
+        }
+    }
+
+    /**
+     * Build phq frames
+     * @return the question frame and the results frame
+     */
+    build_phq_frames() {
+        let ret = [];
+
+        // the frame with the questions
+        let q_frame = {};
+        q_frame.template = PHQ_FRAME_TEMPLATE;
+        q_frame.title = PHQ_TITLE;
+        q_frame.instruction = PHQ_TEXT;
+        q_frame.questions = PHQ_QUESTIONS;
+        q_frame.response_name = RESPONSE_PHQ;
+        ret.push(new FormFrame(q_frame, this.logger));
+
+        for(let question of q_frame.questions) {
+            let text = question[0];
+            let ud = new UserData(text, '', [], q_frame.response_name);
+            this.uds.add(ud);
+        }
+        ret.push(new BlockerFrame());
+
+        // the frame with the results
+        let r_frame = {};
+        r_frame.template = PHQR_FRAME_TEMPLATE;
+        r_frame.title = PHQR_TITLE;
+        // this field will be changed after the fact if participant fails the screen
+        r_frame.instruction = PHQR_TEXT_YES;
+        r_frame.questions = [];
+        ret.push(new FormFrame(r_frame, this.logger));
+
+        this.register_frame_callback(q_frame.template, this.phq_compute);
+
         return ret;
     }
 
@@ -261,11 +270,15 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
-     * Build consent disclosure frames for a DBT worksheet model.
-     * @param consent_questions - list of [question (string), response (bool)]
+     * Build consent frame for a DBT worksheet model.
      * @return the Frame
      */
-    build_consent_disclosure_frame(consent_questions) {
+    build_consent_disclosure_frame() {
+        let consent_questions = [];
+        for (let question of CONSENT_DISCLOSURE_QUESTIONS) {
+            consent_questions.push([question, false]);
+        }
+
         let consent_frame = {};
 
         consent_frame.title = CONSENT_DISCLOSURE_TITLE;
@@ -274,16 +287,25 @@ class DbtWorksheetModelFwd extends Model {
         consent_frame.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
 
         consent_frame.questions = consent_questions;
+
+        for(let item of consent_questions) {
+            let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
+            this.uds.add(ud);
+        }
+
         return new ConsentDisclosureFrame(consent_frame, this.logger);
     }
 
     /**
      * Build self report frame for a DBT worksheet model.
-     * @param self_report_questions - list of [question (string), response (bool or int)]
      * @param response_name - disambiguation name
      * @return the Frame
      */
-    build_self_report_frame(self_report_questions, response_name) {
+    build_self_report_frame(response_name) {
+        let self_report_questions = [];
+        self_report_questions.push([SELF_REPORT_Q1, '']);
+        self_report_questions.push([SELF_REPORT_Q2, '']);
+
         let frame = {};
 
         frame.template = SELF_REPORT_FRAME_TEMPLATE;
@@ -291,17 +313,26 @@ class DbtWorksheetModelFwd extends Model {
         frame.qualifiers = QUALIFIERS;
 
         frame.questions = self_report_questions;
+
+        for(let item of self_report_questions) {
+            let ud = new UserData(item[0], item[1], [], response_name);
+            this.uds.add(ud);
+        }
+
         return new SelfReportFrame(frame, this.logger);
     }
 
     /**
      * Build likert frame for a DBT worksheet model as pre or post measurement frame.
      *
-     * @param likert_questions - list of [text (string), default_response (int)]
      * @param response_name - disambiguation name
      * @return the Frame
      */
-    build_likert_frame(likert_questions, response_name) {
+    build_likert_frame(response_name) {
+        let likert_questions = [];
+        likert_questions.push([SDERS_QUESTIONS[0], undefined]);
+        likert_questions.push([SDERS_QUESTIONS[1], undefined]);
+
         let frame = {};
 
         frame.template = LIKERT_FRAME_TEMPLATE;
@@ -310,6 +341,11 @@ class DbtWorksheetModelFwd extends Model {
         frame.qualifiers = SDERS_QUALIFIERS;
         
         frame.questions = likert_questions;
+
+        for(let item of likert_questions) {
+            let ud = new UserData(item[0], item[1], [], response_name);
+            this.uds.add(ud);
+        }
 
         return new LikertFrame(frame, this.logger);
     }
@@ -331,12 +367,52 @@ class DbtWorksheetModelFwd extends Model {
     /**
      * Build body frames for a DBT worksheet model.
      *
-     * @param section_statements - list of statements that we will make into frames
+     * @param knowledgebase - all the statements
      * @return a list of body Frames
      */
-    build_body_frames(section_statements) {
-        // copy-in the argument
-        let statements = section_statements.concat();
+    build_body_frames(knowledgebase) {
+        //// Pre-process statements
+
+        // get all the statements for this section
+        let section = this.config.section;
+        let section_statements = knowledgebase.filter(
+            entry => entry[KB_KEY_SECTION] === section
+        );
+
+        // find identical statements with different emotions and merge
+        // first, sort by statement
+        section_statements.sort((a, b) => a.Statement.localeCompare(b.Statement));
+
+        // then, merge identical
+        let merged_section_statements = [];
+        let item = section_statements[0];
+        for(let i = 1; i <= section_statements.length; i++) {
+            // peek at the next item
+            let next;
+            if(i < section_statements.length) {
+                next = section_statements[i];
+            }
+            if(i === section_statements.length || next.Statement !== item.Statement) {
+                // item is the last of a run, make a new entry in the merged list
+                let item_to_push = Object.assign(item);
+                item_to_push.Emotions = item_to_push.Emotion.split(', ');
+                delete item_to_push.Emotion;
+                merged_section_statements.push(item_to_push);
+            } else {
+                // merge this entry into the next entry
+                next.Emotion = item.Emotion.concat(', ',next.Emotion);
+            }
+            item = next;
+        }
+
+        // finally, re-sort by emotion
+        merged_section_statements.sort(
+            (a, b) => a.Emotions[0].localeCompare(b.Emotions[0]));
+
+        //// Create frames
+
+        // copy the list (we'll use 1st copy to create uds later, 2nd copy to create frames now)
+        let statements = merged_section_statements.concat();
 
         // divide them into pages
         let num_stmts = statements.length;
@@ -377,6 +453,13 @@ class DbtWorksheetModelFwd extends Model {
             }
             body_frames.push(new StatementsBodyFrame(frame, this.logger));
         }
+
+        //// Create uds
+        for (let stmt of merged_section_statements) {
+            let ud = new UserData(stmt.Statement, false, stmt.Emotions, RESPONSE_GENERIC);
+            this.uds.add(ud);
+        }
+
         return body_frames;
     }
 
@@ -395,6 +478,7 @@ class DbtWorksheetModelFwd extends Model {
         end_frame.contact = END_CONTACT;
         return new EndFrame(end_frame, this.logger);
     }
+
 
     /**
      * Build feedback frames
@@ -443,8 +527,6 @@ class DbtWorksheetModelFwd extends Model {
 
             ret.push(new FormFrame(frame, this.logger));
         }
-
-        console.log('feedback frames', ret);
         return ret;
     }
 
@@ -521,13 +603,23 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
-     * Get next frame from the model.
+     * Execute callback registered to the current frame.
+     * Get and return next frame from the model.
      * It is the caller's responsibility to make sure that the next frame exists before calling.
      * Behavior undefined for nonexistent frames.
      * @return an object containing data for the next frame. based on
      *     the model's internal structure, and input passed in so far
      */
     next_frame() {
+        // execute current frame's callback, if applicable
+        if(this.frame_idx >= 0) {
+            let template = this.frames[this.frame_idx].template;
+            let callback = this.frame_callbacks.get(template);
+            if (callback !== undefined) {
+                callback.bind(this)();
+            }
+        }
+
         this.frame_idx += 1;
         while(this.frames[this.frame_idx].is_blocker()) this.frame_idx += 1;
         let frame = this.frames[this.frame_idx];
@@ -577,7 +669,6 @@ class DbtWorksheetModelFwd extends Model {
     get_frame(slug) {
         return this.nav_functions.get(slug)();
     }
-
 
     /**
      * Pass user input into the model. [For use by NAV.]
@@ -667,10 +758,13 @@ class DbtWorksheetModelConfig {
     }
 
     /**
-     * Setter for this.study, tells the model whether we're doing the study
-     * - affects wording on start frame (and possibly others)
-     * - could potentially be used as master switch to toggle lots of other options, but
-     *   at the time of writing it's not.
+     * Setter for this.study, tells the model whether we're doing the study.
+     * This flag affects:
+     *   - study welcome frame
+     *   - browser check frame
+     *   - phq frame
+     *   - we could potentially bundle more of the config items under the study flag
+     *     to reduce the number of config options
      * @param value - boolean to set it to
      * @return this
      */

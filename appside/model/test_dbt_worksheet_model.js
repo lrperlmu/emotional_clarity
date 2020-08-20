@@ -19,14 +19,16 @@ $(document).ready(function() {
 
         // integ tests
         'intro': visual_test_intro,
-        'consent_disclosure': visual_test_consent_disclosure,
         'self_report': visual_test_self_report,
         'pre_measurement': visual_test_pre_measurement,
         'body': visual_test_body,
         'post_measurement': visual_test_post_measurement,
         'end': visual_test_end,
+        'end2': visual_test_end2,
 
         // integ tests with nav
+        'consent': visual_test_consent_disclosure,
+        'phq': visual_test_phq,
         'induction': visual_test_induction,
         'summary': visual_test_summary,
         'postq': postq,
@@ -125,6 +127,7 @@ function wksht_noerror(config, logger) {
 
 /*
  * Integration test that constructs an EndFrame to render the end frame of this app.
+ * This end frame is used when the participant completes the study.
  * Manually verified.
  * @param variant - the variant to test
  */
@@ -137,6 +140,27 @@ function visual_test_end(variant) {
         while(frame.template !== END_FRAME_TEMPLATE) {
             frame = model.get_frame('next');
         }
+        frame.render();
+    });
+}
+
+
+/*
+ * Integration test that constructs an EndFrame to render the end frame of this app.
+ * This end frame is used when the participant fails phq and the app skips right to the end.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_end2(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== END_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        frame.set_passed_phq(false);
         frame.render();
     });
 }
@@ -237,30 +261,53 @@ function visual_test_self_report() {
 }
 
 
-/*
- * Integration test that invokes ConsentDisclosureFrame to render the consent disclosure frame of this app.
- * Manually verified.
- */
-function visual_test_consent_disclosure() {
-    FWD_PROMPTING_CONFIG.set_consent_disclosure(true);
-    let logger = new Logger();
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
-    model.initialize.then(() => {
-        let frame = model.get_frame('next');
-        while(frame.template !== CONSENT_FRAME_TEMPLATE) {
-            frame = model.get_frame('next');
-        }
-        frame.render();
-    });
-}
-
-
-
 ////////////////////  INTEGRATION TESTS WITH NAV  ////////////////////
 // These tests build and run a model, using some automation to flip
 //   directly to the frame we want to test.
 // Additionally, we use a nav object to render the frame, so navigation
 //   actions (next, back) are available within the test.
+
+
+/*
+ * Integration test that invokes ConsentDisclosureFrame to render the consent disclosure frame of this app.
+ * Manually verified.
+ */
+function visual_test_consent_disclosure(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
+    config.set_consent_disclosure(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== CONSENT_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
+
+
+/*
+ * Integration test for phq screening
+ * Manually verified.
+ */
+function visual_test_phq(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_consent_disclosure(true);
+    config.set_study(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== PHQ_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
 
 
 /*
@@ -343,9 +390,7 @@ function postq(variant) {
         while(frame.template !== FEEDBACK_FRAME_TEMPLATE) {
             frame = model.get_frame('next');
         }
-        model.get_frame('next');
-        model.get_frame('next');
-        //model.back();
+        model.back();
 
         let nav = new Nav(model, logger);
     });
