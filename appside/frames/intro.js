@@ -36,7 +36,7 @@ class IntroFrame extends Frame {
      *
      **/
     render() {
-        this.setBackground();
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div');

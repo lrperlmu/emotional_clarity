@@ -52,7 +52,7 @@ class Frame {
      *
      * @effects -- Changes class definitions of body
      */
-    setBackground() {
+    set_background() {
         if (this.is_app){
             let body = document.getElementsByTagName('body'); 
             $(body[0]).addClass('doodle');
