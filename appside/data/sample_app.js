@@ -40,6 +40,7 @@ var SAMPLE_APP = {
             'title': 'Kittens',
             'question': 'What makes a kitten adorable?',
             'graphic': null,
+            'is_app': true,
             'statements': [
                 ['its purr', false, 'correct'],
                 ['its floof', true, 'correct'],
@@ -53,6 +54,7 @@ var SAMPLE_APP = {
             'question': 'What is your favorite body part?',
             'graphic': null,
             'bodypart': null,    // if null, graphic is black silhouette
+            'is_app': true,
             'statements': [
                 ['Head', false, 'head'],
                 ['Shoulders', false, 'chest'],
@@ -65,6 +67,7 @@ var SAMPLE_APP = {
             'response_name': 'bodymap_1',
             'title': 'Body map coloring activity',
             'question': 'Research shows this is how sensation levels change for {}. How similar is this to your current state?',
+            'is_app': true,
             'emotions': [
                 'anger', 'disgust', 'envy', 'fear', 'happiness', 'love', 'sadness', 'shame',
             ],
@@ -84,6 +87,7 @@ var SAMPLE_APP = {
             'title': 'Word selection example',
             'question': 'Which words are palindromes?',
             'graphic': null,
+            'is_app': true,
             'words': [
                 ['pop', false, 'palindrome'],
                 ['radar', true, 'palindrome'],
@@ -95,6 +99,7 @@ var SAMPLE_APP = {
             'template': 'bodymap_color_fwd',
             'response_name': 'bodymap_color_1',
             'title': 'Body map color forward',
+            'is_app': true,
             'texts': [
                 'Select the body parts where you feel increased sensation.',
                 'Select the body parts where you feel decreased sensation.',
@@ -175,6 +180,7 @@ var SAMPLE_APP = {
         'description': 'This text appears at the top of the summary! I like hedgehogs because they are so so cute.',
         'graphic': 'https://www.washingtonpost.com/resizer/xEOALOr9qrImfg4OWCupZ1OS4kQ=/1396x0/arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/ZGD2JCRBUAI6TJ2ZFOCUDO56EA.jpg',
         'type': 'count', // or qualifier
+        'is_app': true,
 
         'matched_emotions': [
             {
@@ -218,6 +224,7 @@ var SAMPLE_APP = {
         'title': 'A Quality Summary',
         'description': 'This text appears at the top of the summary! Your input for this activity suggests:',
         'type': 'qualifier',
+        'is_app': true,
         'matched_emotions': [
             {
                 'emotion': 'jealousy',
