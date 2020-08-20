@@ -335,7 +335,7 @@ class DbtWorksheetModelFwd extends Model {
         intro_frame.instruction = INTRO_INSTRUCTION[this.config.section];
         intro_frame.text = INTRO_TEXT(this.config.section);
         intro_frame.template = INTRO_FRAME_TEMPLATE;
-        frame.is_app = true;
+        intro_frame.is_app = true;
         return [new IntroFrame(intro_frame, this.logger)];
     }
 

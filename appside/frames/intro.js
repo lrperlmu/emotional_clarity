@@ -15,6 +15,8 @@ class IntroFrame extends Frame {
      *      frame_data.title (string)
      *      frame_data.text (array of string) -- content of each paragraph of introduction
      *      frame_data.graphic (string) -- URL link to graphic
+     *      frame_data.is_app (boolean) -- true if the frame is part of the actual app, 
+     *                 false if it is part of the experiment. Changes the visual design.
      * Behavior undefined if frame does not have these properties.
      **/
     constructor(frame_data) {

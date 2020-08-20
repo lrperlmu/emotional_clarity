@@ -23,6 +23,8 @@ class ListBodyFrame extends Frame {
      *    frame_data.graphic (string) -- URL/path to image or null
      *    frame_data.response_name (string) - name this frame will attach to each piece
      *                 of data in return value of get_user_input
+     *    frame_data.is_app (boolean) -- true if the frame is part of the actual app,
+     *                 false if it is part of the experiment. Changes the visual design.
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {

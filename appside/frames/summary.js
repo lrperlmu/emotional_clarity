@@ -29,6 +29,8 @@ class SummaryFrame extends Frame {
      *    frame_data.matched_emotions (object) - list of emotions e, each having these fields:
      *         e.emotion - the name of the emotion
      *         e.responses (list of string) - list of matching user responses
+     *    frame_data.is_app (boolean) -- true if the frame is part of the actual app, 
+     *         false if it is part of the experiment. Changes the visual design.
      */
     constructor(frame_data) {
         if (new.target == SummaryFrame) {
