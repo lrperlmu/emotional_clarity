@@ -127,7 +127,7 @@ function wksht_noerror(config, logger) {
 
 /*
  * Integration test that constructs an EndFrame to render the end frame of this app.
- * This is ending frame 1.
+ * This end frame is used when the participant completes the study.
  * Manually verified.
  * @param variant - the variant to test
  */
@@ -147,7 +147,7 @@ function visual_test_end(variant) {
 
 /*
  * Integration test that constructs an EndFrame to render the end frame of this app.
- * This is ending frame 2.
+ * This end frame is used when the participant fails phq and the app skips right to the end.
  * Manually verified.
  * @param variant - the variant to test
  */
@@ -290,7 +290,7 @@ function visual_test_consent_disclosure(variant) {
 
 
 /*
- * Integration test that invokes ConsentDisclosureFrame to render the consent disclosure frame of this app.
+ * Integration test for phq screening
  * Manually verified.
  */
 function visual_test_phq(variant) {

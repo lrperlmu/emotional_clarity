@@ -103,7 +103,7 @@ class FormFrame extends Frame {
             // if question[2] is missing, this will get set to undefined, which is falsy
             let required = question[2];
             if(required) {
-                // case for radio button. TODO: magic strings
+                // case for radio button.
                 if(type === 'yesno' || type === 'likert' || type ===  'phq') {
                     // is at least one radio button of the group filled in?
                     let radio_button_group_name = `q_${q_idx}`;
@@ -114,7 +114,8 @@ class FormFrame extends Frame {
                     }
                 }
                 else if(type === 'text') {
-                    // case for text, if we want to require textboxes
+                    // for now, all text boxes are optional
+                    // implement this to enable requiring text boxes
                 }
             }
             q_idx += 1;
@@ -247,7 +248,6 @@ class RadioButtonFormElement extends FormElement {
         let ret = document.createElement('div');
 
         // button and label for each possible answer
-        //for(let resp of this.choices) {
         for(let i = 0; i < this.choices.length; i++) {
             let resp = this.choices[i];
             let val = this.values[i].toString();
