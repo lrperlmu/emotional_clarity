@@ -297,6 +297,10 @@ function visual_test_phq(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
     config.set_consent_disclosure(true);
     config.set_study(true);
+    config.set_feedback(true);
+    config.set_mood_induction(true);
+    config.set_self_report(true);
+    config.set_pre_post_measurement(true);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
     model.initialize.then(() => {

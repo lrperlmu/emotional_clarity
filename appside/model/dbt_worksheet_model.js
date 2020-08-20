@@ -62,13 +62,18 @@ class DbtWorksheetModelFwd extends Model {
                 }
                 this.frames.push(new BlockerFrame());
             }
+
+            // Pre measurement
             if(this.config.self_report) {
                 this.frames.push(this.build_self_report_frame(RESPONSE_PRE));
             }
             if(this.config.pre_post_measurement) {
                 this.frames.push(this.build_likert_frame(RESPONSE_PRE));
             }
-            this.frames.push(new BlockerFrame());
+            if(this.config.pre_post_measurement || this.config.self_report) {
+                this.frames.push(new BlockerFrame());
+            }
+
             for(let frame of this.build_intro_frames()) {
                 this.frames.push(frame);
             }
@@ -77,13 +82,20 @@ class DbtWorksheetModelFwd extends Model {
             }
             this.frames.push(this.summary_frame);
             this.frames.push(new BlockerFrame());
+
+
+            // Post measurement
             if (this.config.self_report) {
                 this.frames.push(this.build_self_report_frame(RESPONSE_POST));
             }
             if(this.config.pre_post_measurement) {
                 this.frames.push(this.build_likert_frame(RESPONSE_POST));
             }
-            this.frames.push(new BlockerFrame());
+            if(this.config.pre_post_measurement || this.config.self_report) {
+                this.frames.push(new BlockerFrame());
+            }
+
+
             if(this.config.feedback) {
                 for(let frame of this.build_feedback_frames()) {
                     this.frames.push(frame);
@@ -167,7 +179,7 @@ class DbtWorksheetModelFwd extends Model {
                 }
             }
             // delete study and app frames, leaving only the end frame
-            let start_deleting_idx = i + 3;
+            let start_deleting_idx = i + 2;
             for(; i<this.frames.length; i++) {
                 let frame = this.frames[i];
                 if(frame.template === END_FRAME_TEMPLATE) {
