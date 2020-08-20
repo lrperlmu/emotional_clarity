@@ -22,6 +22,7 @@ var SECTION_AFTER = 'Aftereffects';
 
 // generic value for frame name (when we don't need to distinguish)
 var RESPONSE_GENERIC = 'response';
+var RESPONSE_PHQ = 'phq';
 var RESPONSE_PRE = 'pre';
 var RESPONSE_POST = 'post';
 var RESPONSE_INDUCTION = 'induction';
@@ -75,6 +76,31 @@ function INTRO_TEXT(section) {
     return [INTRO_TEXT_START, INTRO_MAIN_TEXT[section], INTRO_TEXT_INFO, INTRO_TEXT_END];
 }
 
+// phq frame strings
+var PHQ_FRAME_TEMPLATE = 'phq';
+var PHQ_TITLE = 'Screening questionnaire: PHQ-9';
+var PHQ_TEXT = 'Over the last two weeks, how often have you been bothered by any of the following problems?';
+var PHQ_QUESTIONS = [
+    ['Little interest or pleasure in doing things?', 'phq', true],
+    ['Feeling down, depressed, or hopeless?', 'phq', true],
+    ['Trouble falling or staying asleep, or sleeping too much?', 'phq', true],
+    ['Feeling tired or having little energy?', 'phq', true],
+    ['Poor appetite or overeating?', 'phq', true],
+    ['Feeling bad about yourself - or that you are a failure or have let yourself or your family down?', 'phq', true],
+    ['Trouble concentrating on things, such as reading the newspaper or watching television?', 'phq', true],
+    ['Moving or speaking so slowly that other people would have noticed? Or the opposite - being so fidgety or restless that you have been moving around a lot more than usual?', 'phq', true],
+    ['Thoughts that you would be better off dead, or of hurting yourself in some way?', 'phq', true],
+];
+var PHQ_OPTIONS = ['Not at all', 'Several days', 'More than half the days', 'Nearly every day'];
+var PHQ_OPTION_VALUES = [0, 1, 2, 3];
+
+// phq result frame strings
+var PHQR_FRAME_TEMPLATE = 'phq_result';
+var PHQR_TITLE = 'Results of PHQ-9 Screening Questionnaire';
+var PHQR_TEXT_NO = 'This study presents unnecessary risk to people experiencing moderate to severe depression because it asks participants to relive a negative emotional experience. Your PHQ-9 result indicates that you may be experiencing moderate to severe depression and should not participate in the study.';
+var PHQR_TEXT_YES = 'Your PHQ-9 result indicates that you may continue with the study.';
+var PHQ_LOWEST_FAIL = 10;
+
 // Body frame strings
 var BODY_TITLE = 'Question';
 var BODY_QUESTION = {}
@@ -115,10 +141,9 @@ var QUALIFIERS = ['very uncertain', 'somewhat uncertain', 'neutral', 'somewhat c
 // Consent disclosure frame strings
 var CONSENT_FRAME_TEMPLATE = 'consent';
 var CONSENT_DISCLOSURE_TITLE = 'Consent';
-var CONSENT_DISCLOSURE_QUESTIONS = ['I have read the information above. I understand the risks of this study and wish to participate.',
-    'I am 18 or 19 years old.',
-    'I am able to read, understand, and respond to a web questionnaire written in English.'];
-var CONSENT_DISCLOSURE_INSTRUCTIONS = 'Please click on the following link to read the consent disclosure form.';
+var CONSENT_DISCLOSURE_QUESTIONS = ['I have electronically signed the consent form.',];
+var CONSENT_DISCLOSURE_INSTRUCTIONS = 'After volunteering for the study, you should have received an email to record your electronic consent using DocuSign. If you have not had a chance to electronically sign the consent form, please email Leah Perlmutter <leahperl@uw.edu>.';
+
 
 // Summary frame strings (all DBT worksheet models)
 var SUMMARY_TITLE = 'Summary';
@@ -132,20 +157,46 @@ var END_FRAME_TEMPLATE = 'end';
 var END_TITLE = 'End';
 var END_CODE_TEXT = 'Your unique completion code is';
 var END_DIRECTIONS = `<p>Make sure to record your code before leaving this page. To receive your $12 amazon gift code, please contact the research team by emailing Leah at <a href=mailto:leahperl@uw.edu>leahperl@uw.edu</a> using the subject line "Completed Emotional Clarity Study" and write your completion code in the body of the email.</p>`;
-var END_CONTACT = `<p>This study has asked you to recall potentially distressing life events. If you feel distressed after completing this study, please consider utilizing the following resources:</p>
+
+var END_CONTACT = `<p>Please be aware that your responses will not be checked in real time. Here are some resources that can help if you're feeling distressed.</p>
 <ul>
-<li>UW Counseling Center: 206-543-1240</li>
-<li>National Suicide Prevention Lifeline: 1-800-273-8255</li>
+<li>People you know
+  <ul>
+    <li>Your treatment providers and other supportive people you know</li>
+  </ul>
+</li>
+<li>Now Matters Now
+  <ul>
+    <li>Website with videos for managing the most painful moments of life, based on Dialectical Behavior Therapy (DBT)</li>
+    <li><a href="https://www.nowmattersnow.org">nowmattersnow.org</a></li>
+  </ul>
+</li>
+<li>King County Crisis Hotline
+  <ul>
+    <li> Provides immediate help to individuals, families, and friends of people in emotional crisis </li>
+    <li>(206) 461-3222</li>
+  </ul>
+</li>
+<li>UW Mental Health Resources (only available to UW students)
+  <ul>
+    <li>Two options for mental health care on campus</li>
+    <li><a href=
+https://wellbeing.uw.edu/topic/mental-health">wellbeing.uw.edu/topic/mental-health</a></li>
+  </ul>
+</li>
 </ul>
+<p>If you have questions or concerns about this research, please contact the research team by emailing Leah at <a href=mailto:leahperl@uw.edu>leahperl@uw.edu</a>.
 `;
 
 // Feedback frames
 var FEEDBACK_FRAME_TEMPLATE = 'feedback';
 var FEEDBACK_TITLE = 'Feedback';
 var FEEDBACK_YESNO_OPTIONS = ['Yes', 'No'];
+var FEEDBACK_YESNO_VALUES = [1, 0];
 var FEEDBACK_LIKERT_OPTIONS = [
     'Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree',
 ];
+var FEEDBACK_LIKERT_VALUES = [5, 4, 3, 2, 1];
 var FEEDBACK_QUESTIONS = {
     'page_1': [
         ['Did the app help you figure out your emotion(s)?', 'yesno'],

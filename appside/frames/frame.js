@@ -26,6 +26,7 @@ class Frame {
         }
         this.logger = logger;
         this.is_app = false;
+        this.template = 'none'; // to be ovewritten by child constructor
     }
 
     /**

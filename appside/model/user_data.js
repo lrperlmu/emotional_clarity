@@ -75,6 +75,21 @@ class UserDataSet {
         console.error('failed lookup', question, name);
     }
 
+    /**
+     * Get all the items with a given name
+     * @param name (string)
+     * @return list of matching UserDatas
+     */
+    get_all(name) {
+        let ret = [];
+        for(let item of this.data) {
+            if(item.name === name) {
+                ret.push(item);
+            }
+        }
+        return ret;
+    }
+
     to_array() {
         let arr = [];
         for(let item of this.data) {
