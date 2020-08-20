@@ -42,7 +42,7 @@ class ListBodyFrame extends Frame {
         this.user_input = new Map();
         this.graphic = frame_data.graphic;
         this.response_name = frame_data.response_name;
-        this.is_app = true;
+        this.is_app = frame_data.is_app;
     }
 
     /**

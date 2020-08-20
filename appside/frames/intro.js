@@ -25,7 +25,7 @@ class IntroFrame extends Frame {
         this.text = frame_data.text;
         this.graphic = frame_data.graphic;
         this.template = frame_data.template;
-        this.is_app = true;
+        this.is_app = frame_data.is_app;
     }
 
     /** Render the Intro frame template

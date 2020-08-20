@@ -1,3 +1,4 @@
+
 "use strict";
 
 /**
@@ -39,7 +40,8 @@ class SummaryFrame extends Frame {
         this.instruction = frame_data.instruction;
         this.description = frame_data.description;
         this.has_graphic = false;
-        this.is_app = true;
+        this.is_app = frame_data.is_app;
+
         if ('graphic' in frame_data) {
             if (frame_data.graphic.length > 0) {
                 this.graphic = frame_data.graphic;
