@@ -204,7 +204,6 @@ class DbtWorksheetModelFwd extends Model {
         frame.instruction = SW_TEXT;
         frame.questions = [];
         frame.response_name = RESPONSE_GENERIC;
-        frame.is_app = false;
         let ret = new FormFrame(frame, this.logger);
         return ret;
     }
@@ -220,7 +219,6 @@ class DbtWorksheetModelFwd extends Model {
         frame.instruction = BC_TEXT;
         frame.questions = [];
         frame.response_name = RESPONSE_GENERIC;
-        frame.is_app = false;
         let ret = new FormFrame(frame, this.logger);
         return ret;
     }
@@ -240,7 +238,6 @@ class DbtWorksheetModelFwd extends Model {
         short_answer_frame.truncated_prompt = short_answer_frame.prompt.substring(0, 100);
         short_answer_frame.instruction = INDUCTION_NOTE;
         short_answer_frame.char_limit = INDUCTION_CHAR_LIMIT;
-        short_answer_frame.is_app = false;
         let frame1 = new ShortAnswerFrame(short_answer_frame, this.logger);
 
         let ud1 = new UserData(
@@ -254,7 +251,6 @@ class DbtWorksheetModelFwd extends Model {
         long_answer_frame.prompt = INDUCTION_WRITING_PROMPT;
         long_answer_frame.truncated_prompt = long_answer_frame.prompt.substring(0, 100);
         long_answer_frame.time_limit = INDUCTION_TIME_LIMIT;
-        long_answer_frame.is_app = false;
         let frame2 = new TimedLongAnswerFrame(long_answer_frame, this.logger);
 
         let ud2 = new UserData(
@@ -278,7 +274,6 @@ class DbtWorksheetModelFwd extends Model {
         consent_frame.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
 
         consent_frame.questions = consent_questions;
-        consent_frame.is_app = false;
         return new ConsentDisclosureFrame(consent_frame, this.logger);
     }
 
@@ -297,7 +292,6 @@ class DbtWorksheetModelFwd extends Model {
         frame.qualifiers = QUALIFIERS;
 
         frame.questions = self_report_questions;
-        frame.is_app = false;
         return new SelfReportFrame(frame, this.logger);
     }
 
@@ -318,7 +312,6 @@ class DbtWorksheetModelFwd extends Model {
         frame.qualifiers = SDERS_QUALIFIERS;
         
         frame.questions = likert_questions;
-        frame.is_app = false;
 
         return new LikertFrame(frame, this.logger);
     }
@@ -406,7 +399,6 @@ class DbtWorksheetModelFwd extends Model {
         end_frame.completion_text = END_CODE_TEXT
         end_frame.directions = END_DIRECTIONS;
         end_frame.contact = END_CONTACT;
-        end_frame.is_app = false;
         return new EndFrame(end_frame, this.logger);
     }
 
@@ -424,7 +416,6 @@ class DbtWorksheetModelFwd extends Model {
             frame.title = FEEDBACK_TITLE;
             frame.questions = FEEDBACK_QUESTIONS[page_string];
             frame.response_name = RESPONSE_GENERIC;
-            frame.is_app = false;
             ret.push(new FormFrame(frame, this.logger));
 
             for(let question of frame.questions) {
@@ -446,7 +437,6 @@ class DbtWorksheetModelFwd extends Model {
             frame.instruction = FEEDBACK_COMPARISON_INSTRUCTION.replace(
                 FEEDBACK_PLACEHOLDER, order_string);
             frame.response_name = RESPONSE_GENERIC;
-            frame.is_app = false;
 
             let questions = [];
             for(let q of FEEDBACK_COMPARISON_SKELETON) {
