@@ -74,6 +74,10 @@ class DbtWorksheetModelFwd extends Model {
                 this.frames.push(new BlockerFrame());
             }
 
+            // Transition to app
+            this.frames.push(this.build_pre_transition_frame());
+
+            // App frames
             for(let frame of this.build_intro_frames()) {
                 this.frames.push(frame);
             }
@@ -83,6 +87,8 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(this.summary_frame);
             this.frames.push(new BlockerFrame());
 
+            // Transition away from the app
+            this.frames.push(this.build_post_transition_frame());
 
             // Post measurement
             if (this.config.self_report) {
@@ -396,6 +402,39 @@ class DbtWorksheetModelFwd extends Model {
         return new LikertFrame(frame, this.logger);
     }
 
+
+    /**
+     * Build a frame to transition from study related questions to the app.
+     *
+     * @return a FormFrame
+     */
+    build_pre_transition_frame() {
+        let frame = {};
+        frame.template = TRANSITION_FRAME_TEMPLATE;
+        frame.title = PRE_TRANSITION_TITLE;
+        frame.instruction = PRE_TRANSITION_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    /**
+     * Build a frame to transition from the app back to study related questions .
+     *
+     * @return a FormFrame
+     */
+    build_post_transition_frame() {
+        let frame = {};
+        frame.template = TRANSITION_FRAME_TEMPLATE;
+        frame.title = POST_TRANSITION_TITLE;
+        frame.instruction = POST_TRANSITION_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
     /**
      * Build intro frames for a DBT worksheet model.
      *
@@ -535,7 +574,7 @@ class DbtWorksheetModelFwd extends Model {
      *
      * @return the list of frames
      */
-    build_feedback_frames() {
+        build_feedback_frames() {
         let ret = [];
         for(let idx of [1, 2, 3]) {
             let page_string = `page_${idx}`;
