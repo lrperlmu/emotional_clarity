@@ -542,6 +542,7 @@ class DbtWorksheetModelFwd extends Model {
             let frame = {};
             frame.template = FEEDBACK_FRAME_TEMPLATE;
             frame.title = FEEDBACK_TITLE;
+            frame.instruction = FEEDBACK_INSTRUCTIONS[page_string];
             frame.questions = FEEDBACK_QUESTIONS[page_string];
             frame.response_name = RESPONSE_GENERIC;
             ret.push(new FormFrame(frame, this.logger));

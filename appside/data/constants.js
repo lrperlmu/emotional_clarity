@@ -208,9 +208,20 @@ var FEEDBACK_LIKERT_OPTIONS = [
     'Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree',
 ];
 var FEEDBACK_LIKERT_VALUES = [5, 4, 3, 2, 1];
+
+var FEEDBACK_INSTRUCTIONS = {
+    'page_1': 'Please indicate your agreement with the following statements.',
+    'page_2': '',
+    'page_3': 'Please indicate your agreement with the following statements.'
+};
+
 var FEEDBACK_QUESTIONS = {
     'page_1': [
-        ['Did the app help you figure out your emotion(s)?', 'yesno'],
+        ['The app helped me better understand my emotion(s).', 'likert'],
+        ['The app made me realize I had certain emotions that I did not realize before.', 'likert'],
+        ['The app made me more certain about the emotions I thought I have.', 'likert'],
+        ['The app helped me understand why I had certain emotions.', 'likert'],
+        ['The app helped me understand the link between my emotions and my thoughts and actions.', 'likert'],
         ['Which specific parts of the app were most helpful and why?', 'text'],
     ],
     'page_2': [
