@@ -150,7 +150,7 @@ var CONSENT_DISCLOSURE_INSTRUCTIONS = 'After volunteering for the study, you sho
 
 
 // Summary frame strings (all DBT worksheet models)
-var SUMMARY_TITLE = 'Emotions';
+var SUMMARY_TITLE = 'Your Emotions';
 var SUMMARY_INSTRUCTION = 'Based on your responses';
 var SUMMARY_TEXT = '<p>Your responses are <i>commonly</i> associated with the following emotions, but they are not the <i>only</i> emotions that may be associated with your responses.';
 var SUMMARY_FOLLOW_TEXT = 'Please reflect on this summary to see which emotion(s), if any, you might actually be experiencing.';
