@@ -1,5 +1,6 @@
 * {
-    font-family: Helvetica;
+    /*font-family: Helvetica;*/
+    font-family: 'Roboto', sans-serif;
     color: #444;
     font-size: 16px;
     margin: 0px;
@@ -11,6 +12,29 @@ body {
     height: 100%;
     width: 100%;
     background: #F8F8F8;
+}
+
+body.doodle {
+    background: linear-gradient(rgba(255, 250, 250, 0.75), rgba(255, 250, 250, 0.75)), url(../images/doodles.png);
+}
+
+.nav-btn,
+.custom-checkbox {
+  padding-top: 2rem;
+}
+
+/*----- Custom Large Checkbox -----*/
+.custom-control-lg .custom-control-label::before,
+.custom-control-lg .custom-control-label::after {
+    top: 0.1rem !important;
+    left: -2rem !important;
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+}
+
+.custom-control-lg .custom-control-label {
+    margin-left: 0.5rem !important;
+    font-size: 1rem !important;
 }
 
 .button_disabled {
@@ -25,9 +49,6 @@ body {
   width: 100%;
   height: 200px;
   overflow: scroll;
-}
-
-.intro_text {
 }
 
 .summary_flex {
@@ -101,7 +122,7 @@ body {
     width: 800px;
     margin: auto;
     height: auto;
-    background: #FFF;
+    /*background: #FFF;*/
 }
 
 .list_body_frame {
@@ -380,8 +401,7 @@ body {
     display: none;
 }
 
-.likert_input, .likert_input_text {
-  display: inline;
+.likert_input_text {
   padding: 10px;
 }
 

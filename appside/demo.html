@@ -4,17 +4,23 @@
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="styles/frames.css">
-  <title>Demo</title>
+  <title>Integration Test</title>
 </head>
 
 <body>
-  <div class="container-fluid d-flex h-100 align-items-center justify-content-center">
+  <div class="container-fluid h-100 d-flex align-items-center justify-content-center">
     <div class="container-fixed border border-light rounded-lg">
-      <div class="row mx-5 mb-5 mt-5">
+      <div class="row align-items-center mx-5 mb-5 mt-5">
         <div class="col-sm">
-          <div class="card" id="frame"></div>
-          <div id="nav"></div>
+          <div class="d-flex justify-content-center" id="frame">
+            <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>            
+          </div>
         </div>
+      </div>
+      <div class="row align-items-end mx-5 mb-5 mt-5">
+        <div id="nav"></div>
       </div>
     </div>
   </div>
@@ -23,11 +29,16 @@
   <link rel="stylesheet" href="jquery/jquery-ui.min.css">
   <script src="jquery/external/jquery/jquery.js"></script>
   <script src="jquery/jquery-ui.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
 
   <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.3.0/firebase-database.js"></script>
+
+  <script src="database/logger.js"></script>
 
   <!-- data files -->
   <script src="data/constants.js"></script>
@@ -37,20 +48,20 @@
   <script src="model/model.js"></script>
   <script src="model/dbt_worksheet_model.js"></script>
   <script src="model/user_data.js"></script>
+
   <script src="frames/frame.js"></script>
   <script src="frames/consent_disclosure.js"></script>
   <script src="frames/intro.js"></script>
-  <script src="frames/list_body_frame.js"></script>
-  <script src="frames/body_map_frame.js"></script>
-  <script src="frames/summary.js"></script>
   <script src="frames/induction.js"></script>
+  <script src="frames/list_body_frame.js"></script>
+  <script src="frames/summary.js"></script>
+  <script src="frames/form.js"></script>
   <script src="frames/likert.js"></script>
   <script src="frames/self_report.js"></script>
   <script src="frames/end.js"></script>
-  <script src="frames/form.js"></script>
+
   <script src="nav/nav.js"></script>
   <script src="nav/test_nav.js"></script>
-  <script src="database/logger.js"></script>
 
 </body>
 

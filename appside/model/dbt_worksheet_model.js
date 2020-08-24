@@ -320,6 +320,7 @@ class DbtWorksheetModelFwd extends Model {
 
         let frame = {};
 
+        frame.title = SELF_REPORT_TITLE;
         frame.template = SELF_REPORT_FRAME_TEMPLATE;
         frame.response_name = response_name;
         frame.qualifiers = QUALIFIERS;
@@ -347,6 +348,7 @@ class DbtWorksheetModelFwd extends Model {
 
         let frame = {};
 
+        frame.title = LIKERT_FRAME_TITLE;
         frame.template = LIKERT_FRAME_TEMPLATE;
         frame.response_name = response_name;
         frame.instructions = LIKERT_INSTRUCTIONS;
@@ -371,8 +373,10 @@ class DbtWorksheetModelFwd extends Model {
         // only one intro frame so far, but we'll likely add more
         let intro_frame = {};
         intro_frame.title = INTRO_TITLE[this.config.section];
+        intro_frame.instruction = INTRO_INSTRUCTION[this.config.section];
         intro_frame.text = INTRO_TEXT(this.config.section);
         intro_frame.template = INTRO_FRAME_TEMPLATE;
+        intro_frame.is_app = true;
         return [new IntroFrame(intro_frame, this.logger)];
     }
 
@@ -448,18 +452,20 @@ class DbtWorksheetModelFwd extends Model {
 
         // make a frame for each page
         let body_frames = [];
-        for(let page of pages) {
+        for(let idx of Array(pages.length).keys()) {
+            let page = pages[idx];
             let page_statements = [];
             for(let stmt of page) {
                 page_statements.push([stmt.Statement, false, stmt.Emotions]);
             }
 
             let frame = {};
-            frame.title = BODY_TITLE;
+            frame.title = BODY_TITLE + ' ' + (idx+1);
             frame.response_name = RESPONSE_GENERIC;
             frame.template = STATEMENTS_FRAME_TEMPLATE;
             frame.question = BODY_QUESTION[this.config.section];
             frame.statements = [];
+            frame.is_app = true;
             for(let statement of page_statements) {
                 frame.statements.push(statement);
             }
@@ -573,11 +579,13 @@ class DbtWorksheetModelFwd extends Model {
         let summary_frame = {};
         summary_frame.template = SUMMARY_COUNT_FRAME_TEMPLATE;
         summary_frame.title = SUMMARY_TITLE;
+        summary_frame.instruction = SUMMARY_INSTRUCTION;
         summary_frame.description = SUMMARY_TEXT;
         summary_frame.matched_emotions = [];
         summary_frame.follow_text = SUMMARY_FOLLOW_TEXT;
         summary_frame.info_sheet_links = this.config.info_sheet_links;
         summary_frame.offer_ideas = this.config.offer_ideas;
+        summary_frame.is_app = true;
         return new SummaryFrameCount(summary_frame, this.logger);
     }
 
