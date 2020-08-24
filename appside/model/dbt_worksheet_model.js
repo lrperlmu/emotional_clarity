@@ -443,8 +443,8 @@ class DbtWorksheetModelFwd extends Model {
     build_intro_frames() {
         // only one intro frame so far, but we'll likely add more
         let intro_frame = {};
-        intro_frame.title = INTRO_TITLE[this.config.section];
-        intro_frame.instruction = INTRO_INSTRUCTION[this.config.section];
+        intro_frame.title = INTRO_TITLE;
+        intro_frame.instruction = INTRO_INSTRUCTION;
         intro_frame.text = INTRO_TEXT(this.config.section);
         intro_frame.template = INTRO_FRAME_TEMPLATE;
         intro_frame.is_app = true;

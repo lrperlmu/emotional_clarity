@@ -44,44 +44,29 @@ var BC_FRAME_TEMPLATE = 'browser-check';
 var BC_TITLE = 'Please use a desktop browser';
 var BC_TEXT = 'We didn\'t test this app on small screens or touch screens, you might not be able to complete the study on a mobile device. Please use google chrome browser on a laptop or desktop.';
 
-// Intro frame strings
-var the_title = 'The App';
-var INTRO_FRAME_TEMPLATE = 'intro';
-var INTRO_TITLE = {};
-INTRO_TITLE[SECTION_PROMPTING] = the_title;
-INTRO_TITLE[SECTION_INTERP] = the_title;
-INTRO_TITLE[SECTION_BIO] = the_title;
-INTRO_TITLE[SECTION_ACT] = the_title;
-INTRO_TITLE[SECTION_AFTER] = the_title;
-
-
 // Transition frame
 var TRANSITION_FRAME_TEMPLATE = 'transition';
-var PRE_TRANSITION_TITLE = 'PRE_TRANSITION_TITLE';
-var PRE_TRANSITION_TEXT = 'PRE_TRANSITION_TEXT';
-var POST_TRANSITION_TITLE = 'POST_TRANSITION_TITLE';
-var POST_TRANSITION_TEXT = 'POST_TRANSITION_TEXT';
+var PRE_TRANSITION_TITLE = 'Prepare to use the app';
+var PRE_TRANSITION_TEXT= 'Next you will use the Emotional Clarity App. Consider the Reference Event that you just wrote about and the emotions related to this event while you are using the app.';
+var POST_TRANSITION_TITLE = 'Thanks for completing the exercise';
+var POST_TRANSITION_TEXT = 'Next you will be asked a few questions about the exercise you just completed using the Emotional Clarity App.';
 
-var the_intruction = 'Welcome to the Emotional Clarity App!';
-var INTRO_INSTRUCTION = {};
-INTRO_INSTRUCTION[SECTION_PROMPTING] = the_intruction;
-INTRO_INSTRUCTION[SECTION_INTERP] = the_intruction;
-INTRO_INSTRUCTION[SECTION_BIO] = the_intruction;
-INTRO_INSTRUCTION[SECTION_ACT] = the_intruction;
-INTRO_INSTRUCTION[SECTION_AFTER] = the_intruction;
-
-var INTRO_TEXT_START = 'Consider the Reference Event that you just wrote about.';
+// Intro frame strings
+var INTRO_FRAME_TEMPLATE = 'intro';
+var INTRO_TITLE = 'Emotional Clarity App';
+var INTRO_INSTRUCTION = 'Welcome!';
 var INTRO_MAIN_TEXT = {};
-INTRO_MAIN_TEXT[SECTION_PROMPTING] = 'In the following exercise, you will answer some questions about components of the Reference Event.';
-INTRO_MAIN_TEXT[SECTION_INTERP] = 'In the following exercise, you will answer some questions about your interpretations of the Reference Event or thoughts you are having right now as a result.';
-INTRO_MAIN_TEXT[SECTION_BIO] = 'In the following exercise, you will answer some questions about biological changes and experiences you are having right now.';
-INTRO_MAIN_TEXT[SECTION_ACT] = 'In the following exercise, you will answer some questions about your actions and expressions in response to the Reference Event.';
-INTRO_MAIN_TEXT[SECTION_AFTER] = 'In the following exercise, you will answer some questions about things you are likely to do, feel, or experience in the near future, now that you have recalled the Reference Event.';
-var INTRO_TEXT_INFO = 'This exercise may help you reflect on your emotions and gain emotional clarity.'
+var INTRO_TEXT_START = 'This app will guide you through an exercise that aims to help you reflect on your emotions and gain clarity about your current emotions.';
+INTRO_MAIN_TEXT[SECTION_PROMPTING] = 'In this exercise, you will answer some questions about components of the events that triggered your emotions.';
+INTRO_MAIN_TEXT[SECTION_INTERP] = 'In this  exercise, you will answer some questions about your interpretations of events or thoughts you are having right now as a result.';
+INTRO_MAIN_TEXT[SECTION_BIO] = 'In this  exercise, you will answer some questions about biological changes and experiences that might be related to your emotions.';
+INTRO_MAIN_TEXT[SECTION_ACT] = 'In this  exercise, you will answer some questions about your actions and expressions in response to events.';
+INTRO_MAIN_TEXT[SECTION_AFTER] = 'In this  exercise, you will answer some questions about things you are likely to do, feel, or experience as a result of your emotions.';
+var INTRO_TEXT_INFO = '';
 var INTRO_TEXT_END = 'Tap NEXT to begin.';
 
 function INTRO_TEXT(section) {
-    return [INTRO_TEXT_START, INTRO_MAIN_TEXT[section], INTRO_TEXT_INFO, INTRO_TEXT_END];
+    return [INTRO_TEXT_START, INTRO_MAIN_TEXT[section]];
 }
 
 // phq frame strings
@@ -165,10 +150,10 @@ var CONSENT_DISCLOSURE_INSTRUCTIONS = 'After volunteering for the study, you sho
 
 
 // Summary frame strings (all DBT worksheet models)
-var SUMMARY_TITLE = 'Summary';
-var SUMMARY_INSTRUCTION = 'That\'s it!';
-var SUMMARY_TEXT = '<p>This summary shows which emotions your responses are <i>commonly</i> associated with, but they are not the <i>only</i> emotions that may be associated with your responses.</p>Please reflect on this summary to see which emotion(s), if any, resonate most with your experience of the Reference Event.';
-var SUMMARY_FOLLOW_TEXT = 'Thank you for doing this activity.';
+var SUMMARY_TITLE = 'Emotions';
+var SUMMARY_INSTRUCTION = 'Based on your responses';
+var SUMMARY_TEXT = '<p>Your responses are <i>commonly</i> associated with the following emotions, but they are not the <i>only</i> emotions that may be associated with your responses.';
+var SUMMARY_FOLLOW_TEXT = 'Please reflect on this summary to see which emotion(s), if any, you might actually be experiencing.';
 var SUMMARY_COUNT_FRAME_TEMPLATE = 'summary_count';
 
 // End frame strings
