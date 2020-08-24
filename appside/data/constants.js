@@ -131,6 +131,17 @@ var LIKERT_INSTRUCTIONS = 'Please indicate how much each statement applies to yo
 var SDERS_QUESTIONS = ['I am confused about how I feel.', 'I have no idea how I am feeling.'];
 var SDERS_QUALIFIERS = ['not all all', 'somewhat', 'moderately', 'very much', 'completely'];
 
+
+// Mood check frame strings
+var MOOD_FRAME_TEMPLATE = 'likert';
+var MOOD_FRAME_TITLE = 'Mood Assessment';
+var MOOD_TITLE = 'Likert';
+var MOOD_INSTRUCTIONS = 'Please answer the following questions about your current mood.';
+
+// Pre-measurement strings
+var MOOD_QUESTIONS = ['How distressed are you right now?', 'How sad are you right now?'];
+var MOOD_QUALIFIERS = ['very slightly or not at all', 'a little', 'moderately', 'quite a bit', 'extremely'];
+
 // Self report strings
 var SELF_REPORT_FRAME_TEMPLATE = 'self_report';
 var SELF_REPORT_TITLE = 'Identify your emotions';

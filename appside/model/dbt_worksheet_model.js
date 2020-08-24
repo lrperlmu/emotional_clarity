@@ -91,7 +91,10 @@ class DbtWorksheetModelFwd extends Model {
             if(this.config.pre_post_measurement) {
                 this.frames.push(this.build_likert_frame(RESPONSE_POST));
             }
-            if(this.config.pre_post_measurement || this.config.self_report) {
+            if(this.config.mood_check) {
+                this.frames.push(this.build_post_mood_frame(RESPONSE_POST));
+            }
+            if(this.config.pre_post_measurement || this.config.self_report || this.config.mood_check) {
                 this.frames.push(new BlockerFrame());
             }
 
@@ -357,6 +360,35 @@ class DbtWorksheetModelFwd extends Model {
         frame.questions = likert_questions;
 
         for(let item of likert_questions) {
+            let ud = new UserData(item[0], item[1], [], response_name);
+            this.uds.add(ud);
+        }
+
+        return new LikertFrame(frame, this.logger);
+    }
+
+    /**
+     * Build likert frame for post-activity mood check.
+     *
+     * @param response_name - disambiguation name
+     * @return the Frame
+     */
+    build_post_mood_frame(response_name) {
+        let mood_questions = [];
+        mood_questions.push([MOOD_QUESTIONS[0], undefined]);
+        mood_questions.push([MOOD_QUESTIONS[1], undefined]);
+
+        let frame = {};
+
+        frame.title = MOOD_FRAME_TITLE;
+        frame.template = MOOD_FRAME_TEMPLATE;
+        frame.response_name = response_name;
+        frame.instructions = MOOD_INSTRUCTIONS;
+        frame.qualifiers = MOOD_QUALIFIERS;
+        
+        frame.questions = mood_questions;
+
+        for(let item of mood_questions) {
             let ud = new UserData(item[0], item[1], [], response_name);
             this.uds.add(ud);
         }
@@ -771,6 +803,7 @@ class DbtWorksheetModelConfig {
         this.offer_ideas = false;
         this.pre_post_measurement = false;
         this.self_report = false;
+        this.mood_check = false;
         this.consent_disclosure = false;
         this.mood_induction = false;
         this.feedback = false;
@@ -853,6 +886,16 @@ class DbtWorksheetModelConfig {
      */
     set_self_report(value) {
         this.self_report = value;
+        return this;
+    }
+
+    /**
+     * Setter for this.mood_check, tells the model whether to offer mood check at the end.
+     * @param value - boolean to set it to
+     * @return this
+     */
+    set_mood_check(value) {
+        this.mood_check = value;
         return this;
     }
 
