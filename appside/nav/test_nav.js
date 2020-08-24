@@ -10,6 +10,7 @@ $(document).ready(function() {
     config.set_consent_disclosure(true);
     config.set_mood_induction(false);
     config.set_self_report(true);
+    config.set_mood_check(true);
     config.set_pre_post_measurement(true);
     config.set_feedback(true);
 
