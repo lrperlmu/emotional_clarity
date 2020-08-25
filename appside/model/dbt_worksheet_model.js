@@ -76,6 +76,7 @@ class DbtWorksheetModelFwd extends Model {
 
             // Transition to app
             this.frames.push(this.build_pre_transition_frame());
+            this.frames.push(new BlockerFrame());
 
             // App frames
             for(let frame of this.build_intro_frames()) {

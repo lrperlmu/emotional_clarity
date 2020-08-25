@@ -34,6 +34,7 @@ class LikertFrame extends Frame {
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
         this.response_name = frame_data.response_name;
+        this.has_questions = true;
     }
 
     /**

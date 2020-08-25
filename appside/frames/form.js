@@ -35,6 +35,7 @@ class FormFrame extends Frame {
         this.questions = frame_data.questions;
         this.response_name = frame_data.response_name;
         this.logger = logger;
+        this.has_questions = this.questions.length>0;
 
         this.responses = [];
         for(let q in this.questions) {
