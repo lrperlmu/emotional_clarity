@@ -49,7 +49,7 @@ var TRANSITION_FRAME_TEMPLATE = 'transition';
 var PRE_TRANSITION_TITLE = 'Prepare to use the app';
 var PRE_TRANSITION_TEXT= 'Next you will use the Emotional Clarity App. Consider the Reference Event that you just wrote about and the emotions related to this event while you are using the app.';
 var POST_TRANSITION_TITLE = 'Thanks for completing the exercise';
-var POST_TRANSITION_TEXT = 'Next you will be asked a few questions about the exercise you just completed using the Emotional Clarity App.';
+var POST_TRANSITION_TEXT = 'Next you will be asked to repeat to the rating scales you completed before using the Emotional Clarity App and answer a few questions about the exercise you just completed with the app.';
 
 // Intro frame strings
 var INTRO_FRAME_TEMPLATE = 'intro';
@@ -138,7 +138,7 @@ var MOOD_QUALIFIERS = ['very slightly or not at all', 'a little', 'moderately', 
 // Self report strings
 var SELF_REPORT_FRAME_TEMPLATE = 'self_report';
 var SELF_REPORT_TITLE = 'Identify your emotions';
-var SELF_REPORT_Q1 = 'Which emotion(s) are you feeling right now after thinking about the Reference Event?';
+var SELF_REPORT_Q1 = 'Which emotion(s) are you feeling right now in relation to the Reference Event?';
 var SELF_REPORT_Q2 = 'How certain are you about your answer to the previous question?';
 var QUALIFIERS = ['very uncertain', 'somewhat uncertain', 'neutral', 'somewhat certain', 'very certain'];
 
