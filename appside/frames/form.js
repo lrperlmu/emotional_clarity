@@ -130,6 +130,9 @@ class FormFrame extends Frame {
                 else if(type === 'text') {
                     // for now, all text boxes are optional
                     // implement this to enable requiring text boxes
+                    let text = $(`#q_${q_idx}_input`).val();
+                    if (text == '')
+                        all_complete = false;
                 }
             }
             q_idx += 1;
@@ -352,6 +355,10 @@ class TextFormElement extends FormElement {
 
         $(textbox).attr('id', `q_${q_idx}_input`);
         $(textbox).val(response);
+
+        $(textbox).keyup(function() {
+            this.parent.check_required_questions();
+        }.bind(this));
 
         ret.appendChild(textbox);
         return ret;
