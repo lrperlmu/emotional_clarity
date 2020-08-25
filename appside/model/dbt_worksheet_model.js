@@ -384,6 +384,8 @@ class DbtWorksheetModelFwd extends Model {
         let mood_questions = [];
         mood_questions.push([MOOD_QUESTIONS[0], 'likert', true]);
         mood_questions.push([MOOD_QUESTIONS[1], 'likert', true]);
+        mood_questions.push([MOOD_QUESTIONS[2], 'likert', true]);
+        mood_questions.push([MOOD_QUESTIONS[3], 'likert', true]);
 
         let frame = {};
 

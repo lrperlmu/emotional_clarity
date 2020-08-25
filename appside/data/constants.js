@@ -131,7 +131,10 @@ var MOOD_TITLE = 'Likert';
 var MOOD_INSTRUCTIONS = 'Please answer the following questions about your current mood.';
 
 // Pre-measurement strings
-var MOOD_QUESTIONS = ['How distressed are you right now?', 'How sad are you right now?'];
+var MOOD_QUESTIONS = ['How distressed are you right now?', 
+    'How sad are you right now?',
+    'How upset are you right now?',
+    'How nervous are you right now?'];
 var MOOD_QUALIFIERS = ['very slightly or not at all', 'a little', 'moderately', 'quite a bit', 'extremely'];
 
 // Self report strings
