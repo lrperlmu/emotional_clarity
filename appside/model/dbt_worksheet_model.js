@@ -99,7 +99,8 @@ class DbtWorksheetModelFwd extends Model {
                 this.frames.push(this.build_likert_frame(RESPONSE_POST));
             }
             if(this.config.mood_check) {
-                this.frames.push(this.build_post_mood_frame(RESPONSE_POST));
+                for(let frame of this.build_mood_check_frames())
+                    this.frames.push(frame);
             }
             if(this.config.pre_post_measurement || this.config.self_report || this.config.mood_check) {
                 this.frames.push(new BlockerFrame());
@@ -201,6 +202,37 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.splice(start_deleting_idx, num_to_delete);
         }
     }
+
+    /**
+     * Read uds from this.uds and compute the mood check score
+     */
+    mood_check_compute() {
+
+        console.log("mood_check_compute");
+
+        // get the phq uds and tally the score
+        let mood_uds = this.uds.get_all(RESPONSE_MOOD);
+        let score = 0;
+        for(let ud of mood_uds) {
+            score = Math.max(score, Number(ud.response));
+            console.log(score)
+        }
+        console.log("score: " + score);
+
+        if(score < MOOD_LOWEST_FAIL) {
+            // Remove the positive induction frame
+            let start_deleting_idx = null;
+            for(let i=0; i<this.frames.length; i++) {
+                let frame = this.frames[i];
+                if(frame.template === POSITIVE_INDUCTION_TEMPLATE) {
+                    start_deleting_idx = i;
+                    break;
+                }
+            }
+            let num_to_delete = 2; // Blocker frame and positive mood induction
+            this.frames.splice(start_deleting_idx, num_to_delete);
+        }
+    }    
 
     /**
      * Build phq frames
@@ -335,6 +367,7 @@ class DbtWorksheetModelFwd extends Model {
         frame.template = SELF_REPORT_FRAME_TEMPLATE;
         frame.response_name = response_name;
         frame.qualifiers = SELF_REPORT_QUALIFIERS;
+        frame.values = SELF_REPORT_VALUES;
         frame.questions = self_report_questions;
 
         for(let item of self_report_questions) {
@@ -363,7 +396,7 @@ class DbtWorksheetModelFwd extends Model {
         frame.response_name = response_name;
         frame.instruction = LIKERT_INSTRUCTIONS;
         frame.qualifiers = SDERS_QUALIFIERS;
-        
+        frame.values = SDERS_VALUES;
         frame.questions = likert_questions;
 
         for(let item of likert_questions) {
@@ -380,29 +413,45 @@ class DbtWorksheetModelFwd extends Model {
      * @param response_name - disambiguation name
      * @return the Frame
      */
-    build_post_mood_frame(response_name) {
+    build_mood_check_frames() {
         let mood_questions = [];
         mood_questions.push([MOOD_QUESTIONS[0], 'likert', true]);
         mood_questions.push([MOOD_QUESTIONS[1], 'likert', true]);
         mood_questions.push([MOOD_QUESTIONS[2], 'likert', true]);
         mood_questions.push([MOOD_QUESTIONS[3], 'likert', true]);
 
-        let frame = {};
+        let mood_check_frame = {};
 
-        frame.title = MOOD_FRAME_TITLE;
-        frame.template = MOOD_FRAME_TEMPLATE;
-        frame.response_name = response_name;
-        frame.instructions = MOOD_INSTRUCTIONS;
-        frame.qualifiers = MOOD_QUALIFIERS;
-        
-        frame.questions = mood_questions;
+        mood_check_frame.title = MOOD_FRAME_TITLE;
+        mood_check_frame.template = MOOD_FRAME_TEMPLATE;
+        mood_check_frame.response_name = RESPONSE_MOOD;
+        mood_check_frame.instructions = MOOD_INSTRUCTIONS;
+        mood_check_frame.qualifiers = MOOD_QUALIFIERS;
+        mood_check_frame.values = MOOD_VALUES;
+        mood_check_frame.questions = mood_questions;
 
         for(let item of mood_questions) {
-            let ud = new UserData(item[0], '', [], response_name);
+            let ud = new UserData(item[0], '', [], RESPONSE_MOOD);
             this.uds.add(ud);
         }
 
-        return new FormFrame(frame, this.logger);
+        let positive_induction_frame = {};
+        positive_induction_frame.template = POSITIVE_INDUCTION_TEMPLATE;
+        positive_induction_frame.response_name = RESPONSE_INDUCTION;
+        positive_induction_frame.title = INDUCTION_TITLE;
+        positive_induction_frame.prompt = INDUCTION_WRITING_PROMPT;
+        positive_induction_frame.truncated_prompt = positive_induction_frame.prompt.substring(0, 100);
+        positive_induction_frame.time_limit = INDUCTION_TIME_LIMIT;
+
+        let ud_mood = new UserData(
+            positive_induction_frame.truncated_prompt, '', [], RESPONSE_INDUCTION);
+        this.uds.add(ud_mood);
+
+        this.register_frame_callback(MOOD_FRAME_TEMPLATE, this.mood_check_compute);
+
+        return [new FormFrame(mood_check_frame, this.logger),
+                new BlockerFrame(),
+                new TimedLongAnswerFrame(positive_induction_frame, this.logger)];
     }
 
 
@@ -587,6 +636,7 @@ class DbtWorksheetModelFwd extends Model {
             frame.instruction = FEEDBACK_INSTRUCTIONS[page_string];
             frame.questions = FEEDBACK_QUESTIONS[page_string];
             frame.qualifiers = FEEDBACK_LIKERT_OPTIONS;
+            frame.values = FEEDBACK_LIKERT_VALUES;
             frame.response_name = RESPONSE_GENERIC;
             ret.push(new FormFrame(frame, this.logger));
 

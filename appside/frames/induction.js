@@ -150,6 +150,7 @@ class TimedLongAnswerFrame extends TextboxFrame {
         super(frame_data, logger);
         this.time_limit = frame_data.time_limit;
         this.template = frame_data.template;
+        this.is_auto_advance = false;
     }
 
     /**
@@ -191,7 +192,14 @@ class TimedLongAnswerFrame extends TextboxFrame {
         let auto_advance = function() {
             $('.nav_next_button').click();
         };
-        setTimeout(auto_advance, timeout_millis);
+        let enable_next_botton = function() {
+            $('.nav_next_button').prop('disabled', false);
+            $('.nav_next_button').removeClass('button_disabled');
+        };
+        if (this.is_auto_advance)
+            setTimeout(auto_advance, timeout_millis);
+        else
+            setTimeout(enable_next_botton, timeout_millis);
 
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);

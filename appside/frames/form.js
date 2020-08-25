@@ -21,6 +21,8 @@ class FormFrame extends Frame {
      *          type (string) -- how to render the question: 'text', 'yesno', or 'likert'
      *          required (boolean, optional) -- whether the question must be answered
      *                                          undefined/missing means not required
+     *    frame_data.qualifiers (list) - list of options for 'likert' type questions
+     *    frame_data.values (list) - list of values corresponding to qualifiers
      *    frame_data.response_name (string) - name this frame will attach to each piece
      *                 of data in return value of get_user_input
      *
@@ -34,6 +36,7 @@ class FormFrame extends Frame {
         this.instruction = frame_data.instruction;
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
+        this.values = frame_data.values;
         this.response_name = frame_data.response_name;
         this.logger = logger;
         this.has_questions = this.questions.length>0;
@@ -214,7 +217,7 @@ class FormElement {
                 FEEDBACK_YESNO_VALUES);
         } else if(type === 'likert') {
             ret = new RadioButtonFormElement(parent.qualifiers, 
-                FEEDBACK_LIKERT_VALUES);
+                parent.values);
         } else if(type === 'phq') {
             ret = new RadioButtonFormElement(PHQ_OPTIONS,
                 PHQ_OPTION_VALUES);
