@@ -218,8 +218,8 @@ var FEEDBACK_QUESTIONS = {
         ['Which specific parts of the app were most helpful and why?', 'text'],
     ],
     'page_2': [
-        ['Which features of the app did you like? Name as many as you can think of.', 'text'],
-        ['Which features of the app did you dislike? Name as many as you can think of.', 'text'],
+        ['What did you like about the app?', 'text'],
+        ['What did you dislike about the app?', 'text'],
         ['What would you add or change, and why?', 'text'],
     ],
     'page_3': [
