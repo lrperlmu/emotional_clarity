@@ -338,7 +338,7 @@ class DbtWorksheetModelFwd extends Model {
         frame.questions = self_report_questions;
 
         for(let item of self_report_questions) {
-            let ud = new UserData(item[0], item[1], [], response_name);
+            let ud = new UserData(item[0], '', [], response_name);
             this.uds.add(ud);
         }
 
@@ -367,7 +367,7 @@ class DbtWorksheetModelFwd extends Model {
         frame.questions = likert_questions;
 
         for(let item of likert_questions) {
-            let ud = new UserData(item[0], item[1], [], response_name);
+            let ud = new UserData(item[0], '', [], response_name);
             this.uds.add(ud);
         }
 
@@ -396,7 +396,7 @@ class DbtWorksheetModelFwd extends Model {
         frame.questions = mood_questions;
 
         for(let item of mood_questions) {
-            let ud = new UserData(item[0], item[1], [], response_name);
+            let ud = new UserData(item[0], '', [], response_name);
             this.uds.add(ud);
         }
 
