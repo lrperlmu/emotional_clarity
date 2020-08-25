@@ -124,7 +124,6 @@ var LIKERT_INSTRUCTIONS = 'Please indicate how much each statement applies to yo
 var SDERS_QUESTIONS = ['I am confused about how I feel.', 'I have no idea how I am feeling.'];
 var SDERS_QUALIFIERS = ['not all all', 'somewhat', 'moderately', 'very much', 'completely'];
 
-
 // Mood check frame strings
 var MOOD_FRAME_TEMPLATE = 'likert';
 var MOOD_FRAME_TITLE = 'Mood Assessment';
@@ -140,7 +139,7 @@ var SELF_REPORT_FRAME_TEMPLATE = 'self_report';
 var SELF_REPORT_TITLE = 'Identify your emotions';
 var SELF_REPORT_Q1 = 'Which emotion(s) are you feeling right now in relation to the Reference Event?';
 var SELF_REPORT_Q2 = 'How certain are you about your answer to the previous question?';
-var QUALIFIERS = ['very uncertain', 'somewhat uncertain', 'neutral', 'somewhat certain', 'very certain'];
+var SELF_REPORT_QUALIFIERS = ['very uncertain', 'somewhat uncertain', 'neutral', 'somewhat certain', 'very certain'];
 
 // Consent disclosure frame strings
 var CONSENT_FRAME_TEMPLATE = 'consent';

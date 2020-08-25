@@ -215,6 +215,7 @@ class DbtWorksheetModelFwd extends Model {
         q_frame.title = PHQ_TITLE;
         q_frame.instruction = PHQ_TEXT;
         q_frame.questions = PHQ_QUESTIONS;
+        q_frame.qulifiers = PHQ_OPTIONS;
         q_frame.response_name = RESPONSE_PHQ;
         ret.push(new FormFrame(q_frame, this.logger));
 
@@ -325,16 +326,15 @@ class DbtWorksheetModelFwd extends Model {
      */
     build_self_report_frame(response_name) {
         let self_report_questions = [];
-        self_report_questions.push([SELF_REPORT_Q1, '']);
-        self_report_questions.push([SELF_REPORT_Q2, '']);
+        self_report_questions.push([SELF_REPORT_Q1, 'text', true]);
+        self_report_questions.push([SELF_REPORT_Q2, 'likert', true]);
 
         let frame = {};
 
         frame.title = SELF_REPORT_TITLE;
         frame.template = SELF_REPORT_FRAME_TEMPLATE;
         frame.response_name = response_name;
-        frame.qualifiers = QUALIFIERS;
-
+        frame.qualifiers = SELF_REPORT_QUALIFIERS;
         frame.questions = self_report_questions;
 
         for(let item of self_report_questions) {
@@ -342,7 +342,7 @@ class DbtWorksheetModelFwd extends Model {
             this.uds.add(ud);
         }
 
-        return new SelfReportFrame(frame, this.logger);
+        return new FormFrame(frame, this.logger);
     }
 
     /**
@@ -353,15 +353,15 @@ class DbtWorksheetModelFwd extends Model {
      */
     build_likert_frame(response_name) {
         let likert_questions = [];
-        likert_questions.push([SDERS_QUESTIONS[0], undefined]);
-        likert_questions.push([SDERS_QUESTIONS[1], undefined]);
+        likert_questions.push([SDERS_QUESTIONS[0], 'likert', true]);
+        likert_questions.push([SDERS_QUESTIONS[1], 'likert', true]);
 
         let frame = {};
 
         frame.title = LIKERT_FRAME_TITLE;
         frame.template = LIKERT_FRAME_TEMPLATE;
         frame.response_name = response_name;
-        frame.instructions = LIKERT_INSTRUCTIONS;
+        frame.instruction = LIKERT_INSTRUCTIONS;
         frame.qualifiers = SDERS_QUALIFIERS;
         
         frame.questions = likert_questions;
@@ -371,7 +371,7 @@ class DbtWorksheetModelFwd extends Model {
             this.uds.add(ud);
         }
 
-        return new LikertFrame(frame, this.logger);
+        return new FormFrame(frame, this.logger);
     }
 
     /**
@@ -382,8 +382,8 @@ class DbtWorksheetModelFwd extends Model {
      */
     build_post_mood_frame(response_name) {
         let mood_questions = [];
-        mood_questions.push([MOOD_QUESTIONS[0], undefined]);
-        mood_questions.push([MOOD_QUESTIONS[1], undefined]);
+        mood_questions.push([MOOD_QUESTIONS[0], 'likert', true]);
+        mood_questions.push([MOOD_QUESTIONS[1], 'likert', true]);
 
         let frame = {};
 
@@ -400,7 +400,7 @@ class DbtWorksheetModelFwd extends Model {
             this.uds.add(ud);
         }
 
-        return new LikertFrame(frame, this.logger);
+        return new FormFrame(frame, this.logger);
     }
 
 
@@ -584,6 +584,7 @@ class DbtWorksheetModelFwd extends Model {
             frame.title = FEEDBACK_TITLE;
             frame.instruction = FEEDBACK_INSTRUCTIONS[page_string];
             frame.questions = FEEDBACK_QUESTIONS[page_string];
+            frame.qualifiers = FEEDBACK_LIKERT_OPTIONS;
             frame.response_name = RESPONSE_GENERIC;
             ret.push(new FormFrame(frame, this.logger));
 
