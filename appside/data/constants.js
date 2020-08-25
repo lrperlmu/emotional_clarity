@@ -209,22 +209,22 @@ var FEEDBACK_INSTRUCTIONS = {
 
 var FEEDBACK_QUESTIONS = {
     'page_1': [
-        ['The app helped me better understand my emotion(s).', 'likert'],
-        ['The app made me realize I had certain emotions that I did not realize before.', 'likert'],
-        ['The app made me more certain about the emotions I thought I have.', 'likert'],
-        ['The app helped me understand why I had certain emotions.', 'likert'],
-        ['The app helped me understand the link between my emotions and my thoughts and actions.', 'likert'],
-        ['Which specific parts of the app were most helpful and why?', 'text'],
+        ['The app helped me better understand my emotion(s).', 'likert', true],
+        ['The app made me realize I had certain emotions that I did not realize before.', 'likert', true],
+        ['The app made me more certain about the emotions I thought I have.', 'likert', true],
+        ['The app helped me understand why I had certain emotions.', 'likert', true],
+        ['The app helped me understand the link between my emotions and my thoughts and actions.', 'likert', true],
+        ['Which specific parts of the app were most helpful and why?', 'text', true],
     ],
     'page_2': [
-        ['What did you like about the app?', 'text'],
-        ['What did you dislike about the app?', 'text'],
-        ['What would you add or change, and why?', 'text'],
+        ['What did you like about the app?', 'text', true],
+        ['What did you dislike about the app?', 'text', true],
+        ['What would you add or change, and why?', 'text', true],
     ],
     'page_3': [
-        ['I would use this app in real life.', 'likert'],
-        ['This app would be useful to me in the future.', 'likert'],
-        ['In which future situations or moments would you want to use this app most?', 'text'],
+        ['I would use this app in real life.', 'likert', true],
+        ['This app would be useful to me in the future.', 'likert', true],
+        ['In which future situations or moments would you want to use this app most?', 'text', true],
     ],
 };
 
