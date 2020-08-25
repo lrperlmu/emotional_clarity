@@ -237,3 +237,7 @@ var FEEDBACK_COMPARISON_SKELETON = [
     'In which situations would you prefer {} over the others?',
 ];
 
+var IDENTITY_TITLE = 'Opt In for Future Studies';
+var IDENTITY_INSTRUCTION = 'If you would like to be informed about future studies related to this one, please share your contact information.';
+var IDENTITY_QUESTIONS = [['Email address (optional):', 'shorttext']];
+

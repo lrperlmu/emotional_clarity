@@ -192,7 +192,9 @@ class FormElement {
     static generate(type, parent) {
         let ret;
         if(type === 'text') {
-            ret = new TextFormElement();
+            ret = new TextFormElement(true);
+        } else if(type === 'shorttext') {
+            ret = new TextFormElement(false);
         } else if(type === 'yesno') {
             ret = new RadioButtonFormElement(FEEDBACK_YESNO_OPTIONS, FEEDBACK_YESNO_VALUES);
         } else if(type === 'likert') {
@@ -309,6 +311,12 @@ class RadioButtonFormElement extends FormElement {
  * FormElement that makes text boxes
  */
 class TextFormElement extends FormElement {
+    
+    constructor(is_long) {
+        super();
+        this.is_long = is_long;
+    }
+
     /**
      * Construct html element containing a text box
      *
@@ -321,9 +329,18 @@ class TextFormElement extends FormElement {
         let ret = document.createElement('div');
         $(ret).addClass('mb-4');
         // insert a text box
-        let textbox = document.createElement('textarea');
+        let textbox = null;
+        if (this.is_long) {
+            textbox = document.createElement('textarea');
+            $(textbox).addClass('long_answer_textbox');
+        }
+        else {
+            textbox = document.createElement('input');
+            $(textbox).attr('type', 'text');
+            $(textbox).addClass('short_answer_textbox');
+        }
+
         $(textbox).attr('id', `q_${q_idx}_input`);
-        $(textbox).addClass('long_answer_textbox');
         $(textbox).val(response);
 
         ret.appendChild(textbox);

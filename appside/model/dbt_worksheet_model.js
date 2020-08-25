@@ -617,6 +617,16 @@ class DbtWorksheetModelFwd extends Model {
 
             ret.push(new FormFrame(frame, this.logger));
         }
+
+        let identity_frame = {};
+        identity_frame.template = FEEDBACK_FRAME_TEMPLATE;
+        identity_frame.title = IDENTITY_TITLE;
+        identity_frame.instruction = IDENTITY_INSTRUCTION;
+        identity_frame.questions = IDENTITY_QUESTIONS;
+        identity_frame.response_name = RESPONSE_GENERIC;
+        this.uds.add(new UserData(IDENTITY_QUESTIONS[0][0], '', [], RESPONSE_GENERIC));
+        ret.push(new FormFrame(identity_frame, this.logger));
+
         return ret;
     }
 
