@@ -208,16 +208,12 @@ class DbtWorksheetModelFwd extends Model {
      */
     mood_check_compute() {
 
-        console.log("mood_check_compute");
-
         // get the phq uds and tally the score
         let mood_uds = this.uds.get_all(RESPONSE_MOOD);
         let score = 0;
         for(let ud of mood_uds) {
             score = Math.max(score, Number(ud.response));
-            console.log(score)
         }
-        console.log("score: " + score);
 
         if(score < MOOD_LOWEST_FAIL) {
             // Remove the positive induction frame
@@ -438,8 +434,8 @@ class DbtWorksheetModelFwd extends Model {
         let positive_induction_frame = {};
         positive_induction_frame.template = POSITIVE_INDUCTION_TEMPLATE;
         positive_induction_frame.response_name = RESPONSE_INDUCTION;
-        positive_induction_frame.title = INDUCTION_TITLE;
-        positive_induction_frame.prompt = INDUCTION_WRITING_PROMPT;
+        positive_induction_frame.title = POSITIVE_INDUCTION_TITLE;
+        positive_induction_frame.prompt = POSITIVE_INDUCTION_WRITING_PROMPT;
         positive_induction_frame.truncated_prompt = positive_induction_frame.prompt.substring(0, 100);
         positive_induction_frame.time_limit = INDUCTION_TIME_LIMIT;
 

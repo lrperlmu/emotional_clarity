@@ -108,7 +108,7 @@ class ShortAnswerFrame extends TextboxFrame {
         // insert a h5 node for the instruction
         let prompt = document.createElement('div');
         $(prompt).addClass('font-weight-light mb-2');
-        $(prompt).text(this.prompt);
+        $(prompt).html(this.prompt);
         frame.appendChild(prompt);
 
         // insert a text box for entry
@@ -121,7 +121,7 @@ class ShortAnswerFrame extends TextboxFrame {
 
         // insert a h5 node for the instruction
         let instruction = document.createElement('div');
-        $(instruction).text(this.instruction);
+        $(instruction).html(this.instruction);
         $(instruction).addClass('font-weight-light mb-2');
         frame.appendChild(instruction);
 
@@ -175,7 +175,7 @@ class TimedLongAnswerFrame extends TextboxFrame {
 
         // insert a h5 node for the instruction
         let prompt = document.createElement('div');
-        $(prompt).text(this.prompt);
+        $(prompt).html(this.prompt);
         $(prompt).addClass('font-weight-light mb-4');
         frame.appendChild(prompt);
 
