@@ -773,6 +773,9 @@ class DbtWorksheetModelFwd extends Model {
             if (callback !== undefined) {
                 callback.bind(this)();
             }
+
+            let event = 'forward ' + this.frame_idx + ' ' + template;
+            this.logger.logTimestamp(event)
         }
 
         this.frame_idx += 1;
@@ -802,6 +805,10 @@ class DbtWorksheetModelFwd extends Model {
      *     the model's internal structure, and input passed in so far
      */
     back() {
+        let template = this.frames[this.frame_idx].template;
+        let event = 'back ' + this.frame_idx + ' ' + template;
+        this.logger.logTimestamp(event)
+
         this.frame_idx -= 1;
         let frame = this.frames[this.frame_idx];
         frame.fill_in_data(this.uds);

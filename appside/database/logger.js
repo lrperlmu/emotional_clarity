@@ -79,7 +79,10 @@ class Logger {
         this.signIn.then(credential => {
             let ref = firebase.database().ref(`events/${credential.user.uid}`);
             let data = {};
-            data[event_name] = '' + new Date();
+            // using date as the key allows the same event to be logged more than once
+            // e.g. when navigating back and forward over the same frame
+            let key = '' + (new Date().toISOString().replace(/\./g, ':'));
+            data[key] = event_name;
             ref.update(data);
         });
     }

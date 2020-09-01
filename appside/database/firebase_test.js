@@ -2,6 +2,13 @@
 
 // Sandbox for making the firebase code work.
 $(document).ready(function() {
+
+});
+
+/**
+ * Do a couple things with uds
+ */
+function test_uds() {
     let logger = new Logger();
     logger.logTimestamp('logger1_my_event');
 
@@ -14,12 +21,12 @@ $(document).ready(function() {
 
     console.log(responses)
     logger.logUds(responses);
-});
+}
 
 
 /**
  * Increment and read the pid value
- * Exmaple code of how to use it irl
+ * Example code of how to use it irl
  */
 function test_atomic_new_pid() {
     let logger = new Logger();
