@@ -75,8 +75,10 @@ class DbtWorksheetModelFwd extends Model {
             }
 
             // Transition to app
-            this.frames.push(this.build_pre_transition_frame());
-            this.frames.push(new BlockerFrame());
+            if(this.config.study) {
+                this.frames.push(this.build_pre_transition_frame());
+                this.frames.push(new BlockerFrame());
+            }
 
             // App frames
             for(let frame of this.build_intro_frames()) {
@@ -89,7 +91,9 @@ class DbtWorksheetModelFwd extends Model {
             this.frames.push(new BlockerFrame());
 
             // Transition away from the app
-            this.frames.push(this.build_post_transition_frame());
+            if(this.config.study) {
+                this.frames.push(this.build_post_transition_frame());
+            }
 
             // Post measurement
             if (this.config.self_report) {
@@ -616,13 +620,12 @@ class DbtWorksheetModelFwd extends Model {
         return new EndFrame(end_frame, this.logger);
     }
 
-
     /**
      * Build feedback frames
      *
      * @return the list of frames
      */
-        build_feedback_frames() {
+    build_feedback_frames() {
         let ret = [];
         for(let idx of [1, 2, 3]) {
             let page_string = `page_${idx}`;

@@ -301,6 +301,7 @@ function visual_test_phq(variant) {
     config.set_mood_induction(true);
     config.set_self_report(true);
     config.set_pre_post_measurement(true);
+
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
     model.initialize.then(() => {
@@ -363,6 +364,7 @@ function visual_test_summary(variant) {
  */
 function visual_test_induction(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
     config.set_mood_induction(true);
     config.set_self_report(true);
     config.set_pre_post_measurement(true);

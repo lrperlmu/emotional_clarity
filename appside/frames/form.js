@@ -130,9 +130,8 @@ class FormFrame extends Frame {
                         all_complete = false;
                     }
                 }
+                // case for text box
                 else if(type === 'text') {
-                    // for now, all text boxes are optional
-                    // implement this to enable requiring text boxes
                     let text = $(`#q_${q_idx}_input`).val();
                     if (text == '')
                         all_complete = false;
