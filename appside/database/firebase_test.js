@@ -9,8 +9,10 @@ $(document).ready(function() {
  * Do a couple things with uds
  */
 function test_uds() {
+    let pid = 9999;
+
     let logger = new Logger();
-    logger.logTimestamp('logger1_my_event');
+    logger.logTimestamp('logger1_my_event', pid);
 
     let ud1 = new UserData('How iz?', 'fineook', ['heppy'], 'meow');
     let ud2 = new UserData('Who am?', 'meeee', ['zoomy'], 'maow');
@@ -19,8 +21,8 @@ function test_uds() {
     responses.add(ud1);
     responses.add(ud2);
 
-    console.log(responses)
-    logger.logUds(responses);
+    console.log(responses, pid)
+    logger.logUds(responses, pid);
 }
 
 

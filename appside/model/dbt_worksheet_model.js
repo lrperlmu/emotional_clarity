@@ -617,6 +617,7 @@ class DbtWorksheetModelFwd extends Model {
         end_frame.completion_text = END_CODE_TEXT
         end_frame.directions = END_DIRECTIONS;
         end_frame.contact = END_CONTACT;
+        end_frame.pid = this.pid;
         return new EndFrame(end_frame, this.logger);
     }
 
@@ -775,7 +776,7 @@ class DbtWorksheetModelFwd extends Model {
             }
 
             let event = 'forward ' + this.frame_idx + ' ' + template;
-            this.logger.logTimestamp(event)
+            this.logger.logTimestamp(event, this.pid)
         }
 
         this.frame_idx += 1;
@@ -807,7 +808,7 @@ class DbtWorksheetModelFwd extends Model {
     back() {
         let template = this.frames[this.frame_idx].template;
         let event = 'back ' + this.frame_idx + ' ' + template;
-        this.logger.logTimestamp(event)
+        this.logger.logTimestamp(event, this.pid)
 
         this.frame_idx -= 1;
         let frame = this.frames[this.frame_idx];
@@ -851,7 +852,7 @@ class DbtWorksheetModelFwd extends Model {
             updated_uds.add(ud);
         }
         this.compute_summary();
-        this.logger.logUds(updated_uds);
+        this.logger.logUds(updated_uds, this.pid);
     }
 
     /**

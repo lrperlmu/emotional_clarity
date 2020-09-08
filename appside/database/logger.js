@@ -43,11 +43,13 @@ class Logger {
      * using this method in the current session. Keys and values of the input map will
      * be cleaned of illegal characters and stored as strings.
      *
-     * Data is stored in app-responses subtree, under current uid
+     * Data is stored in app-responses subtree, under current uid and pid,
+     *   as {name/question: response}
      *
      * @param uds (UserDataSet) - the data to write into firebase
+     * @param pid (int) - participant id
      */
-    logUds(uds) {
+    logUds(uds, pid) {
         this.signIn.then(credential => {
             for(let ud of uds) {
                 // clean the strings.
@@ -61,7 +63,7 @@ class Logger {
 
                 // store them one by one so as not to overwrite existing content.
                 firebase.database()
-                    .ref(`app-responses/${credential.user.uid}/${name}`)
+                    .ref(`app-responses/${credential.user.uid}/${pid}/${name}`)
                     .update(update_data);
             }
         });
@@ -71,13 +73,15 @@ class Logger {
      * Log a timestamp to the database. Overwrites any timestamp previously logged
      * in the current session with the current name.
      * 
-     * Data is stored in events subtree, under current uid, as {event_name: timestamp}
+     * Data is stored in events subtree, under current uid and pid,
+     *   as {event_name: timestamp}
      *
      * @param event_name - string saying the name of the event
+     * @pid (int) - participant id
      */
-    logTimestamp(event_name) {
+    logTimestamp(event_name, pid) {
         this.signIn.then(credential => {
-            let ref = firebase.database().ref(`events/${credential.user.uid}`);
+            let ref = firebase.database().ref(`events/${credential.user.uid}/${pid}`);
             let data = {};
             // using date as the key allows the same event to be logged more than once
             // e.g. when navigating back and forward over the same frame
@@ -90,15 +94,17 @@ class Logger {
     /**
      * Log the given user's competion code. Overwrites the last one logged for this user.
      * 
-     * Data is stored in completion_codes subtree, as {uid: completion_code}
+     * Data is stored in completion_codes subtree, under current uid, 
+     *   as {pid: completion_code}
      *
      * @param code - the code to log
+     * @param pid (int) - participant id
      */
-    logCompletionCode(code) {
+    logCompletionCode(code, pid) {
         this.signIn.then(credential => {
-            let ref = firebase.database().ref(`completion_codes`);
+            let ref = firebase.database().ref(`completion_codes/${credential.user.uid}`);
             let data = {};
-            data[credential.user.uid] = code;
+            data[pid] = code;
             ref.update(data);
         });
     }
@@ -142,14 +148,15 @@ class Logger {
 
     /**
      * Record the current user's user id and pid
-     * Data is stored in pid subtree, as {uid: pid}
+     * Data is stored in pid subtree, as {uid/timestamp: pid}
      * @param pid - participant id to record
      */
     logUserPid(pid) {
         this.signIn.then(credential => {
-            let ref = firebase.database().ref('pid');
+            let ref = firebase.database().ref(`pid/${credential.user.uid}`);
             let data = {};
-            data[credential.user.uid] = pid;
+            let key = '' + (new Date().toISOString().replace(/\./g, ':'));
+            data[key] = pid;
             ref.update(data);
         });
     }

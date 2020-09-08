@@ -52,14 +52,14 @@ $(document).ready(function() {
 
 
 class MockLogger {
-    logResponses(data) {
-        console.log('mock log response ' + data);
+    logResponses(data, pid) {
+        console.log('mock log response', data, pid);
     }
-    logTimestamp(event_name) {
-        console.log('mock log timestamp ' + event_name);
+    logTimestamp(event_name, pid) {
+        console.log('mock log timestamp', event_name, pid);
     }
-    logCompletionCode(code) {
-        console.log('mock log completion code ' + code);
+    logCompletionCode(code, pid) {
+        console.log('mock log completion code', code, pid);
     }
 }
 

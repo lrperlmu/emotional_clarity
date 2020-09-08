@@ -247,6 +247,7 @@ var SAMPLE_APP = {
 
     'end': {
         'template': 'end',
+        'pid': 9999,
         'title': 'End',
         'completion_text': 'Your unique completion code is',
         'completion_code': '123456',

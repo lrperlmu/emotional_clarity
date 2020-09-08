@@ -20,6 +20,7 @@ class EndFrame extends Frame {
      *     frame_data.completion_code (string)
      *     frame_data.directions (string)
      *     frame_data.contact (html string)
+     *     frame_data.pid (int)
      * @param logger - Logger object
      */
     constructor(frame_data, logger) {
@@ -30,6 +31,7 @@ class EndFrame extends Frame {
         this.directions = frame_data.directions;
         this.contact = frame_data.contact;
         this.template = frame_data.template;
+        this.pid = frame_data.pid;
         this.passed_phq = true;
     }
 
@@ -89,7 +91,6 @@ class EndFrame extends Frame {
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
 
-        this.logger.logTimestamp('end');
-        this.logger.logCompletionCode(this.completion_code);
+        this.logger.logCompletionCode(this.completion_code, this.pid);
     }
 }
