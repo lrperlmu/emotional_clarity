@@ -636,12 +636,12 @@ class DbtWorksheetModelFwd extends Model {
             frame.questions = FEEDBACK_QUESTIONS[page_string];
             frame.qualifiers = FEEDBACK_LIKERT_OPTIONS;
             frame.values = FEEDBACK_LIKERT_VALUES;
-            frame.response_name = RESPONSE_GENERIC;
+            frame.response_name = RESPONSE_FEEDBACK;
             ret.push(new FormFrame(frame, this.logger));
 
             for(let question of frame.questions) {
                 let text = question[0];
-                let ud = new UserData(text, '', [], RESPONSE_GENERIC);
+                let ud = new UserData(text, '', [], RESPONSE_FEEDBACK);
                 this.uds.add(ud);
             }
         }
@@ -676,8 +676,8 @@ class DbtWorksheetModelFwd extends Model {
         identity_frame.title = IDENTITY_TITLE;
         identity_frame.instruction = IDENTITY_INSTRUCTION;
         identity_frame.questions = IDENTITY_QUESTIONS;
-        identity_frame.response_name = RESPONSE_GENERIC;
-        this.uds.add(new UserData(IDENTITY_QUESTIONS[0][0], '', [], RESPONSE_GENERIC));
+        identity_frame.response_name = RESPONSE_FEEDBACK;
+        this.uds.add(new UserData(IDENTITY_QUESTIONS[0][0], '', [], RESPONSE_FEEDBACK));
         ret.push(new FormFrame(identity_frame, this.logger));
 
         return ret;

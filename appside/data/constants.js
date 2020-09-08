@@ -27,6 +27,7 @@ var RESPONSE_PRE = 'pre';
 var RESPONSE_POST = 'post';
 var RESPONSE_INDUCTION = 'induction';
 var RESPONSE_MOOD = 'mood';
+var RESPONSE_FEEDBACK = 'feedback';
 
 // Body config (all DBT worksheet models)
 var BODY_STATEMENTS_PER_PAGE = 12;
@@ -112,7 +113,7 @@ var INDUCTION_THINKING_PROMPT = 'Think of an event in your life when someone clo
 var INDUCTION_CHAR_LIMIT = 180;
 var INDUCTION_NOTE = 'This event will be referred to as the "Reference Event"';
 var INDUCTION_WRITING_PROMPT = 'For the next few minutes, try to re-experience the event as vividly as you can. Picture the event happening to you all over again. Picture in your "mind\'s eye" the surroundings as clearly as possible. See the people or objects; hear the sounds; experience the events happening to you. Think the thoughts that this event makes you think. Feel the same feelings that this event makes you feel. Let yourself react as if you were actually in the middle of it right now. While you re-experience the event, write about what is happening in the situation, how the other person or people involved behaved toward you, and what you are thinking. You can move on to the next screen when the time is up. Begin writing now.';
-var INDUCTION_TIME_LIMIT = 130; //Reduce for testing/debugging
+var INDUCTION_TIME_LIMIT = 130; // Reduce for testing/debugging
 
 // Likert frame strings
 var LIKERT_FRAME_TEMPLATE = 'likert';
