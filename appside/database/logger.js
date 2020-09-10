@@ -63,7 +63,7 @@ class Logger {
 
                 // store them one by one so as not to overwrite existing content.
                 firebase.database()
-                    .ref(`app-responses/${credential.user.uid}/${pid}/${name}`)
+                    .ref(`app-responses/${credential.user.uid}/pid${pid}/${name}`)
                     .update(update_data);
             }
         });
@@ -81,7 +81,7 @@ class Logger {
      */
     logTimestamp(event_name, pid) {
         this.signIn.then(credential => {
-            let ref = firebase.database().ref(`events/${credential.user.uid}/${pid}`);
+            let ref = firebase.database().ref(`events/${credential.user.uid}/pid${pid}`);
             let data = {};
             // using date as the key allows the same event to be logged more than once
             // e.g. when navigating back and forward over the same frame
@@ -104,7 +104,8 @@ class Logger {
         this.signIn.then(credential => {
             let ref = firebase.database().ref(`completion_codes/${credential.user.uid}`);
             let data = {};
-            data[pid] = code;
+            let key = `pid${pid}`;
+            data[key] = code;
             ref.update(data);
         });
     }
