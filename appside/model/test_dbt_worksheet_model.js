@@ -16,6 +16,7 @@ $(document).ready(function() {
 
         // unit tests
         'shuffle': test_shuffle,
+        'page_counts': test_compute_page_counts,
 
         // integ tests
         'intro': visual_test_intro,
@@ -80,6 +81,25 @@ function test_shuffle() {
         let out = DbtWorksheetModelFwd.shuffle3(key, src);
         console.log(out);
     }
+}
+
+
+/*
+ * Check that it returns true
+ */
+function test_compute_page_counts() {
+    let pass = true;
+    for(let N=5; N<50; N++) {
+        for(let p=2; p<14; p++) {
+            let a, b, c, d, e;
+            [a, b, c, d, e] = DbtWorksheetModelFwd.compute_page_counts(N, p);
+            let ok = N === (d * b + e * c);
+            console.log('' + N + '=' + d + '*' + b + '+' + e + '*' + c, ok);
+            if(!ok) pass = false;
+        }
+    }
+    console.log('pass', pass);
+    return pass;
 }
 
 

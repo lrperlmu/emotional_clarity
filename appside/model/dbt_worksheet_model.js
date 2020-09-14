@@ -504,6 +504,36 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
+     * Distribute N items as evenly as possible over pages, with max p items per page.
+     *
+     * In specific, given a number of items, N, and max per page, p,
+     * determine the number of items on each page so that each page has
+     * no more than one more item than another page
+     *
+     * N = d * b + e * c
+     * b = c + 1
+     * maximize b, such that b <= p
+     *
+     * @param N (int) - number of items
+     * @param p (int) - max number of items per page
+     * @return a (int) - # pages
+     * @return b (int) - larger # per page
+     * @return c (int) - smaller # per page
+     * @return d (int) - # pages with b per page
+     * @return e (int) - # pages with c per page
+     */
+    // awkward to return 5 values, but I did it this way for ease of unit testing
+    static compute_page_counts(N, p) {
+        let a = Math.ceil(N/p);
+        let b = Math.ceil(N/a);
+        let c = b - 1;
+        let d = N - a * c;
+        let e = a - d;
+
+        return [a, b, c, d, e];
+    }
+
+    /**
      * Build body frames for a DBT worksheet model.
      *
      * @param knowledgebase - all the statements
@@ -553,24 +583,22 @@ class DbtWorksheetModelFwd extends Model {
         // copy the list (we'll use 1st copy to create uds later, 2nd copy to create frames now)
         let statements = merged_section_statements.concat();
 
-        // divide them into pages
-        let num_stmts = statements.length;
-        let statements_per_page = BODY_STATEMENTS_PER_PAGE;
         statements = _.shuffle(statements);
 
-        let pages = [];
-        while(statements.length > 0) {
-            pages.push(statements.splice(0, statements_per_page));
-        }
+        // divide them into pages...
 
-        // prevent the last page from having only one statement, if possible
-        if(statements_per_page >= 3 && pages.length > 1) {
-            if(pages[pages.length-1].length == 1) {
-                let penultimate_page = pages[pages.length-2];
-                let ultimate_page = pages[pages.length-1];
-                let removed = penultimate_page.splice(penultimate_page.length-1, 1);
-                pages[pages.length-1] = ultimate_page.concat(removed);
-            }
+        // first, determine number of statements on each page
+        let a, b, c, d, e;
+        [a, b, c, d, e] = DbtWorksheetModelFwd.compute_page_counts(
+            statements.length, BODY_MAX_STATEMENTS_PER_PAGE);
+        let pages = [];
+        // make d many pages with b many statements each
+        for(let idx = 0; idx < d; idx++) {
+            pages.push(statements.splice(0, b));
+        }
+        // make e many pages with c many statements each
+        for(let idx = 0; idx < e; idx++) {
+            pages.push(statements.splice(0, c));
         }
 
         // make a frame for each page
