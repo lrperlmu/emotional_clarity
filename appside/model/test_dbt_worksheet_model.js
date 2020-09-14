@@ -186,25 +186,6 @@ function visual_test_intro(variant) {
 
 
 /*
- * Integration test that invokes StatementsBodyFrame to render a body frame of this app.
- * Manually verified.
- * @param variant - the variant to test
- */
-function visual_test_body(variant) {
-    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
-    let logger = new Logger();
-    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
-    model.initialize.then(() => {
-        let frame = model.get_frame('next');
-        while(frame.template !== STATEMENTS_FRAME_TEMPLATE) {
-            frame = model.get_frame('next');
-        }
-        frame.render();
-    });
-}
-
-
-/*
  * Integration test that invokes LikertFrame to render the pre measurement frame of this app.
  * Manually verified.
  */
@@ -307,6 +288,26 @@ function visual_test_phq(variant) {
     model.initialize.then(() => {
         let frame = model.get_frame('next');
         while(frame.template !== PHQ_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
+
+
+/*
+ * Integration test that invokes StatementsBodyFrame to render a body frame of this app.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_body(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== STATEMENTS_FRAME_TEMPLATE) {
             frame = model.get_frame('next');
         }
         model.get_frame('back');

@@ -556,7 +556,7 @@ class DbtWorksheetModelFwd extends Model {
         // divide them into pages
         let num_stmts = statements.length;
         let statements_per_page = BODY_STATEMENTS_PER_PAGE;
-        //statements = _.shuffle(statements);
+        statements = _.shuffle(statements);
 
         let pages = [];
         while(statements.length > 0) {
