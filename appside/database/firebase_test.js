@@ -2,8 +2,20 @@
 
 // Sandbox for making the firebase code work.
 $(document).ready(function() {
+    test_compute_variant();
 
 });
+
+function test_compute_variant() {
+    let print_result = function(str) {
+        console.log(str);
+    };
+
+    let logger =  new Logger();
+    let promise = logger.getAppVariant(123);
+    promise.then(print_result);
+}
+
 
 /**
  * Do a couple things with uds

@@ -110,35 +110,6 @@ class Logger {
         });
     }
 
-    /**
-     * Generate a new participant id
-     *
-     * @param handle_outcome - function(error, written, data_snapshot)
-     *        that will be passed in to transaction as the onComplete callback
-     *        (see firebase transaction docs)
-     * @return promise that will reject with an error or
-     *  resolve with a transaction result `tr` with these properties:
-     *      tr.committed - boolean true if committed, false otherwise
-     *      tr.snapshot - data snapshot at end of transaction
-     *   (note: ^ this return value is not well documented in the firebase docs
-     *    I've inferred these properties experimentally)
-     */
-    incrementPid() {
-        let increment_counter = count => {
-            // increment or initialize the count, and re-store
-            let ret = (count || 0) + 1;
-            return ret;
-        };
-
-        let transaction = credential => {
-            return firebase.database().ref('pid/counter').transaction(
-                increment_counter,
-            );
-        };
-
-        return this.signIn.then(transaction);
-    }
-
     // return promise that contains the data snapshot
     // Using this with incrementPid is subject to race conditions.
     // Instead, use the snapshot in the return value from incrementPid
@@ -161,6 +132,211 @@ class Logger {
             ref.update(data);
         });
     }
+
+    /**
+     * Generate a new participant id
+     *
+     * @return promise that will reject with an error or
+     *  resolve with a transaction result `tr` with these properties:
+     *      tr.committed - boolean true if committed, false otherwise
+     *      tr.snapshot - data snapshot at end of transaction
+     *   (note: ^ this return value is not well documented in the firebase docs
+     *    I've inferred these properties experimentally)
+     */
+    incrementPid() {
+        let increment_counter = count => {
+            // increment or initialize the count, and re-store
+            let ret = (count || 0) + 1;
+            return ret;
+        };
+
+        let transaction = function(credential) {
+            return firebase.database().ref('pid/counter').transaction(
+                increment_counter,
+            );
+        };
+
+        return this.signIn.then(transaction);
+
+        /*
+        // conceptual map
+
+        // return promise that resolves with credential
+        signIn
+
+        // param credential
+        // atomically call increment_counter on ref(pid/counter)
+        // return promise that resolves to transacion result containing pid
+        .then(transaction)
+        */
+    }
+
+    // determine which app variant this pid should have
+    // assign variant so as to balance variants for this epoch
+    getAppVariant(pid) {
+        /*
+          app-variant {
+              counts: {
+                  prompting: {
+                      assign:, n1,
+                      start: n2,
+                      complete: n3,
+                  },
+                  interp: {...},
+                  bio: {...},
+                  ...,
+              }
+              uid: {
+                  pid: {
+                      assign-vid: timestamp,   // log in build frames
+                      start-vid: timestamp,    // log after passing phq
+                      complete-vid: timestamp, // log after receiving completion code
+                  },
+              uid: {...},
+
+        */
+
+        console.log('get app variant');
+        console.log('this', this);
+
+        let read_counts = function(credential) {
+            return firebase.database()
+                .ref('app-variant/counts')
+                .once('value');
+        };
+
+        let compute_variant = function(counts) {
+            return new Promise(function(resolve, reject) {
+                console.log(counts);
+                let tree = counts.val();
+                console.log(tree);
+
+                // here, actually decide which variant to use
+
+                // placeholder resolve value
+                resolve('variant foo');
+            });
+        };
+
+        // return promise that resolves with credential
+        return this.signIn
+
+            // param credential
+            // read the counts
+            // return promise that resolves with counts tree in a DataSnapshot
+            .then(read_counts)
+
+            // param Data Snashot containing counts tree
+            // decide which variant to use
+            // return promise that resolves with that variant
+            .then(compute_variant);
+    }
+
+
+        /*
+        // placeholder implementation
+        let determineVariant = function(resolve, reject) {
+            // shortcut -- replace me
+            // determine variant based on pid
+            let variants = VARIANT_SLUGS;
+            let idx = pid % variants.length;
+            let variant = variants[idx];
+            resolve(variant);
+        }
+
+        return new Promise(determineVariant);
+        */
+
+
+        /*
+        let computeVariant = function(variantTable) {
+
+            console.log(variantTable);
+
+            // TODO:
+            // count existing completed variants
+            // use existing started variants as a tie breaker
+
+            // shortcut -- replace me
+            // determine variant based on pid
+            let variants = VARIANT_SLUGS;
+            let idx = pid % variants.length;
+            let variant = variants[idx];
+            return variant;
+        };
+
+        let extractVariant = function(transaction_result) {
+            return new Promise(function(resolve, reject) {
+                console.log(transaction_result.snapshot.val());
+
+                // todo: return the current variant
+                resolve('variantfoo');
+            });
+        };
+
+        let transaction = function(credential) {
+
+            // DEBUG starting here.
+            // NOTE: need to aggregate the variants in a structure that
+            //       is publicly read and writable like pid/counter
+            let ref = firebase.database().ref('app-variant/counts');
+            return ref.transaction(computeVariant);
+        };
+
+
+        let transaction_result = this.signIn.then(transaction);
+        let variant = transaction_result.then(extractVariant);
+        return variant;
+        */
+        /*
+        // return promise that resolves with credential
+        this.signIn
+            // param credential
+            // call computeVariant in a transaction
+            // return promise that resolves in transaction result
+            .then(transaction)
+
+            // param transaction result
+            // extract 
+            .then(extract_variant);
+
+        */
+
+    logVariantEvent(pid, event, variant) {
+        // log this event-variant privately under the given uid/pid
+        this.signIn.then(credential => {
+            let ref = firebase.database().ref(`app-variant/${credential.user.uid}/pid${pid}`);
+            let data = {};
+            let key = event + '-' + variant;
+            data[key] = new Date().toISOString().replace(/\./g, ':');
+            ref.update(data);
+        });
+
+        // Increment public counter for this variant/event
+        let increment_counter = function(count) {
+            let ret = (count || 0) + 1;
+            return ret;
+        };
+        let transaction = function(credential) {
+            return firebase.database()
+                .ref(`app-variant/counts/${variant}/${event}`)
+                .transaction(increment_counter);
+        };
+        this.signIn.then(transaction);
+    }
+
+    logAssignVariant(pid, variant) {
+        this.logVariantEvent(pid, 'assign', variant);
+    }
+
+    logStartVariant(pid, variant) {
+        this.logVariantEvent(pid, 'start', variant);
+    }
+
+    logCompleteVariant(pid, variant) {
+        this.logVariantEvent(pid, 'complete', variant);
+    }
+
 
     /**
      * Transform a string so it's suitable for storing in firebase

@@ -26,10 +26,14 @@ class DbtWorksheetModelFwd extends Model {
         this.config = config;
         this.initialize = this.async_init();
         this.pid = null;
+        this.variant = null;
 
         this.initialize.then(() => {
             console.log('participant id', this.pid);
             logger.logUserPid(this.pid);
+
+            console.log('variant', this.variant);
+            logger.logAssignVariant(this.pid, this.variant);
         });
 
         this.uds = new UserDataSet();
@@ -137,15 +141,59 @@ class DbtWorksheetModelFwd extends Model {
      * @return promise that resolves when initialization is done
      */
     async_init() {
-        let pid_promise = this.logger.incrementPid();
-        pid_promise.then(function(result) {
-            this.pid = result.snapshot.val();
-        }.bind(this));
-        pid_promise.catch(error => {
+        // TODO: make all function names lower_underscore
+        let assignPidAsync = function(transaction_result) {
+            return new Promise(function(resolve, reject) {
+                this.pid = transaction_result.snapshot.val();
+                resolve(this.pid);
+            }.bind(this));
+        }.bind(this);
+
+        let assignVariantAsync = function(variant) {
+            return new Promise(function(resolve, reject) {
+                this.variant = variant;
+                resolve(variant);
+            }.bind(this));
+        }.bind(this);
+
+        let get_pid = this.logger.incrementPid();
+        let assign_pid = get_pid.then(assignPidAsync);
+        get_pid.catch(error => {
             console.error('failed to get participant id');
         });
-        return pid_promise;
+
+        console.log('async init');
+        console.log('logger', this.logger);
+
+        let get_app_variant = assign_pid.then(this.logger.getAppVariant.bind(this.logger));
+        let ret = get_app_variant.then(assignVariantAsync);
+
+        return ret;
     }
+
+    /*
+    // conceptual map of what async_init is doing:
+
+    // param none
+    // increment pid in database
+    // return promise that resolves with transaction result containing pid
+    this.logger.incrementPid() 
+
+        // param transaction result containing pid
+        // this.pid = pid
+        // return promise that resolves with pid
+        .then(this.assignPidAsync) 
+
+        // param pid                             
+        // assign variant in database            
+        // return promise that resolves with variant id
+        .then(this.logger.getAppVariant) 
+                                         
+        // param variant                               
+        // this.variant = variant                      
+        // return promise that resolves with variant id
+        .then(this.assignVariantAsync); 
+    */
 
     /**
      * Register a callback to be called by the model when
@@ -204,6 +252,8 @@ class DbtWorksheetModelFwd extends Model {
             }
             let num_to_delete = i - start_deleting_idx;
             this.frames.splice(start_deleting_idx, num_to_delete);
+        } else {
+            this.logger.logStartVariant(this.pid, this.variant);
         }
     }
 
@@ -646,6 +696,7 @@ class DbtWorksheetModelFwd extends Model {
         end_frame.directions = END_DIRECTIONS;
         end_frame.contact = END_CONTACT;
         end_frame.pid = this.pid;
+        end_frame.variant = this.variant;
         return new EndFrame(end_frame, this.logger);
     }
 
