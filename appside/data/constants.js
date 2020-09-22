@@ -29,6 +29,16 @@ var VARIANT_AFTER = 'after';
 var VARIANT_SLUGS = [VARIANT_PROMPTING, VARIANT_INTERP, VARIANT_BIO,
                      VARIANT_ACT, VARIANT_AFTER];
 
+// slug: full name
+// variant = VARIANT_LOOKUP.get(slug);
+let VARIANT_LOOKUP = new Map([
+    [VARIANT_PROMPTING, SECTION_PROMPTING],
+    [VARIANT_INTERP, SECTION_INTERP],
+    [VARIANT_BIO, SECTION_BIO],
+    [VARIANT_ACT, SECTION_ACT],
+    [VARIANT_AFTER, SECTION_AFTER],
+]);
+
 // generic value for frame name (when we don't need to distinguish)
 var RESPONSE_GENERIC = 'response';
 var RESPONSE_PHQ = 'phq';

@@ -182,7 +182,7 @@ class Logger {
      * Note: Does not log which variant was assigned. Relies on caller
      *  to call logVariantEvent(pid, event, variant) after each variant is assigned
      *
-     * @return promise that resolves with the variant
+     * @return promise that resolves with the variant slug
      */
      // Note: very bursty participation will break this by assigning too many participants
      //  to the same bucket, e.g. 50 participants all starting within 5 minutes.
@@ -241,7 +241,6 @@ class Logger {
 
         return ret;
     }
-
 
     /**
      * Log an event (assign, start, or complete) of an app variant given a user and pid

@@ -24,9 +24,9 @@ class DbtWorksheetModelFwd extends Model {
         super(logger);
 
         this.config = config;
-        this.initialize = this.async_init();
+        this.variant = config.section;
         this.pid = null;
-        this.variant = null;
+        this.initialize = this.async_init();
 
         this.initialize.then(() => {
             console.log('participant id', this.pid);
@@ -139,6 +139,7 @@ class DbtWorksheetModelFwd extends Model {
      * Do asynchronous initialization stuff such as database reads.
      * Top level code can use then() to do things after this.
      * @return promise that resolves when initialization is done
+     *    with unspecified resolve value
      */
     async_init() {
         // TODO: make all function names lower_underscore
@@ -151,7 +152,8 @@ class DbtWorksheetModelFwd extends Model {
 
         let assignVariantAsync = function(variant) {
             return new Promise(function(resolve, reject) {
-                this.variant = variant;
+                // look up the variant for this slug
+                this.variant = VARIANT_LOOKUP.get(variant);
                 resolve(variant);
             }.bind(this));
         }.bind(this);
@@ -165,10 +167,15 @@ class DbtWorksheetModelFwd extends Model {
         console.log('async init');
         console.log('logger', this.logger);
 
-        let get_app_variant = assign_pid
-            .then(this.logger.getAppVariant.bind(this.logger));
-        let ret = get_app_variant
-            .then(assignVariantAsync);
+        let ret = assign_pid;
+
+        // assign app variant automatically if not specified in config
+        if(this.variant === undefined) {
+            let get_app_variant = assign_pid
+                .then(this.logger.getAppVariant.bind(this.logger));
+            ret = get_app_variant
+                .then(assignVariantAsync);
+        }
 
         return ret;
     }
@@ -188,12 +195,12 @@ class DbtWorksheetModelFwd extends Model {
 
         // param pid                             
         // assign variant in database            
-        // return promise that resolves with variant id
+        // return promise that resolves with variant slug
         .then(this.logger.getAppVariant) 
                                          
         // param variant                               
         // this.variant = variant                      
-        // return promise that resolves with variant id
+        // return promise that resolves with variant slug
         .then(this.assignVariantAsync); 
     */
 
@@ -549,7 +556,7 @@ class DbtWorksheetModelFwd extends Model {
         let intro_frame = {};
         intro_frame.title = INTRO_TITLE;
         intro_frame.instruction = INTRO_INSTRUCTION;
-        intro_frame.text = INTRO_TEXT(this.config.section);
+        intro_frame.text = INTRO_TEXT(this.variant);
         intro_frame.template = INTRO_FRAME_TEMPLATE;
         intro_frame.is_app = true;
         return [new IntroFrame(intro_frame, this.logger)];
@@ -595,7 +602,7 @@ class DbtWorksheetModelFwd extends Model {
         //// Pre-process statements
 
         // get all the statements for this section
-        let section = this.config.section;
+        let section = this.variant;
         let section_statements = knowledgebase.filter(
             entry => entry[KB_KEY_SECTION] === section
         );
@@ -666,7 +673,8 @@ class DbtWorksheetModelFwd extends Model {
             frame.title = BODY_TITLE + ' ' + (idx+1);
             frame.response_name = RESPONSE_GENERIC;
             frame.template = STATEMENTS_FRAME_TEMPLATE;
-            frame.question = BODY_QUESTION[this.config.section];
+            frame.question = BODY_QUESTION[this.variant];
+
             frame.statements = [];
             frame.is_app = true;
             for(let statement of page_statements) {
@@ -985,7 +993,8 @@ class DbtWorksheetModelConfig {
     /**
      * Construct config.
      * @param direction - (string) one of the directions specified in constants.js
-     * @param section - (string) one of the sections specified in constants.js
+     * @param section - (optional string) one of the sections specified in constants.js
+     *   if undefined, section will be auto selected
      */
     constructor(direction, section) {
         this.category = CATEGORY_DBT_WORKSHEET;
