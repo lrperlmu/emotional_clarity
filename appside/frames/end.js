@@ -94,6 +94,6 @@ class EndFrame extends Frame {
         old_frame.replaceWith(frame);
 
         this.logger.logCompletionCode(this.completion_code, this.pid);
-        this.logger.logCompleteVariant(this.pid, this.variant);
+        this.logger.logVariantEvent(this.pid, 'complete', this.variant);
     }
 }

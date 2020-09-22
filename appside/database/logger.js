@@ -136,7 +136,9 @@ class Logger {
     /**
      * Generate a new participant id
      *
-     * @return promise that will reject with an error or
+     * @return promise that resolves to a transaction result containing pid
+     *  In specific, the promise will
+     *  reject with an error or
      *  resolve with a transaction result `tr` with these properties:
      *      tr.committed - boolean true if committed, false otherwise
      *      tr.snapshot - data snapshot at end of transaction
@@ -156,49 +158,36 @@ class Logger {
             );
         };
 
-        return this.signIn.then(transaction);
+        // returns promise that resolves with credential
+        let ret = this.signIn
 
-        /*
-        // conceptual map
+            // param credential
+            // atomically call increment_counter on ref(pid/counter)
+            // return promise that resolves to transacion result containing pid
+            .then(transaction);
 
-        // return promise that resolves with credential
-        signIn
-
-        // param credential
-        // atomically call increment_counter on ref(pid/counter)
-        // return promise that resolves to transacion result containing pid
-        .then(transaction)
-        */
+        return ret;
     }
 
-    // determine which app variant this pid should have
-    // assign variant so as to balance variants for this epoch
-    getAppVariant(pid) {
-        /*
-          app-variant {
-              counts: {
-                  prompting: {
-                      assign:, n1,
-                      start: n2,
-                      complete: n3,
-                  },
-                  interp: {...},
-                  bio: {...},
-                  ...,
-              }
-              uid: {
-                  pid: {
-                      assign-vid: timestamp,   // log in build frames
-                      start-vid: timestamp,    // log after passing phq
-                      complete-vid: timestamp, // log after receiving completion code
-                  },
-              uid: {...},
-
-        */
-
-        console.log('get app variant');
-        console.log('this', this);
-
+    /**
+     * Figure out which variant to use for the next participant
+     *
+     * Variant is selected in order to allocate an equal number of participants to
+     *   each variant as best we can, given that
+     *   - we select the variant when the study/app initializes
+     *   - not all participants who start the study/app will be eligible for the study
+     *   - not all participants who start the study will complete it
+     *   - participants may overlap temporally in their study participation
+     *
+     * Note: Does not log which variant was assigned. Relies on caller
+     *  to call logVariantEvent(pid, event, variant) after each variant is assigned
+     *
+     * @return promise that resolves with the variant
+     */
+     // Note: very bursty participation will break this by assigning too many participants
+     //  to the same bucket, e.g. 50 participants all starting within 5 minutes.
+     // A high dropout rate will not break this, assuming non-bursty participation.
+    getAppVariant() {
         let read_counts = function(credential) {
             return firebase.database()
                 .ref('app-variant/counts')
@@ -207,19 +196,38 @@ class Logger {
 
         let compute_variant = function(counts) {
             return new Promise(function(resolve, reject) {
-                console.log(counts);
                 let tree = counts.val();
-                console.log(tree);
 
-                // here, actually decide which variant to use
+                // pick the variant with the fewest completed
+                // if tie, pick the one with the fewest started
+                // if tie, pick the one with the fewest assigned
+                // if tie, pick the first one
 
-                // placeholder resolve value
-                resolve('variant foo');
+                let variants_with_fewest = function(status, variants) {
+                    let nums_of_status = [];
+                    for(let variant of variants) {
+                        nums_of_status.push(tree[variant][status] || 0);
+                    }
+                    let min = Math.min(...nums_of_status);
+                    let min_of_status_variants = [];
+                    for(let variant of variants) {
+                        if((tree[variant][status] || 0) === min) {
+                            min_of_status_variants.push(variant);
+                        }
+                    }
+                    return min_of_status_variants;
+                };
+
+                let v_complete = variants_with_fewest('complete', VARIANT_SLUGS);
+                let v_started = variants_with_fewest('start', v_complete);
+                let v_assigned = variants_with_fewest('assign', v_started);
+                let selected_variant = v_assigned[0];
+                resolve(selected_variant);
             });
         };
 
         // return promise that resolves with credential
-        return this.signIn
+        let ret = this.signIn
 
             // param credential
             // read the counts
@@ -230,78 +238,22 @@ class Logger {
             // decide which variant to use
             // return promise that resolves with that variant
             .then(compute_variant);
+
+        return ret;
     }
 
 
-        /*
-        // placeholder implementation
-        let determineVariant = function(resolve, reject) {
-            // shortcut -- replace me
-            // determine variant based on pid
-            let variants = VARIANT_SLUGS;
-            let idx = pid % variants.length;
-            let variant = variants[idx];
-            resolve(variant);
-        }
-
-        return new Promise(determineVariant);
-        */
-
-
-        /*
-        let computeVariant = function(variantTable) {
-
-            console.log(variantTable);
-
-            // TODO:
-            // count existing completed variants
-            // use existing started variants as a tie breaker
-
-            // shortcut -- replace me
-            // determine variant based on pid
-            let variants = VARIANT_SLUGS;
-            let idx = pid % variants.length;
-            let variant = variants[idx];
-            return variant;
-        };
-
-        let extractVariant = function(transaction_result) {
-            return new Promise(function(resolve, reject) {
-                console.log(transaction_result.snapshot.val());
-
-                // todo: return the current variant
-                resolve('variantfoo');
-            });
-        };
-
-        let transaction = function(credential) {
-
-            // DEBUG starting here.
-            // NOTE: need to aggregate the variants in a structure that
-            //       is publicly read and writable like pid/counter
-            let ref = firebase.database().ref('app-variant/counts');
-            return ref.transaction(computeVariant);
-        };
-
-
-        let transaction_result = this.signIn.then(transaction);
-        let variant = transaction_result.then(extractVariant);
-        return variant;
-        */
-        /*
-        // return promise that resolves with credential
-        this.signIn
-            // param credential
-            // call computeVariant in a transaction
-            // return promise that resolves in transaction result
-            .then(transaction)
-
-            // param transaction result
-            // extract 
-            .then(extract_variant);
-
-        */
-
+    /**
+     * Log an event (assign, start, or complete) of an app variant given a user and pid
+     *
+     * Data is stored for the user and as an aggregate
+     * - user: {app-variant/uid/pid/event-variant:timestamp}
+     * - aggregate: incremetns {app-variant/counts/variant/event:count}
+     *
+     * @param pid (int) - participant id
+     * @param event (string) - assign, start, or complete
+     * @param variant (string) - variant of the app (e.g. prompting, interp, act, ...)
+     */
     logVariantEvent(pid, event, variant) {
         // log this event-variant privately under the given uid/pid
         this.signIn.then(credential => {
@@ -324,19 +276,6 @@ class Logger {
         };
         this.signIn.then(transaction);
     }
-
-    logAssignVariant(pid, variant) {
-        this.logVariantEvent(pid, 'assign', variant);
-    }
-
-    logStartVariant(pid, variant) {
-        this.logVariantEvent(pid, 'start', variant);
-    }
-
-    logCompleteVariant(pid, variant) {
-        this.logVariantEvent(pid, 'complete', variant);
-    }
-
 
     /**
      * Transform a string so it's suitable for storing in firebase

@@ -33,7 +33,7 @@ class DbtWorksheetModelFwd extends Model {
             logger.logUserPid(this.pid);
 
             console.log('variant', this.variant);
-            logger.logAssignVariant(this.pid, this.variant);
+            logger.logVariantEvent(this.pid, 'assign', this.variant);
         });
 
         this.uds = new UserDataSet();
@@ -165,8 +165,10 @@ class DbtWorksheetModelFwd extends Model {
         console.log('async init');
         console.log('logger', this.logger);
 
-        let get_app_variant = assign_pid.then(this.logger.getAppVariant.bind(this.logger));
-        let ret = get_app_variant.then(assignVariantAsync);
+        let get_app_variant = assign_pid
+            .then(this.logger.getAppVariant.bind(this.logger));
+        let ret = get_app_variant
+            .then(assignVariantAsync);
 
         return ret;
     }
@@ -253,7 +255,7 @@ class DbtWorksheetModelFwd extends Model {
             let num_to_delete = i - start_deleting_idx;
             this.frames.splice(start_deleting_idx, num_to_delete);
         } else {
-            this.logger.logStartVariant(this.pid, this.variant);
+            this.logger.logVariantEvent(this.pid, 'start', this.variant);
         }
     }
 
