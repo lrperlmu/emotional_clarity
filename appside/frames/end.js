@@ -21,6 +21,7 @@ class EndFrame extends Frame {
      *     frame_data.directions (string)
      *     frame_data.contact (html string)
      *     frame_data.pid (int)
+     *     frame_data.variant (string)
      * @param logger - Logger object
      */
     constructor(frame_data, logger) {
@@ -32,6 +33,7 @@ class EndFrame extends Frame {
         this.contact = frame_data.contact;
         this.template = frame_data.template;
         this.pid = frame_data.pid;
+        this.variant = frame_data.variant;
         this.passed_phq = true;
     }
 
@@ -92,5 +94,6 @@ class EndFrame extends Frame {
         old_frame.replaceWith(frame);
 
         this.logger.logCompletionCode(this.completion_code, this.pid);
+        this.logger.logVariantEvent(this.pid, 'complete', this.variant);
     }
 }

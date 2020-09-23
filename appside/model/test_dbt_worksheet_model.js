@@ -36,25 +36,21 @@ $(document).ready(function() {
     }
     let page_types = Object.keys(test_methods);
     let page_to_show = page_types[0];
-    let variant = SECTION_PROMPTING;
+    let variant = undefined;
 
     let query_string = new URLSearchParams(location.search);
 
     if(query_string.has('test')) {
         page_to_show = query_string.get('test');
     }
+    // variant slug options: prompting, interp, bio, act, after, auto
     if(query_string.has('variant')) {
         let slug = query_string.get('variant');
-        let variants = new Map([
-            ['prompting', SECTION_PROMPTING],
-            ['interp', SECTION_INTERP],
-            ['bio', SECTION_BIO],
-            ['act', SECTION_ACT],
-            ['after', SECTION_AFTER],
-        ]);
-        variant = variants.get(slug);
+        // slug 'auto' sets this to undefined, intentionally
+        variant = VARIANT_LOOKUP.get(slug);
 
-        let variant_names = Array.from(variants.keys());
+        let variant_names = Array.from(VARIANT_LOOKUP.keys());
+        variant_names.push('auto');
         if(!variant_names.includes(slug)) {
             console.error('Valid variant names are: ' + variant_names);
             throw Error('Unknown variant requested: ' + variant);

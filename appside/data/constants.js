@@ -20,6 +20,25 @@ var SECTION_BIO = 'Biological changes and experiences';
 var SECTION_ACT = 'Expressions and actions';
 var SECTION_AFTER = 'Aftereffects';
 
+// variant id slugs
+var VARIANT_PROMPTING = 'prompting';
+var VARIANT_INTERP = 'interp';
+var VARIANT_BIO = 'bio';
+var VARIANT_ACT = 'act';
+var VARIANT_AFTER = 'after';
+var VARIANT_SLUGS = [VARIANT_PROMPTING, VARIANT_INTERP, VARIANT_BIO,
+                     VARIANT_ACT, VARIANT_AFTER];
+
+// Map of {slug: full name}
+// usage: `VARIANT_LOOKUP.get(slug);`
+let VARIANT_LOOKUP = new Map([
+    [VARIANT_PROMPTING, SECTION_PROMPTING],
+    [VARIANT_INTERP, SECTION_INTERP],
+    [VARIANT_BIO, SECTION_BIO],
+    [VARIANT_ACT, SECTION_ACT],
+    [VARIANT_AFTER, SECTION_AFTER],
+]);
+
 // generic value for frame name (when we don't need to distinguish)
 var RESPONSE_GENERIC = 'response';
 var RESPONSE_PHQ = 'phq';

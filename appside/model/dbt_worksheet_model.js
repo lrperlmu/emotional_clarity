@@ -24,12 +24,17 @@ class DbtWorksheetModelFwd extends Model {
         super(logger);
 
         this.config = config;
-        this.initialize = this.async_init();
+        // full name of variant (not the slug)
+        this.variant = config.section;
         this.pid = null;
+        this.initialize = this.async_init();
 
         this.initialize.then(() => {
             console.log('participant id', this.pid);
             logger.logUserPid(this.pid);
+
+            console.log('variant', this.variant);
+            logger.logVariantEvent(this.pid, 'assign', this.variant);
         });
 
         this.uds = new UserDataSet();
@@ -135,17 +140,66 @@ class DbtWorksheetModelFwd extends Model {
      * Do asynchronous initialization stuff such as database reads.
      * Top level code can use then() to do things after this.
      * @return promise that resolves when initialization is done
+     *    with unspecified resolve value
      */
     async_init() {
-        let pid_promise = this.logger.incrementPid();
-        pid_promise.then(function(result) {
-            this.pid = result.snapshot.val();
-        }.bind(this));
-        pid_promise.catch(error => {
+        let assign_pid_async = function(transaction_result) {
+            return new Promise(function(resolve, reject) {
+                this.pid = transaction_result.snapshot.val();
+                resolve(this.pid);
+            }.bind(this));
+        }.bind(this);
+
+        let assign_variant_async = function(variant) {
+            return new Promise(function(resolve, reject) {
+                // look up the variant for this slug
+                this.variant = VARIANT_LOOKUP.get(variant);
+                resolve(variant);
+            }.bind(this));
+        }.bind(this);
+
+        let get_pid = this.logger.incrementPid();
+        let assign_pid = get_pid.then(assign_pid_async);
+        get_pid.catch(error => {
             console.error('failed to get participant id');
         });
-        return pid_promise;
+
+        let ret = assign_pid;
+
+        // assign app variant automatically if not specified in config
+        if(this.variant === undefined) {
+            let get_app_variant = assign_pid
+                .then(this.logger.getAppVariant.bind(this.logger));
+            ret = get_app_variant
+                .then(assign_variant_async);
+        }
+
+        return ret;
     }
+
+    /*
+    // conceptual map of what async_init is doing:
+
+    // param none
+    // increment pid in database
+    // return promise that resolves with transaction result containing pid
+    this.logger.incrementPid()
+
+        // param transaction result containing pid
+        // this.pid = pid
+        // return promise that resolves with pid
+        .then(this.assign_pid_async)
+
+        // param pid
+        // assign variant in database
+        // return promise that resolves with variant slug
+        .then(this.logger.getAppVariant)
+                                         
+        // param variant
+        // this.variant = full name of variant
+        // return promise that resolves with variant slug
+        .then(this.assign_variant_async);
+    */
 
     /**
      * Register a callback to be called by the model when
@@ -204,6 +258,8 @@ class DbtWorksheetModelFwd extends Model {
             }
             let num_to_delete = i - start_deleting_idx;
             this.frames.splice(start_deleting_idx, num_to_delete);
+        } else {
+            this.logger.logVariantEvent(this.pid, 'start', this.variant);
         }
     }
 
@@ -497,7 +553,7 @@ class DbtWorksheetModelFwd extends Model {
         let intro_frame = {};
         intro_frame.title = INTRO_TITLE;
         intro_frame.instruction = INTRO_INSTRUCTION;
-        intro_frame.text = INTRO_TEXT(this.config.section);
+        intro_frame.text = INTRO_TEXT(this.variant);
         intro_frame.template = INTRO_FRAME_TEMPLATE;
         intro_frame.is_app = true;
         return [new IntroFrame(intro_frame, this.logger)];
@@ -543,7 +599,7 @@ class DbtWorksheetModelFwd extends Model {
         //// Pre-process statements
 
         // get all the statements for this section
-        let section = this.config.section;
+        let section = this.variant;
         let section_statements = knowledgebase.filter(
             entry => entry[KB_KEY_SECTION] === section
         );
@@ -614,7 +670,8 @@ class DbtWorksheetModelFwd extends Model {
             frame.title = BODY_TITLE + ' ' + (idx+1);
             frame.response_name = RESPONSE_GENERIC;
             frame.template = STATEMENTS_FRAME_TEMPLATE;
-            frame.question = BODY_QUESTION[this.config.section];
+            frame.question = BODY_QUESTION[this.variant];
+
             frame.statements = [];
             frame.is_app = true;
             for(let statement of page_statements) {
@@ -646,6 +703,7 @@ class DbtWorksheetModelFwd extends Model {
         end_frame.directions = END_DIRECTIONS;
         end_frame.contact = END_CONTACT;
         end_frame.pid = this.pid;
+        end_frame.variant = this.variant;
         return new EndFrame(end_frame, this.logger);
     }
 
@@ -932,7 +990,9 @@ class DbtWorksheetModelConfig {
     /**
      * Construct config.
      * @param direction - (string) one of the directions specified in constants.js
-     * @param section - (string) one of the sections specified in constants.js
+     * @param section - (optional string) one of the sections specified in constants.js
+     *   Full section name, not the slug.
+     *   If undefined, section will be auto selected.
      */
     constructor(direction, section) {
         this.category = CATEGORY_DBT_WORKSHEET;
