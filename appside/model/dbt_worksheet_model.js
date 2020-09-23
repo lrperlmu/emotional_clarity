@@ -143,15 +143,14 @@ class DbtWorksheetModelFwd extends Model {
      *    with unspecified resolve value
      */
     async_init() {
-        // TODO: make all function names lower_underscore
-        let assignPidAsync = function(transaction_result) {
+        let assign_pid_async = function(transaction_result) {
             return new Promise(function(resolve, reject) {
                 this.pid = transaction_result.snapshot.val();
                 resolve(this.pid);
             }.bind(this));
         }.bind(this);
 
-        let assignVariantAsync = function(variant) {
+        let assign_variant_async = function(variant) {
             return new Promise(function(resolve, reject) {
                 // look up the variant for this slug
                 this.variant = VARIANT_LOOKUP.get(variant);
@@ -160,7 +159,7 @@ class DbtWorksheetModelFwd extends Model {
         }.bind(this);
 
         let get_pid = this.logger.incrementPid();
-        let assign_pid = get_pid.then(assignPidAsync);
+        let assign_pid = get_pid.then(assign_pid_async);
         get_pid.catch(error => {
             console.error('failed to get participant id');
         });
@@ -172,7 +171,7 @@ class DbtWorksheetModelFwd extends Model {
             let get_app_variant = assign_pid
                 .then(this.logger.getAppVariant.bind(this.logger));
             ret = get_app_variant
-                .then(assignVariantAsync);
+                .then(assign_variant_async);
         }
 
         return ret;
@@ -189,7 +188,7 @@ class DbtWorksheetModelFwd extends Model {
         // param transaction result containing pid
         // this.pid = pid
         // return promise that resolves with pid
-        .then(this.assignPidAsync)
+        .then(this.assign_pid_async)
 
         // param pid
         // assign variant in database
@@ -199,7 +198,7 @@ class DbtWorksheetModelFwd extends Model {
         // param variant
         // this.variant = full name of variant
         // return promise that resolves with variant slug
-        .then(this.assignVariantAsync);
+        .then(this.assign_variant_async);
     */
 
     /**
