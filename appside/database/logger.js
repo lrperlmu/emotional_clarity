@@ -179,21 +179,26 @@ class Logger {
      *   - not all participants who start the study will complete it
      *   - participants may overlap temporally in their study participation
      *
-     * Note: Does not log which variant was assigned. Relies on caller
-     *  to call logVariantEvent(pid, event, variant) after each variant is assigned
+     * Note: Does not log which variant was assigned. Even allocation of
+     *  variants relies on caller to call logVariantEvent(pid, event, variant)
+     *  after each variant is assigned, started, or completed.
      *
      * @return promise that resolves with the variant slug
      */
-     // Note: very bursty participation will break this by assigning too many participants
-     //  to the same bucket, e.g. 50 participants all starting within 5 minutes.
-     // A high dropout rate will not break this, assuming non-bursty participation.
+    // Note: Completion is the highest order bit in deciding assignment,
+    //  very bursty participation will break this by assigning too many participants
+    //  to the same bucket, e.g. 50 participants all starting within 5 minutes.
+    // Assignment of a variant is the lowest order bit, so a high
+    //   dropout rate will not break this, assuming non-bursty participation.
     getAppVariant() {
+        // callback to get counts from database
         let read_counts = function(credential) {
             return firebase.database()
                 .ref('app-variant/counts')
                 .once('value');
         };
 
+        // callback to decide variant, given counts
         let compute_variant = function(counts) {
             return new Promise(function(resolve, reject) {
                 let tree = counts.val();
@@ -234,7 +239,7 @@ class Logger {
             // return promise that resolves with counts tree in a DataSnapshot
             .then(read_counts)
 
-            // param Data Snashot containing counts tree
+            // param DataSnapshot containing counts tree
             // decide which variant to use
             // return promise that resolves with that variant
             .then(compute_variant);
@@ -247,7 +252,7 @@ class Logger {
      *
      * Data is stored for the user and as an aggregate
      * - user: {app-variant/uid/pid/event-variant:timestamp}
-     * - aggregate: incremetns {app-variant/counts/variant/event:count}
+     * - aggregate: increments {app-variant/counts/variant/event:count}
      *
      * @param pid (int) - participant id
      * @param event (string) - assign, start, or complete

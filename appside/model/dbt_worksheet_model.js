@@ -24,6 +24,7 @@ class DbtWorksheetModelFwd extends Model {
         super(logger);
 
         this.config = config;
+        // full name of variant (not the slug)
         this.variant = config.section;
         this.pid = null;
         this.initialize = this.async_init();
@@ -164,9 +165,6 @@ class DbtWorksheetModelFwd extends Model {
             console.error('failed to get participant id');
         });
 
-        console.log('async init');
-        console.log('logger', this.logger);
-
         let ret = assign_pid;
 
         // assign app variant automatically if not specified in config
@@ -186,22 +184,22 @@ class DbtWorksheetModelFwd extends Model {
     // param none
     // increment pid in database
     // return promise that resolves with transaction result containing pid
-    this.logger.incrementPid() 
+    this.logger.incrementPid()
 
         // param transaction result containing pid
         // this.pid = pid
         // return promise that resolves with pid
-        .then(this.assignPidAsync) 
+        .then(this.assignPidAsync)
 
-        // param pid                             
-        // assign variant in database            
+        // param pid
+        // assign variant in database
         // return promise that resolves with variant slug
-        .then(this.logger.getAppVariant) 
+        .then(this.logger.getAppVariant)
                                          
-        // param variant                               
-        // this.variant = variant                      
+        // param variant
+        // this.variant = full name of variant
         // return promise that resolves with variant slug
-        .then(this.assignVariantAsync); 
+        .then(this.assignVariantAsync);
     */
 
     /**
@@ -994,7 +992,8 @@ class DbtWorksheetModelConfig {
      * Construct config.
      * @param direction - (string) one of the directions specified in constants.js
      * @param section - (optional string) one of the sections specified in constants.js
-     *   if undefined, section will be auto selected
+     *   Full section name, not the slug.
+     *   If undefined, section will be auto selected.
      */
     constructor(direction, section) {
         this.category = CATEGORY_DBT_WORKSHEET;

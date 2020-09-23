@@ -43,6 +43,7 @@ $(document).ready(function() {
     if(query_string.has('test')) {
         page_to_show = query_string.get('test');
     }
+    // variant slug options: prompting, interp, bio, act, after, auto
     if(query_string.has('variant')) {
         let slug = query_string.get('variant');
         // slug 'auto' sets this to undefined, intentionally

@@ -6,6 +6,9 @@ $(document).ready(function() {
 
 });
 
+/**
+ * Test the code that decides which variant to assign new participants
+ */
 function test_compute_variant() {
     let print_result = function(str) {
         console.log(str);
