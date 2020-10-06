@@ -248,9 +248,10 @@ var FEEDBACK_QUESTIONS = {
         ['The app made me more certain about the emotions I thought I have.', 'likert', true],
         ['The app helped me understand why I had certain emotions.', 'likert', true],
         ['The app helped me understand the link between my emotions and my thoughts and actions.', 'likert', true],
-        ['Which specific parts of the app were most helpful and why?', 'text', true],
+        ['What did you learn about your emotions?', 'text', true],
     ],
     'page_2': [
+        ['Which specific parts of the app were most helpful and why?', 'text', true],
         ['What did you like about the app?', 'text', true],
         ['What did you dislike about the app?', 'text', true],
         ['What would you add or change, and why?', 'text', true],
