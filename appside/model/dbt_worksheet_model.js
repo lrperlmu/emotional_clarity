@@ -442,8 +442,15 @@ class DbtWorksheetModelFwd extends Model {
      */
     build_likert_frame(response_name) {
         let likert_questions = [];
-        likert_questions.push([SDERS_QUESTIONS[0], 'likert', true]);
-        likert_questions.push([SDERS_QUESTIONS[1], 'likert', true]);
+
+        // ordering based on even/odd pid
+        if(this.pid % 2 === 0) {
+            likert_questions.push([SDERS_QUESTIONS[0], 'likert', true]);
+            likert_questions.push([SDERS_QUESTIONS[1], 'likert', true]);
+        } else {
+            likert_questions.push([SDERS_QUESTIONS[1], 'likert', true]);
+            likert_questions.push([SDERS_QUESTIONS[0], 'likert', true]);
+        }
 
         let frame = {};
 
