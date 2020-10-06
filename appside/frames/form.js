@@ -21,6 +21,7 @@ class FormFrame extends Frame {
      *          type (string) -- how to render the question: 'text', 'yesno', or 'likert'
      *          required (boolean, optional) -- whether the question must be answered
      *                                          undefined/missing means not required
+     *          follow (string, optional) -- text to display after the question
      *    frame_data.qualifiers (list) - list of options for 'likert' type questions
      *    frame_data.values (list) - list of values corresponding to qualifiers
      *    frame_data.response_name (string) - name this frame will attach to each piece
@@ -79,6 +80,7 @@ class FormFrame extends Frame {
             let text = q_info[0];
             let type = q_info[1];
             let required = q_info[2];
+            let follow = q_info[3];
             let response = this.responses[q_idx];
 
             // Insert node for the question
@@ -98,6 +100,13 @@ class FormFrame extends Frame {
             let element = FormElement.generate(type, this);
             let html_element = element.generate_html(response, q_idx);
             frame.appendChild(html_element);
+
+            if(follow) {
+                let follow_text = document.createElement('h5');
+                $(follow_text).attr('class', 'font-weight-light mb-2');
+                $(follow_text).text(follow);
+                frame.appendChild(follow_text);
+            }
 
             q_idx += 1;
         }
@@ -131,7 +140,7 @@ class FormFrame extends Frame {
                     }
                 }
                 // case for text box
-                else if(type === 'text') {
+                else if(type === 'text' || type === 'shorttext') {
                     let text = $(`#q_${q_idx}_input`).val();
                     if (text == '')
                         all_complete = false;
@@ -353,6 +362,7 @@ class TextFormElement extends FormElement {
             textbox = document.createElement('input');
             $(textbox).attr('type', 'text');
             $(textbox).addClass('short_answer_textbox');
+            $(textbox).attr('maxlength', SHORTTEXT_CHAR_LIMIT);
         }
 
         $(textbox).attr('id', `q_${q_idx}_input`);

@@ -57,7 +57,6 @@ class Nav {
         }
 
         // make a next button
-        // TODO: let frame help with placement
         if(this.fwd_ok) {
             let next = document.createElement('button');
             if (this.fwd_reversible)

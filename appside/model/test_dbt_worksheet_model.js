@@ -419,7 +419,7 @@ function visual_test_induction(variant) {
     model.initialize.then(() => {
 
         let frame = model.get_frame('next');
-        while(frame.template !== LONG_ANSWER_TEMPLATE) {
+        while(frame.template !== SHORT_ANSWER_TEMPLATE) {
             frame = model.get_frame('next');
         }
         frame.time_limit = 2;

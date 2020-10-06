@@ -354,14 +354,13 @@ class DbtWorksheetModelFwd extends Model {
         short_answer_frame.template = SHORT_ANSWER_TEMPLATE;
         short_answer_frame.response_name = RESPONSE_INDUCTION;
         short_answer_frame.title = INDUCTION_TITLE;
-        short_answer_frame.prompt = INDUCTION_THINKING_PROMPT;
-        short_answer_frame.truncated_prompt = short_answer_frame.prompt.substring(0, 100);
-        short_answer_frame.instruction = INDUCTION_NOTE;
-        short_answer_frame.char_limit = INDUCTION_CHAR_LIMIT;
-        let frame1 = new ShortAnswerFrame(short_answer_frame, this.logger);
+        short_answer_frame.questions = [
+            [INDUCTION_THINKING_PROMPT, 'shorttext', true, INDUCTION_NOTE],
+        ];
+        let frame1 = new FormFrame(short_answer_frame, this.logger);
 
         let ud1 = new UserData(
-            short_answer_frame.truncated_prompt, '', [], short_answer_frame.response_name);
+            INDUCTION_THINKING_PROMPT, '', [], short_answer_frame.response_name);
         this.uds.add(ud1);
 
         let long_answer_frame = {};
