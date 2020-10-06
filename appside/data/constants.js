@@ -187,6 +187,7 @@ var SUMMARY_INSTRUCTION = 'Based on your responses';
 var SUMMARY_TEXT = '<p>Your responses are <i>commonly</i> associated with the following emotions, but they are not the <i>only</i> emotions that may be associated with your responses.';
 var SUMMARY_FOLLOW_TEXT = 'Please reflect on this summary to see which emotion(s), if any, you might actually be experiencing.';
 var SUMMARY_COUNT_FRAME_TEMPLATE = 'summary_count';
+var SUMMARY_EMPTY_MSG = '[Summary is empty because no boxes were checked.]';
 
 // End frame strings
 var END_FRAME_TEMPLATE = 'end';

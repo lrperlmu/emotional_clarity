@@ -32,6 +32,7 @@ $(document).ready(function() {
         'phq': visual_test_phq,
         'induction': visual_test_induction,
         'summary': visual_test_summary,
+        'summary_empty': visual_test_empty_summary,
         'postq': postq,
     }
     let page_types = Object.keys(test_methods);
@@ -362,6 +363,34 @@ function visual_test_summary(variant) {
         }
         model.update(user_input);
 
+        while(frame.template === 'statements') {
+            frame = model.get_frame('next');
+        }
+
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
+
+
+/*
+ * Integration test that invokes SummaryFrameCount to render a summary frame generated
+ * by this app.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_empty_summary(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_self_report(true);
+    config.set_pre_post_measurement(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+
+        while(frame.template !== 'statements') {
+            frame = model.get_frame('next');
+        }
         while(frame.template === 'statements') {
             frame = model.get_frame('next');
         }

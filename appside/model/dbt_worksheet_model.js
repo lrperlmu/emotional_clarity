@@ -812,6 +812,7 @@ class DbtWorksheetModelFwd extends Model {
         summary_frame.description = SUMMARY_TEXT;
         summary_frame.matched_emotions = [];
         summary_frame.follow_text = SUMMARY_FOLLOW_TEXT;
+        summary_frame.empty_msg = SUMMARY_EMPTY_MSG;
         summary_frame.info_sheet_links = this.config.info_sheet_links;
         summary_frame.offer_ideas = this.config.offer_ideas;
         summary_frame.is_app = true;
