@@ -55,6 +55,8 @@ class DbtWorksheetModelFwd extends Model {
                 this.frames.push(this.build_consent_disclosure_frame());
                 this.frames.push(new BlockerFrame());
             }
+            this.frames.push(this.build_content_warning_frame());
+            this.frames.push(new BlockerFrame());
             if(this.config.study) {
                 for(let frame of this.build_phq_frames()) {
                     this.frames.push(frame);
@@ -220,6 +222,17 @@ class DbtWorksheetModelFwd extends Model {
         frame.template = SW_FRAME_TEMPLATE;
         frame.title = SW_TITLE;
         frame.instruction = SW_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    build_content_warning_frame() {
+        let frame = {};
+        frame.template = CW_FRAME_TEMPLATE;
+        frame.title = CW_TITLE;
+        frame.instruction = CW_TEXT;
         frame.questions = [];
         frame.response_name = RESPONSE_GENERIC;
         let ret = new FormFrame(frame, this.logger);

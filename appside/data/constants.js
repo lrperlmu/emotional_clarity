@@ -65,6 +65,11 @@ var BC_FRAME_TEMPLATE = 'browser-check';
 var BC_TITLE = 'Please use a desktop browser';
 var BC_TEXT = 'We didn\'t test this app on small screens or touch screens, you might not be able to complete the study on a mobile device. Please use google chrome browser on a laptop or desktop.';
 
+// content warning frame
+var CW_FRAME_TEMPLATE = 'content-warning';
+var CW_TITLE = 'Content Warning';
+var CW_TEXT = 'The activity ahead asks you to reflect upon a negative, emotionally charged event from your past. Such a recollection could understandably be upsetting or re-ignite past negative emotions. If at any time you prefer not to continue, you may opt out of the study by closing your browser tab.';
+
 // Transition frame
 var TRANSITION_FRAME_TEMPLATE = 'transition';
 var PRE_TRANSITION_TITLE = 'Prepare to use the app';
