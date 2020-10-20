@@ -211,12 +211,20 @@ class Logger {
                 let variants_with_fewest = function(status, variants) {
                     let nums_of_status = [];
                     for(let variant of variants) {
-                        nums_of_status.push(tree[variant][status] || 0);
+                        let val = 0;
+                        if(tree && tree[variant]) {
+                            val = tree[variant][status] || 0;
+                        }
+                        nums_of_status.push(val);
                     }
                     let min = Math.min(...nums_of_status);
                     let min_of_status_variants = [];
                     for(let variant of variants) {
-                        if((tree[variant][status] || 0) === min) {
+                        let val = 0;
+                        if(tree && tree[variant]) {
+                            val = tree[variant][status] || 0;
+                        }
+                        if(val === min) {
                             min_of_status_variants.push(variant);
                         }
                     }
@@ -247,6 +255,7 @@ class Logger {
         return ret;
     }
 
+
     /**
      * Log an event (assign, start, or complete) of an app variant given a user and pid
      *
@@ -256,7 +265,7 @@ class Logger {
      *
      * @param pid (int) - participant id
      * @param event (string) - assign, start, or complete
-     * @param variant (string) - variant of the app (e.g. prompting, interp, act, ...)
+     * @param variant (string) - slug for variant of the app (e.g. prompting, interp, act, ...)
      */
     logVariantEvent(pid, event, variant) {
         // log this event-variant privately under the given uid/pid

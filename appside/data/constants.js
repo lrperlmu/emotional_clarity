@@ -39,6 +39,14 @@ let VARIANT_LOOKUP = new Map([
     [VARIANT_AFTER, SECTION_AFTER],
 ]);
 
+let VARIANT_SLUG_LOOKUP = new Map([
+    [SECTION_PROMPTING, VARIANT_PROMPTING],
+    [SECTION_INTERP, VARIANT_INTERP],
+    [SECTION_BIO, VARIANT_BIO],
+    [SECTION_ACT, VARIANT_ACT],
+    [SECTION_AFTER, VARIANT_AFTER],
+]);
+
 // generic value for frame name (when we don't need to distinguish)
 var RESPONSE_GENERIC = 'response';
 var RESPONSE_PHQ = 'phq';
