@@ -184,7 +184,7 @@ var SELF_REPORT_VALUES = [0, 1, 2, 3, 4];
 var CONSENT_FRAME_TEMPLATE = 'consent';
 var CONSENT_DISCLOSURE_TITLE = 'Consent';
 var CONSENT_DISCLOSURE_QUESTIONS = ['I have electronically signed the consent form.',];
-var CONSENT_DISCLOSURE_INSTRUCTIONS = 'After volunteering for the study, you should have received an email to record your electronic consent using DocuSign. If you have not had a chance to electronically sign the consent form, please email Leah Perlmutter <leahperl@uw.edu>.';
+var CONSENT_DISCLOSURE_INSTRUCTIONS = 'After volunteering for the study, you should have received an email to record your electronic consent using DocuSign. If you have not had a chance to electronically sign the consent form, please email the study team  <ec-study@cs.washington.edu>.';
 
 
 // Summary frame strings (all DBT worksheet models)
@@ -199,7 +199,7 @@ var SUMMARY_EMPTY_MSG = '[Summary is empty because no boxes were checked.]';
 var END_FRAME_TEMPLATE = 'end';
 var END_TITLE = 'End';
 var END_CODE_TEXT = 'Your unique completion code is';
-var END_DIRECTIONS = `<p>Make sure to record your code before leaving this page. To receive your $12 amazon gift code, please contact the research team by emailing Leah at <a href=mailto:leahperl@uw.edu>leahperl@uw.edu</a> using the subject line "Completed Emotional Clarity Study" and write your completion code in the body of the email.</p>`;
+var END_DIRECTIONS = `<p>Make sure to record your code before leaving this page. To receive your $12 amazon gift code, please contact the research team by emailing the study team at <a href=mailto:ec-study@cs.washington.edu>ec-study@cs.washington.edu</a> using the subject line "Completed Emotional Clarity Study" and write your completion code in the body of the email.</p>`;
 
 var END_CONTACT = `<p>Please be aware that your responses will not be checked in real time. Here are some resources that can help if you're feeling distressed.</p>
 <ul>
@@ -228,7 +228,7 @@ https://wellbeing.uw.edu/topic/mental-health">wellbeing.uw.edu/topic/mental-heal
   </ul>
 </li>
 </ul>
-<p>If you have questions or concerns about this research, please contact the research team by emailing Leah at <a href=mailto:leahperl@uw.edu>leahperl@uw.edu</a>.
+<p>If you have questions or concerns about this research, please contact the research team by emailing <a href=mailto:ec-study@cs.washington.edu>ec-study@cs.washington.edu</a>.
 `;
 
 // Feedback frames
