@@ -20,6 +20,8 @@ class EndFrame extends Frame {
      *     frame_data.completion_code (string)
      *     frame_data.directions (string)
      *     frame_data.contact (html string)
+     *     frame_data.pid (int)
+     *     frame_data.variant (string)
      * @param logger - Logger object
      */
     constructor(frame_data, logger) {
@@ -30,6 +32,20 @@ class EndFrame extends Frame {
         this.directions = frame_data.directions;
         this.contact = frame_data.contact;
         this.template = frame_data.template;
+        this.pid = frame_data.pid;
+        this.variant = frame_data.variant;
+        this.passed_phq = true;
+    }
+
+    /**
+     * Set internal variable saying whether participant passed phq screen
+     * If passed, the end screen will display completion code and message and resources
+     * If not, it will only display the resources
+     * @param passed (boolean)
+     * @modifies the internal state to determine what the end frame will show
+     */
+    set_passed_phq(passed) {
+        this.passed_phq = passed;
     }
 
     /**
@@ -44,7 +60,7 @@ class EndFrame extends Frame {
      *      Renders the data from this frame into that div.
      */
     render() {
-        this.setBackground();
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div');
@@ -57,17 +73,19 @@ class EndFrame extends Frame {
         $(title).text(this.title);
         frame.appendChild(title);
 
-        // insert a p node for the completion text
-        let completion_text = document.createElement('p');
-        $(completion_text).text(this.completion_text + ' ' + this.completion_code);
-        frame.appendChild(completion_text);
+        if(this.passed_phq) {
+            // insert a p node for the completion text
+            let completion_text = document.createElement('p');
+            $(completion_text).text(this.completion_text + ' ' + this.completion_code);
+            frame.appendChild(completion_text);
 
-        // insert a div for the directions
-        let directions = document.createElement('div');
-        $(directions).html(this.directions);
-        frame.appendChild(directions);
+            // insert a div for the directions
+            let directions = document.createElement('div');
+            $(directions).html(this.directions);
+            frame.appendChild(directions);
+        }
 
-        // insert a div for the directions
+        // insert a div for the resources
         let contact = document.createElement('div');
         $(contact).html(this.contact);
         frame.appendChild(contact);
@@ -75,7 +93,7 @@ class EndFrame extends Frame {
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
 
-        this.logger.logTimestamp('end');
-        this.logger.logCompletionCode(this.completion_code);
+        this.logger.logCompletionCode(this.completion_code, this.pid);
+        this.logger.logVariantEvent(this.pid, 'complete', this.variant);
     }
 }

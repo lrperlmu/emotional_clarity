@@ -57,14 +57,30 @@ class Nav {
         }
 
         // make a next button
-        // TODO: let frame help with placement
         if(this.fwd_ok) {
             let next = document.createElement('button');
-            $(next).text('next');
-            if (this.view.is_app)
-                $(next).attr('class', 'btn btn-info mr-2');
+            if (this.fwd_reversible)
+                $(next).text('next');
             else
-                $(next).attr('class', 'btn btn-primary mr-2');
+                if (this.view.is_app)
+                    $(next).text('done');
+                else
+                    if (this.view.has_questions)
+                        $(next).text('submit');
+                    else
+                        $(next).text('OK');
+
+            if (this.view.is_app)
+                if (this.fwd_reversible)
+                    $(next).attr('class', 'btn btn-info mr-2');
+                else
+                    $(next).attr('class', 'btn btn-warning mr-2');
+            else
+                if (this.fwd_reversible)
+                    $(next).attr('class', 'btn btn-primary mr-2');
+                else
+                    $(next).attr('class', 'btn btn-danger mr-2');
+
             $(next).addClass('nav_next_button');
             $(next).click(function() {
                 this.navigate('next');
@@ -89,7 +105,7 @@ class Nav {
 
     navigate(slug) {
         let input = this.view.get_user_input();
-        this.model.update(input)
+        this.model.update(input);
         // TODO: call has_x_frame to verify this is safe
         this.current_frame = this.model.get_frame(slug);
         this.render();

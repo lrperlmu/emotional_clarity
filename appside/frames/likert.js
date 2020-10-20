@@ -34,6 +34,7 @@ class LikertFrame extends Frame {
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
         this.response_name = frame_data.response_name;
+        this.has_questions = true;
     }
 
     /**
@@ -45,7 +46,7 @@ class LikertFrame extends Frame {
      *    Renders the data from this into that div.
      */
     render() {
-        this.setBackground();
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
@@ -70,6 +71,7 @@ class LikertFrame extends Frame {
         for (let data of this.questions) {
             let question = data[0];
             let answer = data[1];
+            let required = data[2];
             i += 1;
 
             let item = document.createElement('div');
@@ -79,6 +81,13 @@ class LikertFrame extends Frame {
             $(question_text).attr('class', 'likert_question_text');
             $(question_text).attr('class', 'font-weight-light mb-1');
             $(question_text).text(question);
+            if (required){
+                let asterisk = document.createElement('span');
+                $(asterisk).addClass('text-danger');
+                $(asterisk).addClass('h5');
+                $(asterisk).text(' *');
+                question_text.appendChild(asterisk);
+            }
             item.appendChild(question_text);
 
             // the actual radio buttons

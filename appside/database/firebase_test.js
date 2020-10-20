@@ -2,8 +2,32 @@
 
 // Sandbox for making the firebase code work.
 $(document).ready(function() {
+    test_compute_variant();
+
+});
+
+/**
+ * Test the code that decides which variant to assign new participants
+ */
+function test_compute_variant() {
+    let print_result = function(str) {
+        console.log(str);
+    };
+
+    let logger =  new Logger();
+    let promise = logger.getAppVariant(123);
+    promise.then(print_result);
+}
+
+
+/**
+ * Do a couple things with uds
+ */
+function test_uds() {
+    let pid = 9999;
+
     let logger = new Logger();
-    logger.logTimestamp('logger1_my_event');
+    logger.logTimestamp('logger1_my_event', pid);
 
     let ud1 = new UserData('How iz?', 'fineook', ['heppy'], 'meow');
     let ud2 = new UserData('Who am?', 'meeee', ['zoomy'], 'maow');
@@ -12,14 +36,14 @@ $(document).ready(function() {
     responses.add(ud1);
     responses.add(ud2);
 
-    console.log(responses)
-    logger.logUds(responses);
-});
+    console.log(responses, pid)
+    logger.logUds(responses, pid);
+}
 
 
 /**
  * Increment and read the pid value
- * Exmaple code of how to use it irl
+ * Example code of how to use it irl
  */
 function test_atomic_new_pid() {
     let logger = new Logger();

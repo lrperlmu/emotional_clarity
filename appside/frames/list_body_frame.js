@@ -23,6 +23,8 @@ class ListBodyFrame extends Frame {
      *    frame_data.graphic (string) -- URL/path to image or null
      *    frame_data.response_name (string) - name this frame will attach to each piece
      *                 of data in return value of get_user_input
+     *    frame_data.is_app (boolean) -- true if the frame is part of the actual app,
+     *                 false if it is part of the experiment. Changes the visual design.
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
@@ -42,7 +44,7 @@ class ListBodyFrame extends Frame {
         this.user_input = new Map();
         this.graphic = frame_data.graphic;
         this.response_name = frame_data.response_name;
-        this.is_app = true;
+        this.is_app = frame_data.is_app;
     }
 
     /**
@@ -54,7 +56,7 @@ class ListBodyFrame extends Frame {
      *    Renders the data from this into that div.
      */
     render() {
-        this.setBackground();
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 

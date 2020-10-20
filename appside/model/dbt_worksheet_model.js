@@ -14,7 +14,7 @@ class DbtWorksheetModelFwd extends Model {
     /**
      * Construct model from data
      * NOTE: construction is not finished when this constructor returns
-     *     It is ony done upon resolution of the promise this.initialize.
+     *     It is only done upon resolution of the promise this.initialize.
      *     Anything to be done after initialization must be wrapped in
      *     this.initialize.then(...);
      * @param knowledgebase - js object containing the DBT worksheet data
@@ -24,16 +24,603 @@ class DbtWorksheetModelFwd extends Model {
         super(logger);
 
         this.config = config;
-        this.initialize = this.async_init();
+        // full name of variant (not the slug)
+        this.variant = config.section;
         this.pid = null;
+        this.initialize = this.async_init();
 
         this.initialize.then(() => {
             console.log('participant id', this.pid);
             logger.logUserPid(this.pid);
+
+            console.log('variant', this.variant);
+            logger.logVariantEvent(this.pid, 'assign', this.variant);
         });
 
+        this.uds = new UserDataSet();
+        this.summary_frame = this.initialize_summary_frame();
+        this.frame_callbacks = new Map();
+
+        // make a list of references to all the frames, so we can index into it
+        // add userdataset items where applicable
+        this.initialize.then(() => {
+            this.frames = [];
+            if(this.config.study) {
+                this.frames.push(this.build_study_welcome_frame());
+                this.frames.push(new BlockerFrame());
+                this.frames.push(this.build_browser_check_frame());
+                this.frames.push(new BlockerFrame());
+            }
+            if(this.config.consent_disclosure) {
+                this.frames.push(this.build_consent_disclosure_frame());
+                this.frames.push(new BlockerFrame());
+            }
+            this.frames.push(this.build_content_warning_frame());
+            this.frames.push(new BlockerFrame());
+            if(this.config.study) {
+                for(let frame of this.build_phq_frames()) {
+                    this.frames.push(frame);
+                }
+                this.frames.push(new BlockerFrame());
+            }
+            if(this.config.mood_induction) {
+                for(let frame of this.build_mood_induction_frames()) {
+                    this.frames.push(frame);
+                }
+                this.frames.push(new BlockerFrame());
+            }
+
+            // Pre measurement
+            if(this.config.self_report) {
+                this.frames.push(this.build_self_report_frame(RESPONSE_PRE));
+            }
+            if(this.config.pre_post_measurement) {
+                this.frames.push(this.build_likert_frame(RESPONSE_PRE));
+            }
+            if(this.config.pre_post_measurement || this.config.self_report) {
+                this.frames.push(new BlockerFrame());
+            }
+
+            // Transition to app
+            if(this.config.study) {
+                this.frames.push(this.build_pre_transition_frame());
+                this.frames.push(new BlockerFrame());
+            }
+
+            // App frames
+            for(let frame of this.build_intro_frames()) {
+                this.frames.push(frame);
+            }
+            for(let frame of this.build_body_frames(knowledgebase)) {
+                this.frames.push(frame);
+            }
+            this.frames.push(this.summary_frame);
+            this.frames.push(new BlockerFrame());
+
+            // Transition away from the app
+            if(this.config.study) {
+                this.frames.push(this.build_post_transition_frame());
+            }
+
+            // Post measurement
+            if (this.config.self_report) {
+                this.frames.push(this.build_self_report_frame(RESPONSE_POST));
+            }
+            if(this.config.pre_post_measurement) {
+                this.frames.push(this.build_likert_frame(RESPONSE_POST));
+            }
+            if(this.config.mood_check) {
+                for(let frame of this.build_mood_check_frames())
+                    this.frames.push(frame);
+            }
+            if(this.config.pre_post_measurement || this.config.self_report || this.config.mood_check) {
+                this.frames.push(new BlockerFrame());
+            }
+
+            if(this.config.feedback) {
+                this.frames.push(new BlockerFrame());
+                for(let frame of this.build_feedback_frames()) {
+                    this.frames.push(frame);
+                }
+            }
+            if(this.config.end) {
+                this.frames.push(new BlockerFrame());
+                this.frames.push(this.build_end_frame());
+            }
+
+            // index into frames
+            this.frame_idx = -1;
+
+            // function mapping for get_frame. It's initialized here so that child classes
+            //    can optionally add entries
+            this.nav_functions = new Map([
+                ['next', this.next_frame.bind(this)],
+                ['back', this.back.bind(this)],
+            ]);
+        });
+    }
+
+    /**
+     * Do asynchronous initialization stuff such as database reads.
+     * Top level code can use then() to do things after this.
+     * @return promise that resolves when initialization is done
+     *    with unspecified resolve value
+     */
+    async_init() {
+        let assign_pid_async = function(transaction_result) {
+            return new Promise(function(resolve, reject) {
+                this.pid = transaction_result.snapshot.val();
+                resolve(this.pid);
+            }.bind(this));
+        }.bind(this);
+
+        let assign_variant_async = function(variant) {
+            return new Promise(function(resolve, reject) {
+                // look up the variant for this slug
+                this.variant = VARIANT_LOOKUP.get(variant);
+                resolve(variant);
+            }.bind(this));
+        }.bind(this);
+
+        let get_pid = this.logger.incrementPid();
+        let assign_pid = get_pid.then(assign_pid_async);
+        get_pid.catch(error => {
+            console.error('failed to get participant id');
+        });
+
+        let ret = assign_pid;
+
+        // assign app variant automatically if not specified in config
+        if(this.variant === undefined) {
+            let get_app_variant = assign_pid
+                .then(this.logger.getAppVariant.bind(this.logger));
+            ret = get_app_variant
+                .then(assign_variant_async);
+        }
+
+        return ret;
+    }
+
+    /*
+    // conceptual map of what async_init is doing:
+
+    // param none
+    // increment pid in database
+    // return promise that resolves with transaction result containing pid
+    this.logger.incrementPid()
+
+        // param transaction result containing pid
+        // this.pid = pid
+        // return promise that resolves with pid
+        .then(this.assign_pid_async)
+
+        // param pid
+        // assign variant in database
+        // return promise that resolves with variant slug
+        .then(this.logger.getAppVariant)
+                                         
+        // param variant
+        // this.variant = full name of variant
+        // return promise that resolves with variant slug
+        .then(this.assign_variant_async);
+    */
+
+    /**
+     * Register a callback to be called by the model when
+     *   navigating forward after a frame with the given template name.
+     * @param template_name - name of the frame's template
+     * @callback - the method that should be called
+     */
+    register_frame_callback(template_name, callback) {
+        this.frame_callbacks.set(template_name, callback);
+    }
+
+    /**
+     * Build welcome frame
+     * @return welcome frame
+     */
+    build_study_welcome_frame() {
+        let frame = {};
+        frame.template = SW_FRAME_TEMPLATE;
+        frame.title = SW_TITLE;
+        frame.instruction = SW_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    build_content_warning_frame() {
+        let frame = {};
+        frame.template = CW_FRAME_TEMPLATE;
+        frame.title = CW_TITLE;
+        frame.instruction = CW_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    /**
+     * Read uds from this.uds and compute the phq-9 score
+     */
+    phq_compute() {
+        // get the phq uds and tally the score
+        let phq_uds = this.uds.get_all(RESPONSE_PHQ);
+        let score = 0;
+        for(let ud of phq_uds) {
+            score += Number(ud.response);
+        }
+
+        if(score >= PHQ_LOWEST_FAIL) {
+            let i;
+            for(i=0; i<this.frames.length; i++){
+                let frame = this.frames[i];
+                // change phq result frame text
+                if(frame.template === PHQR_FRAME_TEMPLATE) {
+                    frame.instruction = PHQR_TEXT_NO;
+                    break;
+                }
+            }
+            // delete study and app frames, leaving only the end frame
+            let start_deleting_idx = i + 2;
+            for(; i<this.frames.length; i++) {
+                let frame = this.frames[i];
+                if(frame.template === END_FRAME_TEMPLATE) {
+                    frame.set_passed_phq(false);
+                    break;
+                }
+            }
+            let num_to_delete = i - start_deleting_idx;
+            this.frames.splice(start_deleting_idx, num_to_delete);
+        } else {
+            this.logger.logVariantEvent(this.pid, 'start', this.variant);
+        }
+    }
+
+    /**
+     * Read uds from this.uds and compute the mood check score
+     */
+    mood_check_compute() {
+
+        // get the phq uds and tally the score
+        let mood_uds = this.uds.get_all(RESPONSE_MOOD);
+        let score = 0;
+        for(let ud of mood_uds) {
+            score = Math.max(score, Number(ud.response));
+        }
+
+        if(score < MOOD_LOWEST_FAIL) {
+            // Remove the positive induction frame
+            let start_deleting_idx = null;
+            for(let i=0; i<this.frames.length; i++) {
+                let frame = this.frames[i];
+                if(frame.template === POSITIVE_INDUCTION_TEMPLATE) {
+                    start_deleting_idx = i;
+                    break;
+                }
+            }
+            let num_to_delete = 2; // Blocker frame and positive mood induction
+            this.frames.splice(start_deleting_idx, num_to_delete);
+        }
+    }    
+
+    /**
+     * Build phq frames
+     * @return the question frame and the results frame
+     */
+    build_phq_frames() {
+        let ret = [];
+
+        // the frame with the questions
+        let q_frame = {};
+        q_frame.template = PHQ_FRAME_TEMPLATE;
+        q_frame.title = PHQ_TITLE;
+        q_frame.instruction = PHQ_TEXT;
+        q_frame.questions = PHQ_QUESTIONS;
+        q_frame.qulifiers = PHQ_OPTIONS;
+        q_frame.response_name = RESPONSE_PHQ;
+        ret.push(new FormFrame(q_frame, this.logger));
+
+        for(let question of q_frame.questions) {
+            let text = question[0];
+            let ud = new UserData(text, '', [], q_frame.response_name);
+            this.uds.add(ud);
+        }
+        ret.push(new BlockerFrame());
+
+        // the frame with the results
+        let r_frame = {};
+        r_frame.template = PHQR_FRAME_TEMPLATE;
+        r_frame.title = PHQR_TITLE;
+        // this field will be changed after the fact if participant fails the screen
+        r_frame.instruction = PHQR_TEXT_YES;
+        r_frame.questions = [];
+        ret.push(new FormFrame(r_frame, this.logger));
+
+        this.register_frame_callback(q_frame.template, this.phq_compute);
+
+        return ret;
+    }
+
+    /**
+     * Build browser check frame
+     * @return browser check frame
+     */
+    build_browser_check_frame() {
+        let frame = {};
+        frame.template = BC_FRAME_TEMPLATE;
+        frame.title = BC_TITLE;
+        frame.instruction = BC_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    /**
+     * Build mood_induction frames for a DBT worksheet model.
+     * @effects - adds some new uds
+     * @modifies - this.uds
+     * @return list of Frames
+     */
+    build_mood_induction_frames() {
+        let short_answer_frame = {};
+        short_answer_frame.template = SHORT_ANSWER_TEMPLATE;
+        short_answer_frame.response_name = RESPONSE_INDUCTION;
+        short_answer_frame.title = INDUCTION_TITLE;
+        short_answer_frame.questions = [
+            [INDUCTION_THINKING_PROMPT, 'shorttext', true, INDUCTION_NOTE],
+        ];
+        let frame1 = new FormFrame(short_answer_frame, this.logger);
+
+        let ud1 = new UserData(
+            INDUCTION_THINKING_PROMPT, '', [], short_answer_frame.response_name);
+        this.uds.add(ud1);
+
+        let long_answer_frame = {};
+        long_answer_frame.template = LONG_ANSWER_TEMPLATE;
+        long_answer_frame.response_name = RESPONSE_INDUCTION;
+        long_answer_frame.title = INDUCTION_TITLE;
+        long_answer_frame.prompt = INDUCTION_WRITING_PROMPT;
+        long_answer_frame.truncated_prompt = long_answer_frame.prompt.substring(0, 100);
+        long_answer_frame.time_limit = INDUCTION_TIME_LIMIT;
+        let frame2 = new TimedLongAnswerFrame(long_answer_frame, this.logger);
+
+        let ud2 = new UserData(
+            long_answer_frame.truncated_prompt, '', [], long_answer_frame.response_name);
+        this.uds.add(ud2);
+
+        return [frame1, new BlockerFrame(), frame2];
+    }
+
+    /**
+     * Build consent frame for a DBT worksheet model.
+     * @return the Frame
+     */
+    build_consent_disclosure_frame() {
+        let consent_questions = [];
+        for (let question of CONSENT_DISCLOSURE_QUESTIONS) {
+            consent_questions.push([question, false]);
+        }
+
+        let consent_frame = {};
+
+        consent_frame.title = CONSENT_DISCLOSURE_TITLE;
+        consent_frame.response_name = RESPONSE_GENERIC;
+        consent_frame.template = CONSENT_FRAME_TEMPLATE;
+        consent_frame.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
+
+        consent_frame.questions = consent_questions;
+
+        for(let item of consent_questions) {
+            let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
+            this.uds.add(ud);
+        }
+
+        return new ConsentDisclosureFrame(consent_frame, this.logger);
+    }
+
+    /**
+     * Build self report frame for a DBT worksheet model.
+     * @param response_name - disambiguation name
+     * @return the Frame
+     */
+    build_self_report_frame(response_name) {
+        let self_report_questions = [];
+        self_report_questions.push([SELF_REPORT_Q1, 'text', true]);
+        self_report_questions.push([SELF_REPORT_Q2, 'likert', true]);
+
+        let frame = {};
+
+        frame.title = SELF_REPORT_TITLE;
+        frame.template = SELF_REPORT_FRAME_TEMPLATE;
+        frame.response_name = response_name;
+        frame.qualifiers = SELF_REPORT_QUALIFIERS;
+        frame.values = SELF_REPORT_VALUES;
+        frame.questions = self_report_questions;
+
+        for(let item of self_report_questions) {
+            let ud = new UserData(item[0], '', [], response_name);
+            this.uds.add(ud);
+        }
+
+        return new FormFrame(frame, this.logger);
+    }
+
+    /**
+     * Build likert frame for a DBT worksheet model as pre or post measurement frame.
+     *
+     * @param response_name - disambiguation name
+     * @return the Frame
+     */
+    build_likert_frame(response_name) {
+        let likert_questions = [];
+
+        // ordering based on even/odd pid
+        if(this.pid % 2 === 0) {
+            likert_questions.push([SDERS_QUESTIONS[0], 'likert', true]);
+            likert_questions.push([SDERS_QUESTIONS[1], 'likert', true]);
+        } else {
+            likert_questions.push([SDERS_QUESTIONS[1], 'likert', true]);
+            likert_questions.push([SDERS_QUESTIONS[0], 'likert', true]);
+        }
+
+        let frame = {};
+
+        frame.title = LIKERT_FRAME_TITLE;
+        frame.template = LIKERT_FRAME_TEMPLATE;
+        frame.response_name = response_name;
+        frame.instruction = LIKERT_INSTRUCTIONS;
+        frame.qualifiers = SDERS_QUALIFIERS;
+        frame.values = SDERS_VALUES;
+        frame.questions = likert_questions;
+
+        for(let item of likert_questions) {
+            let ud = new UserData(item[0], '', [], response_name);
+            this.uds.add(ud);
+        }
+
+        return new FormFrame(frame, this.logger);
+    }
+
+    /**
+     * Build likert frame for post-activity mood check.
+     *
+     * @param response_name - disambiguation name
+     * @return the Frame
+     */
+    build_mood_check_frames() {
+        let mood_questions = [];
+        mood_questions.push([MOOD_QUESTIONS[0], 'likert', true]);
+        mood_questions.push([MOOD_QUESTIONS[1], 'likert', true]);
+        mood_questions.push([MOOD_QUESTIONS[2], 'likert', true]);
+        mood_questions.push([MOOD_QUESTIONS[3], 'likert', true]);
+
+        let mood_check_frame = {};
+
+        mood_check_frame.title = MOOD_FRAME_TITLE;
+        mood_check_frame.template = MOOD_FRAME_TEMPLATE;
+        mood_check_frame.response_name = RESPONSE_MOOD;
+        mood_check_frame.instructions = MOOD_INSTRUCTIONS;
+        mood_check_frame.qualifiers = MOOD_QUALIFIERS;
+        mood_check_frame.values = MOOD_VALUES;
+        mood_check_frame.questions = mood_questions;
+
+        for(let item of mood_questions) {
+            let ud = new UserData(item[0], '', [], RESPONSE_MOOD);
+            this.uds.add(ud);
+        }
+
+        let positive_induction_frame = {};
+        positive_induction_frame.template = POSITIVE_INDUCTION_TEMPLATE;
+        positive_induction_frame.response_name = RESPONSE_INDUCTION;
+        positive_induction_frame.title = POSITIVE_INDUCTION_TITLE;
+        positive_induction_frame.prompt = POSITIVE_INDUCTION_WRITING_PROMPT;
+        positive_induction_frame.truncated_prompt = positive_induction_frame.prompt.substring(0, 100);
+        positive_induction_frame.time_limit = INDUCTION_TIME_LIMIT;
+
+        let ud_mood = new UserData(
+            positive_induction_frame.truncated_prompt, '', [], RESPONSE_INDUCTION);
+        this.uds.add(ud_mood);
+
+        this.register_frame_callback(MOOD_FRAME_TEMPLATE, this.mood_check_compute);
+
+        return [new FormFrame(mood_check_frame, this.logger),
+                new BlockerFrame(),
+                new TimedLongAnswerFrame(positive_induction_frame, this.logger)];
+    }
+
+
+    /**
+     * Build a frame to transition from study related questions to the app.
+     *
+     * @return a FormFrame
+     */
+    build_pre_transition_frame() {
+        let frame = {};
+        frame.template = TRANSITION_FRAME_TEMPLATE;
+        frame.title = PRE_TRANSITION_TITLE;
+        frame.instruction = PRE_TRANSITION_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    /**
+     * Build a frame to transition from the app back to study related questions .
+     *
+     * @return a FormFrame
+     */
+    build_post_transition_frame() {
+        let frame = {};
+        frame.template = TRANSITION_FRAME_TEMPLATE;
+        frame.title = POST_TRANSITION_TITLE;
+        frame.instruction = POST_TRANSITION_TEXT;
+        frame.questions = [];
+        frame.response_name = RESPONSE_GENERIC;
+        let ret = new FormFrame(frame, this.logger);
+        return ret;
+    }
+
+    /**
+     * Build intro frames for a DBT worksheet model.
+     *
+     * @return a list of IntroFrames
+     */
+    build_intro_frames() {
+        // only one intro frame so far, but we'll likely add more
+        let intro_frame = {};
+        intro_frame.title = INTRO_TITLE;
+        intro_frame.instruction = INTRO_INSTRUCTION;
+        intro_frame.text = INTRO_TEXT(this.variant);
+        intro_frame.template = INTRO_FRAME_TEMPLATE;
+        intro_frame.is_app = true;
+        return [new IntroFrame(intro_frame, this.logger)];
+    }
+
+    /**
+     * Distribute N items as evenly as possible over pages, with max p items per page.
+     *
+     * In specific, given a number of items, N, and max per page, p,
+     * determine the number of items on each page so that each page has
+     * no more than one more item than another page
+     *
+     * N = d * b + e * c
+     * b = c + 1
+     * maximize b, such that b <= p
+     *
+     * @param N (int) - number of items
+     * @param p (int) - max number of items per page
+     * @return a (int) - # pages
+     * @return b (int) - larger # per page
+     * @return c (int) - smaller # per page
+     * @return d (int) - # pages with b per page
+     * @return e (int) - # pages with c per page
+     */
+    // awkward to return 5 values, but I did it this way for ease of unit testing
+    static compute_page_counts(N, p) {
+        let a = Math.ceil(N/p);
+        let b = Math.ceil(N/a);
+        let c = b - 1;
+        let d = N - a * c;
+        let e = a - d;
+
+        return [a, b, c, d, e];
+    }
+
+    /**
+     * Build body frames for a DBT worksheet model.
+     *
+     * @param knowledgebase - all the statements
+     * @return a list of body Frames
+     */
+    build_body_frames(knowledgebase) {
+        //// Pre-process statements
+
         // get all the statements for this section
-        let section = config.section;
+        let section = this.variant;
         let section_statements = knowledgebase.filter(
             entry => entry[KB_KEY_SECTION] === section
         );
@@ -68,299 +655,27 @@ class DbtWorksheetModelFwd extends Model {
         merged_section_statements.sort(
             (a, b) => a.Emotions[0].localeCompare(b.Emotions[0]));
 
-        this.summary_frame = this.initialize_summary_frame();
-        let body_frames = this.build_body_frames(merged_section_statements);
+        //// Create frames
 
-        this.uds = new UserDataSet();
-        for (let stmt of merged_section_statements) {
-            let ud = new UserData(stmt.Statement, false, stmt.Emotions, RESPONSE_GENERIC);
-            this.uds.add(ud);
-        }
+        // copy the list (we'll use 1st copy to create uds later, 2nd copy to create frames now)
+        let statements = merged_section_statements.concat();
 
-        let consent_questions = [];
-        for (let question of CONSENT_DISCLOSURE_QUESTIONS) {
-            consent_questions.push([question, false]);
-        }
+        statements = _.shuffle(statements);
 
-        let likert_questions = [];
-        likert_questions.push([SDERS_QUESTIONS[0], undefined]);
-        likert_questions.push([SDERS_QUESTIONS[1], undefined]);
+        // divide them into pages...
 
-        let self_report_questions = [];
-        self_report_questions.push([SELF_REPORT_Q1, '']);
-        self_report_questions.push([SELF_REPORT_Q2, '']);
-
-        // make a list of references to all the frames, so we can index into it
-        // add userdataset items where applicable
-        this.initialize.then(() => {
-            this.frames = [];
-            if(this.config.study) {
-                this.frames.push(this.build_study_welcome_frame());
-                this.frames.push(new BlockerFrame());
-                this.frames.push(this.build_browser_check_frame());
-                this.frames.push(new BlockerFrame());
-            }
-            if(this.config.consent_disclosure) {
-                this.frames.push(this.build_consent_disclosure_frame(consent_questions));
-
-                for(let item of consent_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
-                    this.uds.add(ud);
-                }
-                this.frames.push(new BlockerFrame());
-            }
-            if(this.config.mood_induction) {
-                for(let frame of this.build_mood_induction_frames()) {
-                    this.frames.push(frame);
-                }
-                this.frames.push(new BlockerFrame());
-            }
-            if(this.config.self_report) {
-                this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_PRE));
-
-                for(let item of self_report_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
-                    this.uds.add(ud);
-                }
-            }
-            if(this.config.pre_post_measurement) {
-                this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_PRE));
-
-                for(let item of likert_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_PRE);
-                    this.uds.add(ud);
-                }
-            }
-            this.frames.push(new BlockerFrame());
-            for(let frame of this.build_intro_frames()) {
-                this.frames.push(frame);
-            }
-            for(let frame of body_frames) {
-                this.frames.push(frame);
-            }
-            this.frames.push(this.summary_frame);
-            if (this.config.self_report) {
-                this.frames.push(new BlockerFrame());
-                this.frames.push(this.build_self_report_frame(self_report_questions, RESPONSE_POST));
-
-                for(let item of self_report_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
-                    this.uds.add(ud);
-                }
-            }
-            if(this.config.pre_post_measurement) {
-                this.frames.push(this.build_likert_frame(likert_questions, RESPONSE_POST));
-
-                for(let item of likert_questions) {
-                    let ud = new UserData(item[0], item[1], [], RESPONSE_POST);
-                    this.uds.add(ud);
-                }
-            }
-            if(this.config.feedback) {
-                this.frames.push(new BlockerFrame());
-                for(let frame of this.build_feedback_frames()) {
-                    this.frames.push(frame);
-                }
-            }
-            if(this.config.end) {
-                this.frames.push(new BlockerFrame());
-                this.frames.push(this.build_end_frame());
-            }
-
-            // index into frames
-            this.frame_idx = -1;
-
-            // function mapping for get_frame. It's initialized here so that child classes
-            //    can optionally add entries
-            this.nav_functions = new Map([
-                ['next', this.next_frame.bind(this)],
-                ['back', this.back.bind(this)],
-            ]);
-        });
-    }
-
-    /**
-     * Do asynchronous initialization stuff such as database reads.
-     * Top level code can use then() to do things after this.
-     * @return promise that resolves when initialization is done
-     */
-    async_init() {
-        let pid_promise = this.logger.incrementPid();
-        pid_promise.then(function(result) {
-            this.pid = result.snapshot.val();
-        }.bind(this));
-        pid_promise.catch(error => {
-            console.error('failed to get participant id');
-        });
-        return pid_promise;
-    }
-
-    /**
-     * Build welcome frame
-     * @return welcome frame
-     */
-    build_study_welcome_frame() {
-        let frame = {};
-        frame.template = SW_FRAME_TEMPLATE;
-        frame.title = SW_TITLE;
-        frame.instruction = SW_TEXT;
-        frame.questions = [];
-        frame.response_name = RESPONSE_GENERIC;
-        let ret = new FormFrame(frame, this.logger);
-        return ret;
-    }
-
-    /**
-     * Build browser check frame
-     * @return browser check frame
-     */
-    build_browser_check_frame() {
-        let frame = {};
-        frame.template = BC_FRAME_TEMPLATE;
-        frame.title = BC_TITLE;
-        frame.instruction = BC_TEXT;
-        frame.questions = [];
-        frame.response_name = RESPONSE_GENERIC;
-        let ret = new FormFrame(frame, this.logger);
-        return ret;
-    }
-
-    /**
-     * Build mood_induction frames for a DBT worksheet model.
-     * @effects - adds some new uds
-     * @modifies - this.uds
-     * @return list of Frames
-     */
-    build_mood_induction_frames() {
-        let short_answer_frame = {};
-        short_answer_frame.template = SHORT_ANSWER_TEMPLATE;
-        short_answer_frame.response_name = RESPONSE_INDUCTION;
-        short_answer_frame.title = INDUCTION_TITLE;
-        short_answer_frame.prompt = INDUCTION_THINKING_PROMPT;
-        short_answer_frame.truncated_prompt = short_answer_frame.prompt.substring(0, 100);
-        short_answer_frame.instruction = INDUCTION_NOTE;
-        short_answer_frame.char_limit = INDUCTION_CHAR_LIMIT;
-        let frame1 = new ShortAnswerFrame(short_answer_frame, this.logger);
-
-        let ud1 = new UserData(
-            short_answer_frame.truncated_prompt, '', [], short_answer_frame.response_name);
-        this.uds.add(ud1);
-
-        let long_answer_frame = {};
-        long_answer_frame.template = LONG_ANSWER_TEMPLATE;
-        long_answer_frame.response_name = RESPONSE_INDUCTION;
-        long_answer_frame.title = INDUCTION_TITLE;
-        long_answer_frame.prompt = INDUCTION_WRITING_PROMPT;
-        long_answer_frame.truncated_prompt = long_answer_frame.prompt.substring(0, 100);
-        long_answer_frame.time_limit = INDUCTION_TIME_LIMIT;
-        let frame2 = new TimedLongAnswerFrame(long_answer_frame, this.logger);
-
-        let ud2 = new UserData(
-            long_answer_frame.truncated_prompt, '', [], long_answer_frame.response_name);
-        this.uds.add(ud2);
-
-        return [frame1, new BlockerFrame(), frame2];
-    }
-
-    /**
-     * Build consent disclosure frames for a DBT worksheet model.
-     * @param consent_questions - list of [question (string), response (bool)]
-     * @return the Frame
-     */
-    build_consent_disclosure_frame(consent_questions) {
-        let consent_frame = {};
-
-        consent_frame.title = CONSENT_DISCLOSURE_TITLE;
-        consent_frame.response_name = RESPONSE_GENERIC;
-        consent_frame.template = CONSENT_FRAME_TEMPLATE;
-        consent_frame.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
-
-        consent_frame.questions = consent_questions;
-        return new ConsentDisclosureFrame(consent_frame, this.logger);
-    }
-
-    /**
-     * Build self report frame for a DBT worksheet model.
-     * @param self_report_questions - list of [question (string), response (bool or int)]
-     * @param response_name - disambiguation name
-     * @return the Frame
-     */
-    build_self_report_frame(self_report_questions, response_name) {
-        let frame = {};
-
-        frame.title = SELF_REPORT_TITLE;
-        frame.template = SELF_REPORT_FRAME_TEMPLATE;
-        frame.response_name = response_name;
-        frame.qualifiers = QUALIFIERS;
-
-        frame.questions = self_report_questions;
-        return new SelfReportFrame(frame, this.logger);
-    }
-
-    /**
-     * Build likert frame for a DBT worksheet model as pre or post measurement frame.
-     *
-     * @param likert_questions - list of [text (string), default_response (int)]
-     * @param response_name - disambiguation name
-     * @return the Frame
-     */
-    build_likert_frame(likert_questions, response_name) {
-        let frame = {};
-
-        frame.title = LIKERT_FRAME_TITLE;
-        frame.template = LIKERT_FRAME_TEMPLATE;
-        frame.response_name = response_name;
-        frame.instructions = LIKERT_INSTRUCTIONS;
-        frame.qualifiers = SDERS_QUALIFIERS;
-        
-        frame.questions = likert_questions;
-
-        return new LikertFrame(frame, this.logger);
-    }
-
-    /**
-     * Build intro frames for a DBT worksheet model.
-     *
-     * @return a list of IntroFrames
-     */
-    build_intro_frames() {
-        // only one intro frame so far, but we'll likely add more
-        let intro_frame = {};
-        intro_frame.title = INTRO_TITLE[this.config.section];
-        intro_frame.instruction = INTRO_INSTRUCTION[this.config.section];
-        intro_frame.text = INTRO_TEXT(this.config.section);
-        intro_frame.template = INTRO_FRAME_TEMPLATE;
-        return [new IntroFrame(intro_frame, this.logger)];
-    }
-
-    /**
-     * Build body frames for a DBT worksheet model.
-     *
-     * @param section_statements - list of statements that we will make into frames
-     * @return a list of body Frames
-     */
-    build_body_frames(section_statements) {
-        // copy-in the argument
-        let statements = section_statements.concat();
-
-        // divide them into pages
-        let num_stmts = statements.length;
-        let statements_per_page = BODY_STATEMENTS_PER_PAGE;
-        //statements = _.shuffle(statements);
-
+        // first, determine number of statements on each page
+        let a, b, c, d, e;
+        [a, b, c, d, e] = DbtWorksheetModelFwd.compute_page_counts(
+            statements.length, BODY_MAX_STATEMENTS_PER_PAGE);
         let pages = [];
-        while(statements.length > 0) {
-            pages.push(statements.splice(0, statements_per_page));
+        // make d many pages with b many statements each
+        for(let idx = 0; idx < d; idx++) {
+            pages.push(statements.splice(0, b));
         }
-
-        // prevent the last page from having only one statement, if possible
-        if(statements_per_page >= 3 && pages.length > 1) {
-            if(pages[pages.length-1].length == 1) {
-                let penultimate_page = pages[pages.length-2];
-                let ultimate_page = pages[pages.length-1];
-                let removed = penultimate_page.splice(penultimate_page.length-1, 1);
-                pages[pages.length-1] = ultimate_page.concat(removed);
-            }
+        // make e many pages with c many statements each
+        for(let idx = 0; idx < e; idx++) {
+            pages.push(statements.splice(0, c));
         }
 
         // make a frame for each page
@@ -376,13 +691,22 @@ class DbtWorksheetModelFwd extends Model {
             frame.title = BODY_TITLE + ' ' + (idx+1);
             frame.response_name = RESPONSE_GENERIC;
             frame.template = STATEMENTS_FRAME_TEMPLATE;
-            frame.question = BODY_QUESTION[this.config.section];
+            frame.question = BODY_QUESTION[this.variant];
+
             frame.statements = [];
+            frame.is_app = true;
             for(let statement of page_statements) {
                 frame.statements.push(statement);
             }
             body_frames.push(new StatementsBodyFrame(frame, this.logger));
         }
+
+        //// Create uds
+        for (let stmt of merged_section_statements) {
+            let ud = new UserData(stmt.Statement, false, stmt.Emotions, RESPONSE_GENERIC);
+            this.uds.add(ud);
+        }
+
         return body_frames;
     }
 
@@ -399,6 +723,8 @@ class DbtWorksheetModelFwd extends Model {
         end_frame.completion_text = END_CODE_TEXT
         end_frame.directions = END_DIRECTIONS;
         end_frame.contact = END_CONTACT;
+        end_frame.pid = this.pid;
+        end_frame.variant = this.variant;
         return new EndFrame(end_frame, this.logger);
     }
 
@@ -414,13 +740,16 @@ class DbtWorksheetModelFwd extends Model {
             let frame = {};
             frame.template = FEEDBACK_FRAME_TEMPLATE;
             frame.title = FEEDBACK_TITLE;
+            frame.instruction = FEEDBACK_INSTRUCTIONS[page_string];
             frame.questions = FEEDBACK_QUESTIONS[page_string];
-            frame.response_name = RESPONSE_GENERIC;
+            frame.qualifiers = FEEDBACK_LIKERT_OPTIONS;
+            frame.values = FEEDBACK_LIKERT_VALUES;
+            frame.response_name = RESPONSE_FEEDBACK;
             ret.push(new FormFrame(frame, this.logger));
 
             for(let question of frame.questions) {
                 let text = question[0];
-                let ud = new UserData(text, '', [], RESPONSE_GENERIC);
+                let ud = new UserData(text, '', [], RESPONSE_FEEDBACK);
                 this.uds.add(ud);
             }
         }
@@ -450,7 +779,15 @@ class DbtWorksheetModelFwd extends Model {
             ret.push(new FormFrame(frame, this.logger));
         }
 
-        console.log('feedback frames', ret);
+        let identity_frame = {};
+        identity_frame.template = FEEDBACK_FRAME_TEMPLATE;
+        identity_frame.title = IDENTITY_TITLE;
+        identity_frame.instruction = IDENTITY_INSTRUCTION;
+        identity_frame.questions = IDENTITY_QUESTIONS;
+        identity_frame.response_name = RESPONSE_FEEDBACK;
+        this.uds.add(new UserData(IDENTITY_QUESTIONS[0][0], '', [], RESPONSE_FEEDBACK));
+        ret.push(new FormFrame(identity_frame, this.logger));
+
         return ret;
     }
 
@@ -489,8 +826,10 @@ class DbtWorksheetModelFwd extends Model {
         summary_frame.description = SUMMARY_TEXT;
         summary_frame.matched_emotions = [];
         summary_frame.follow_text = SUMMARY_FOLLOW_TEXT;
+        summary_frame.empty_msg = SUMMARY_EMPTY_MSG;
         summary_frame.info_sheet_links = this.config.info_sheet_links;
         summary_frame.offer_ideas = this.config.offer_ideas;
+        summary_frame.is_app = true;
         return new SummaryFrameCount(summary_frame, this.logger);
     }
 
@@ -528,13 +867,26 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
-     * Get next frame from the model.
+     * Execute callback registered to the current frame.
+     * Get and return next frame from the model.
      * It is the caller's responsibility to make sure that the next frame exists before calling.
      * Behavior undefined for nonexistent frames.
      * @return an object containing data for the next frame. based on
      *     the model's internal structure, and input passed in so far
      */
     next_frame() {
+        // execute current frame's callback, if applicable
+        if(this.frame_idx >= 0) {
+            let template = this.frames[this.frame_idx].template;
+            let callback = this.frame_callbacks.get(template);
+            if (callback !== undefined) {
+                callback.bind(this)();
+            }
+
+            let event = 'forward ' + this.frame_idx + ' ' + template;
+            this.logger.logTimestamp(event, this.pid)
+        }
+
         this.frame_idx += 1;
         while(this.frames[this.frame_idx].is_blocker()) this.frame_idx += 1;
         let frame = this.frames[this.frame_idx];
@@ -562,6 +914,10 @@ class DbtWorksheetModelFwd extends Model {
      *     the model's internal structure, and input passed in so far
      */
     back() {
+        let template = this.frames[this.frame_idx].template;
+        let event = 'back ' + this.frame_idx + ' ' + template;
+        this.logger.logTimestamp(event, this.pid)
+
         this.frame_idx -= 1;
         let frame = this.frames[this.frame_idx];
         frame.fill_in_data(this.uds);
@@ -585,7 +941,6 @@ class DbtWorksheetModelFwd extends Model {
         return this.nav_functions.get(slug)();
     }
 
-
     /**
      * Pass user input into the model. [For use by NAV.]
      *
@@ -605,7 +960,7 @@ class DbtWorksheetModelFwd extends Model {
             updated_uds.add(ud);
         }
         this.compute_summary();
-        this.logger.logUds(updated_uds);
+        this.logger.logUds(updated_uds, this.pid);
     }
 
     /**
@@ -657,7 +1012,9 @@ class DbtWorksheetModelConfig {
     /**
      * Construct config.
      * @param direction - (string) one of the directions specified in constants.js
-     * @param section - (string) one of the sections specified in constants.js
+     * @param section - (optional string) one of the sections specified in constants.js
+     *   Full section name, not the slug.
+     *   If undefined, section will be auto selected.
      */
     constructor(direction, section) {
         this.category = CATEGORY_DBT_WORKSHEET;
@@ -667,6 +1024,7 @@ class DbtWorksheetModelConfig {
         this.offer_ideas = false;
         this.pre_post_measurement = false;
         this.self_report = false;
+        this.mood_check = false;
         this.consent_disclosure = false;
         this.mood_induction = false;
         this.feedback = false;
@@ -684,10 +1042,13 @@ class DbtWorksheetModelConfig {
     }
 
     /**
-     * Setter for this.study, tells the model whether we're doing the study
-     * - affects wording on start frame (and possibly others)
-     * - could potentially be used as master switch to toggle lots of other options, but
-     *   at the time of writing it's not.
+     * Setter for this.study, tells the model whether we're doing the study.
+     * This flag affects:
+     *   - study welcome frame
+     *   - browser check frame
+     *   - phq frame
+     *   - we could potentially bundle more of the config items under the study flag
+     *     to reduce the number of config options
      * @param value - boolean to set it to
      * @return this
      */
@@ -756,6 +1117,16 @@ class DbtWorksheetModelConfig {
      */
     set_self_report(value) {
         this.self_report = value;
+        return this;
+    }
+
+    /**
+     * Setter for this.mood_check, tells the model whether to offer mood check at the end.
+     * @param value - boolean to set it to
+     * @return this
+     */
+    set_mood_check(value) {
+        this.mood_check = value;
         return this;
     }
 

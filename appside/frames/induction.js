@@ -94,7 +94,7 @@ class ShortAnswerFrame extends TextboxFrame {
      *    Renders the data from this into that div.
      */
     render() {
-        this.setBackground();
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
@@ -108,7 +108,7 @@ class ShortAnswerFrame extends TextboxFrame {
         // insert a h5 node for the instruction
         let prompt = document.createElement('div');
         $(prompt).addClass('font-weight-light mb-2');
-        $(prompt).text(this.prompt);
+        $(prompt).html(this.prompt);
         frame.appendChild(prompt);
 
         // insert a text box for entry
@@ -121,7 +121,7 @@ class ShortAnswerFrame extends TextboxFrame {
 
         // insert a h5 node for the instruction
         let instruction = document.createElement('div');
-        $(instruction).text(this.instruction);
+        $(instruction).html(this.instruction);
         $(instruction).addClass('font-weight-light mb-2');
         frame.appendChild(instruction);
 
@@ -150,6 +150,7 @@ class TimedLongAnswerFrame extends TextboxFrame {
         super(frame_data, logger);
         this.time_limit = frame_data.time_limit;
         this.template = frame_data.template;
+        this.is_auto_advance = false;
     }
 
     /**
@@ -161,7 +162,7 @@ class TimedLongAnswerFrame extends TextboxFrame {
      *    Renders the data from this into that div.
      */
     render() {
-        this.setBackground();
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
@@ -174,7 +175,7 @@ class TimedLongAnswerFrame extends TextboxFrame {
 
         // insert a h5 node for the instruction
         let prompt = document.createElement('div');
-        $(prompt).text(this.prompt);
+        $(prompt).html(this.prompt);
         $(prompt).addClass('font-weight-light mb-4');
         frame.appendChild(prompt);
 
@@ -191,7 +192,14 @@ class TimedLongAnswerFrame extends TextboxFrame {
         let auto_advance = function() {
             $('.nav_next_button').click();
         };
-        setTimeout(auto_advance, timeout_millis);
+        let enable_next_botton = function() {
+            $('.nav_next_button').prop('disabled', false);
+            $('.nav_next_button').removeClass('button_disabled');
+        };
+        if (this.is_auto_advance)
+            setTimeout(auto_advance, timeout_millis);
+        else
+            setTimeout(enable_next_botton, timeout_millis);
 
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);

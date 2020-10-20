@@ -1,3 +1,4 @@
+
 "use strict";
 
 /**
@@ -22,12 +23,16 @@ class SummaryFrame extends Frame {
      *    frame_data.title (string) - The frame's title
      *    frame_data.description (string) - Text to appear before the list of matched emotions
      *    frame_data.graphic (string) - URL of an image to display
-     *    frame_data.follow_text - text that comes after the list
+     *    frame_data.follow_text (string) - text that comes after the list
+     *    frame_data.empty_msg (string) - display if summary is empty
      *    frame_data.info_sheet_links - true to show 'more info on [emotion]' buttons
      *    frame_data.offer_ideas - true to show 'ideas for dealing with [emotion]' buttons
      *    frame_data.matched_emotions (object) - list of emotions e, each having these fields:
      *         e.emotion - the name of the emotion
      *         e.responses (list of string) - list of matching user responses
+     *    frame_data.is_app (boolean) - true if the frame is part of the actual app,
+     *         false if it is part of the experiment. Changes the visual design.
+     *    frame_data.template (string) - specified in child constructor
      */
     constructor(frame_data) {
         if (new.target == SummaryFrame) {
@@ -39,7 +44,9 @@ class SummaryFrame extends Frame {
         this.instruction = frame_data.instruction;
         this.description = frame_data.description;
         this.has_graphic = false;
-        this.is_app = true;
+        this.is_app = frame_data.is_app;
+        this.template = frame_data.template;
+
         if ('graphic' in frame_data) {
             if (frame_data.graphic.length > 0) {
                 this.graphic = frame_data.graphic;
@@ -48,6 +55,7 @@ class SummaryFrame extends Frame {
         }
         this.follow_text = frame_data.follow_text;
         this.matched_emotions = frame_data.matched_emotions;
+        this.empty_msg = frame_data.empty_msg;
         
         // list of functions to call to append additional content to a list item
         // this serves as a hook for child classes to add content
@@ -69,7 +77,7 @@ class SummaryFrame extends Frame {
      *    Renders the data from this into that div.
      */
     render() {
-        this.setBackground();
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
@@ -147,6 +155,14 @@ class SummaryFrame extends Frame {
             match_list.appendChild(list_item);
         }
         listDiv.appendChild(match_list);
+
+        if(this.matched_emotions.length === 0) {
+            let empty_msg = document.createElement('div');
+            $(empty_msg).text(this.empty_msg);
+            $(empty_msg).attr('class', 'font-weight-light');
+            listDiv.appendChild(empty_msg);
+        }
+
         return listDiv;
     }
 

@@ -44,7 +44,7 @@ class SelfReportFrame extends Frame {
      *    Renders the data from this into that div.
      */
     render() {
-        this.setBackground();
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
@@ -75,9 +75,7 @@ class SelfReportFrame extends Frame {
         container.appendChild(question2);
 
         for (let answer of this.qualifiers) {
-            let choice = document.createElement('div');
             let input = document.createElement('input');
-            $(input).attr('class', 'form-check-input');
             $(input).attr('class', 'mr-1');
             $(input).attr('type', 'radio');
             $(input).attr('name', this.questions[1][0]);    // question text
@@ -96,7 +94,6 @@ class SelfReportFrame extends Frame {
 
             container.appendChild(input);
             container.appendChild(input_text);
-            // container.appendChild(choice);
         }
         frame.appendChild(container);
         

@@ -15,6 +15,8 @@ class IntroFrame extends Frame {
      *      frame_data.title (string)
      *      frame_data.text (array of string) -- content of each paragraph of introduction
      *      frame_data.graphic (string) -- URL link to graphic
+     *      frame_data.is_app (boolean) -- true if the frame is part of the actual app, 
+     *                 false if it is part of the experiment. Changes the visual design.
      * Behavior undefined if frame does not have these properties.
      **/
     constructor(frame_data) {
@@ -25,7 +27,7 @@ class IntroFrame extends Frame {
         this.text = frame_data.text;
         this.graphic = frame_data.graphic;
         this.template = frame_data.template;
-        this.is_app = true;
+        this.is_app = frame_data.is_app;
     }
 
     /** Render the Intro frame template
@@ -36,7 +38,7 @@ class IntroFrame extends Frame {
      *
      **/
     render() {
-        this.setBackground();
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div');

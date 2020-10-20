@@ -16,42 +16,42 @@ $(document).ready(function() {
 
         // unit tests
         'shuffle': test_shuffle,
+        'page_counts': test_compute_page_counts,
 
         // integ tests
         'intro': visual_test_intro,
-        'consent_disclosure': visual_test_consent_disclosure,
         'self_report': visual_test_self_report,
         'pre_measurement': visual_test_pre_measurement,
         'body': visual_test_body,
         'post_measurement': visual_test_post_measurement,
         'end': visual_test_end,
+        'end2': visual_test_end2,
 
         // integ tests with nav
+        'consent': visual_test_consent_disclosure,
+        'phq': visual_test_phq,
         'induction': visual_test_induction,
         'summary': visual_test_summary,
+        'summary_empty': visual_test_empty_summary,
         'postq': postq,
     }
     let page_types = Object.keys(test_methods);
     let page_to_show = page_types[0];
-    let variant = SECTION_PROMPTING;
+    let variant = undefined;
 
     let query_string = new URLSearchParams(location.search);
 
     if(query_string.has('test')) {
         page_to_show = query_string.get('test');
     }
+    // variant slug options: prompting, interp, bio, act, after, auto
     if(query_string.has('variant')) {
         let slug = query_string.get('variant');
-        let variants = new Map([
-            ['prompting', SECTION_PROMPTING],
-            ['interp', SECTION_INTERP],
-            ['bio', SECTION_BIO],
-            ['act', SECTION_ACT],
-            ['after', SECTION_AFTER],
-        ]);
-        variant = variants.get(slug);
+        // slug 'auto' sets this to undefined, intentionally
+        variant = VARIANT_LOOKUP.get(slug);
 
-        let variant_names = Array.from(variants.keys());
+        let variant_names = Array.from(VARIANT_LOOKUP.keys());
+        variant_names.push('auto');
         if(!variant_names.includes(slug)) {
             console.error('Valid variant names are: ' + variant_names);
             throw Error('Unknown variant requested: ' + variant);
@@ -78,6 +78,25 @@ function test_shuffle() {
         let out = DbtWorksheetModelFwd.shuffle3(key, src);
         console.log(out);
     }
+}
+
+
+/*
+ * Check that it returns true
+ */
+function test_compute_page_counts() {
+    let pass = true;
+    for(let N=5; N<50; N++) {
+        for(let p=2; p<14; p++) {
+            let a, b, c, d, e;
+            [a, b, c, d, e] = DbtWorksheetModelFwd.compute_page_counts(N, p);
+            let ok = N === (d * b + e * c);
+            console.log('' + N + '=' + d + '*' + b + '+' + e + '*' + c, ok);
+            if(!ok) pass = false;
+        }
+    }
+    console.log('pass', pass);
+    return pass;
 }
 
 
@@ -125,6 +144,7 @@ function wksht_noerror(config, logger) {
 
 /*
  * Integration test that constructs an EndFrame to render the end frame of this app.
+ * This end frame is used when the participant completes the study.
  * Manually verified.
  * @param variant - the variant to test
  */
@@ -143,6 +163,27 @@ function visual_test_end(variant) {
 
 
 /*
+ * Integration test that constructs an EndFrame to render the end frame of this app.
+ * This end frame is used when the participant fails phq and the app skips right to the end.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_end2(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== END_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        frame.set_passed_phq(false);
+        frame.render();
+    });
+}
+
+
+/*
  * Integration test that invokes IntroFrame to render the intro frame of this app.
  * Manually verified.
  * @param variant - the variant to test
@@ -154,25 +195,6 @@ function visual_test_intro(variant) {
     model.initialize.then(() => {
         let frame = model.get_frame('next');
         while(frame.template !== INTRO_FRAME_TEMPLATE) {
-            frame = model.get_frame('next');
-        }
-        frame.render();
-    });
-}
-
-
-/*
- * Integration test that invokes StatementsBodyFrame to render a body frame of this app.
- * Manually verified.
- * @param variant - the variant to test
- */
-function visual_test_body(variant) {
-    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
-    let logger = new Logger();
-    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
-    model.initialize.then(() => {
-        let frame = model.get_frame('next');
-        while(frame.template !== STATEMENTS_FRAME_TEMPLATE) {
             frame = model.get_frame('next');
         }
         frame.render();
@@ -237,30 +259,78 @@ function visual_test_self_report() {
 }
 
 
-/*
- * Integration test that invokes ConsentDisclosureFrame to render the consent disclosure frame of this app.
- * Manually verified.
- */
-function visual_test_consent_disclosure() {
-    FWD_PROMPTING_CONFIG.set_consent_disclosure(true);
-    let logger = new Logger();
-    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
-    model.initialize.then(() => {
-        let frame = model.get_frame('next');
-        while(frame.template !== CONSENT_FRAME_TEMPLATE) {
-            frame = model.get_frame('next');
-        }
-        frame.render();
-    });
-}
-
-
-
 ////////////////////  INTEGRATION TESTS WITH NAV  ////////////////////
 // These tests build and run a model, using some automation to flip
 //   directly to the frame we want to test.
 // Additionally, we use a nav object to render the frame, so navigation
 //   actions (next, back) are available within the test.
+
+
+/*
+ * Integration test that invokes ConsentDisclosureFrame to render the consent disclosure frame of this app.
+ * Manually verified.
+ */
+function visual_test_consent_disclosure(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
+    config.set_consent_disclosure(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== CONSENT_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
+
+
+/*
+ * Integration test for phq screening
+ * Manually verified.
+ */
+function visual_test_phq(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_consent_disclosure(true);
+    config.set_study(true);
+    config.set_feedback(true);
+    config.set_mood_induction(true);
+    config.set_self_report(true);
+    config.set_pre_post_measurement(true);
+
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== PHQ_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
+
+
+/*
+ * Integration test that invokes StatementsBodyFrame to render a body frame of this app.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_body(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== STATEMENTS_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
 
 
 /*
@@ -304,6 +374,34 @@ function visual_test_summary(variant) {
 
 
 /*
+ * Integration test that invokes SummaryFrameCount to render a summary frame generated
+ * by this app.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_empty_summary(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_self_report(true);
+    config.set_pre_post_measurement(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+
+        while(frame.template !== 'statements') {
+            frame = model.get_frame('next');
+        }
+        while(frame.template === 'statements') {
+            frame = model.get_frame('next');
+        }
+
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
+
+
+/*
  * Integration test to make sure the induction frame advances by itself.
  * Timeout set to 2 seconds for this test only.
  * Introduces a dependency on nav for this test module.
@@ -312,6 +410,7 @@ function visual_test_summary(variant) {
  */
 function visual_test_induction(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
     config.set_mood_induction(true);
     config.set_self_report(true);
     config.set_pre_post_measurement(true);
@@ -320,7 +419,7 @@ function visual_test_induction(variant) {
     model.initialize.then(() => {
 
         let frame = model.get_frame('next');
-        while(frame.template !== LONG_ANSWER_TEMPLATE) {
+        while(frame.template !== SHORT_ANSWER_TEMPLATE) {
             frame = model.get_frame('next');
         }
         frame.time_limit = 2;
@@ -343,9 +442,7 @@ function postq(variant) {
         while(frame.template !== FEEDBACK_FRAME_TEMPLATE) {
             frame = model.get_frame('next');
         }
-        model.get_frame('next');
-        model.get_frame('next');
-        //model.back();
+        model.back();
 
         let nav = new Nav(model, logger);
     });
