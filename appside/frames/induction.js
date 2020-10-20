@@ -94,18 +94,21 @@ class ShortAnswerFrame extends TextboxFrame {
      *    Renders the data from this into that div.
      */
     render() {
+        this.set_background();
+
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
         $(frame).attr('id', 'frame');
         
-        let title = document.createElement('h3');
+        let title = document.createElement('h4');
         $(title).text(this.title);
-        $(title).addClass('font-weight-light mb-4');
+        $(title).addClass('text-primary text-uppercase mb-4');
         frame.appendChild(title);
 
         // insert a h5 node for the instruction
-        let prompt = document.createElement('h5');
-        $(prompt).text(this.prompt);
+        let prompt = document.createElement('div');
+        $(prompt).addClass('font-weight-light mb-2');
+        $(prompt).html(this.prompt);
         frame.appendChild(prompt);
 
         // insert a text box for entry
@@ -117,8 +120,9 @@ class ShortAnswerFrame extends TextboxFrame {
         frame.appendChild(textbox);
 
         // insert a h5 node for the instruction
-        let instruction = document.createElement('h5');
-        $(instruction).text(this.instruction);
+        let instruction = document.createElement('div');
+        $(instruction).html(this.instruction);
+        $(instruction).addClass('font-weight-light mb-2');
         frame.appendChild(instruction);
 
         let old_frame = $('#frame')[0];
@@ -146,6 +150,7 @@ class TimedLongAnswerFrame extends TextboxFrame {
         super(frame_data, logger);
         this.time_limit = frame_data.time_limit;
         this.template = frame_data.template;
+        this.is_auto_advance = false;
     }
 
     /**
@@ -157,18 +162,21 @@ class TimedLongAnswerFrame extends TextboxFrame {
      *    Renders the data from this into that div.
      */
     render() {
+        this.set_background();
+
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
         $(frame).attr('id', 'frame');
         
-        let title = document.createElement('h3');
+        let title = document.createElement('h5');
         $(title).text(this.title);
-        $(title).addClass('font-weight-light mb-4');
+        $(title).addClass('text-primary text-uppercase mb-2');
         frame.appendChild(title);
 
         // insert a h5 node for the instruction
-        let prompt = document.createElement('h5');
-        $(prompt).text(this.prompt);
+        let prompt = document.createElement('div');
+        $(prompt).html(this.prompt);
+        $(prompt).addClass('font-weight-light mb-4');
         frame.appendChild(prompt);
 
         // insert a text box for entry
@@ -184,7 +192,14 @@ class TimedLongAnswerFrame extends TextboxFrame {
         let auto_advance = function() {
             $('.nav_next_button').click();
         };
-        setTimeout(auto_advance, timeout_millis);
+        let enable_next_botton = function() {
+            $('.nav_next_button').prop('disabled', false);
+            $('.nav_next_button').removeClass('button_disabled');
+        };
+        if (this.is_auto_advance)
+            setTimeout(auto_advance, timeout_millis);
+        else
+            setTimeout(enable_next_botton, timeout_millis);
 
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);

@@ -23,6 +23,8 @@ class ListBodyFrame extends Frame {
      *    frame_data.graphic (string) -- URL/path to image or null
      *    frame_data.response_name (string) - name this frame will attach to each piece
      *                 of data in return value of get_user_input
+     *    frame_data.is_app (boolean) -- true if the frame is part of the actual app,
+     *                 false if it is part of the experiment. Changes the visual design.
      *  Behavior undefined if frame does not have these properties.
      */
     constructor(frame_data) {
@@ -42,6 +44,7 @@ class ListBodyFrame extends Frame {
         this.user_input = new Map();
         this.graphic = frame_data.graphic;
         this.response_name = frame_data.response_name;
+        this.is_app = frame_data.is_app;
     }
 
     /**
@@ -53,6 +56,7 @@ class ListBodyFrame extends Frame {
      *    Renders the data from this into that div.
      */
     render() {
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
@@ -61,7 +65,7 @@ class ListBodyFrame extends Frame {
         // insert a h2 node for the title
         let title = document.createElement('h5');
         $(title).text(this.title);
-        $(title).attr('class', 'text-info text-uppercase mb-2');
+        $(title).attr('class', 'text-info text-uppercase');
         frame.appendChild(title);
 
         let container = document.createElement('div');  // flexbox for content
@@ -99,7 +103,7 @@ class ListBodyFrame extends Frame {
         }
 
         // insert a p node for the question
-        let question = document.createElement('h2');
+        let question = document.createElement('h3');
         $(question).text(this.question);
         $(question).attr('class', 'font-weight-light mb-4');
         text_column.appendChild(question);
@@ -128,7 +132,7 @@ class ListBodyFrame extends Frame {
 
             // label that can also be clicked to select the checkbox
             let label = document.createElement('label');
-            $(label).attr('class', 'form-check-label');
+            $(label).attr('class', 'form-check-label font-weight-light');
             $(label).attr('for', name);
             $(label).text(statement);
             statements.appendChild(label);

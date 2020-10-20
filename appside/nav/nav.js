@@ -3,7 +3,7 @@
 /**
    nav.js
    Navigation module for EC app
-   @author Leah Perlmutter, Rachel Sitt
+   @author Leah Perlmutter
 */
  
 
@@ -14,10 +14,8 @@ class Nav {
      *
      * @public
      *
-     * @param model - the backend
      */
-    constructor(model, logger) {
-        this.logger = logger;
+    constructor(model) {
         this.model = model;
         if(!this.model.has_next_frame()) {
             throw new RangeError('Model does not have any frames');
@@ -42,11 +40,16 @@ class Nav {
         // make a new empty div with id nav, not yet in the dom
         let nav_menu = document.createElement('div');
         $(nav_menu).attr('id', 'nav');
+        $(nav_menu).attr('class', 'text-center align-bottom flex-grow-1 nav-btn');
 
         // make a back button
         if(this.back_ok) {
             let back = document.createElement('button');
             $(back).text('back');
+            if (this.view.is_app)
+                $(back).attr('class', 'btn btn-info mr-2');
+            else
+                $(back).attr('class', 'btn btn-primary mr-2');
             $(back).click(function() {
                 this.navigate('back')
             }.bind(this));
@@ -54,10 +57,30 @@ class Nav {
         }
 
         // make a next button
-        // TODO: let frame help with placement
         if(this.fwd_ok) {
             let next = document.createElement('button');
-            $(next).text('next');
+            if (this.fwd_reversible)
+                $(next).text('next');
+            else
+                if (this.view.is_app)
+                    $(next).text('done');
+                else
+                    if (this.view.has_questions)
+                        $(next).text('submit');
+                    else
+                        $(next).text('OK');
+
+            if (this.view.is_app)
+                if (this.fwd_reversible)
+                    $(next).attr('class', 'btn btn-info mr-2');
+                else
+                    $(next).attr('class', 'btn btn-warning mr-2');
+            else
+                if (this.fwd_reversible)
+                    $(next).attr('class', 'btn btn-primary mr-2');
+                else
+                    $(next).attr('class', 'btn btn-danger mr-2');
+
             $(next).addClass('nav_next_button');
             $(next).click(function() {
                 this.navigate('next');
@@ -80,18 +103,9 @@ class Nav {
         this.view.render();
     }
 
-    /**
-     * Navigate to the page specified by slug.
-     * Delegates actual navigation to the model, and renders the frame
-     * returned by the model.
-     *
-     * @param slug - string indicating to the model which page is desired
-     * @requires - model must know which frame slug refers to
-     * @effects - renders the frame specified by slug
-     */
     navigate(slug) {
         let input = this.view.get_user_input();
-        this.model.update(input)
+        this.model.update(input);
         // TODO: call has_x_frame to verify this is safe
         this.current_frame = this.model.get_frame(slug);
         this.render();

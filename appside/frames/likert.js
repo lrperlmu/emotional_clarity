@@ -29,10 +29,12 @@ class LikertFrame extends Frame {
     constructor(frame_data) {
         super();
 
+        this.title = frame_data.title;
         this.instructions = frame_data.instructions;
         this.questions = frame_data.questions;
         this.qualifiers = frame_data.qualifiers;
         this.response_name = frame_data.response_name;
+        this.has_questions = true;
     }
 
     /**
@@ -44,36 +46,55 @@ class LikertFrame extends Frame {
      *    Renders the data from this into that div.
      */
     render() {
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
         $(frame).attr('id', 'frame');
+
+        let title = document.createElement('h4');
+        $(title).text(this.title);
+        $(title).addClass('text-primary text-uppercase mb-4');
+        frame.appendChild(title);
         
         // insert a h5 node for the instruction
-        let instructions = document.createElement('h5');
+        let instructions = document.createElement('div');
+        $(instructions).attr('class', 'font-weight-light mb-4');
         $(instructions).text(this.instructions);
         frame.appendChild(instructions);
 
         // insert a radio button list for the statements
         let statements = document.createElement('div');
-        $(statements).attr('class', 'form-check');
+        // $(statements).attr('class', 'form-check');
 
         let i = 0;
         for (let data of this.questions) {
             let question = data[0];
             let answer = data[1];
+            let required = data[2];
             i += 1;
+
+            let item = document.createElement('div');
+            $(item).addClass('mb-3');
 
             let question_text = document.createElement('h5');
             $(question_text).attr('class', 'likert_question_text');
+            $(question_text).attr('class', 'font-weight-light mb-1');
             $(question_text).text(question);
-            statements.appendChild(question_text);
+            if (required){
+                let asterisk = document.createElement('span');
+                $(asterisk).addClass('text-danger');
+                $(asterisk).addClass('h5');
+                $(asterisk).text(' *');
+                question_text.appendChild(asterisk);
+            }
+            item.appendChild(question_text);
 
             // the actual radio buttons
             for (let j = 1; j <= 5; j++) {
                 let input = document.createElement('input');
                 $(input).attr('class', 'form-check-input');
-                $(input).attr('class', 'likert_input');
+                $(input).attr('class', 'mr-1');
                 $(input).attr('type', 'radio');
                 $(input).attr('name', question);    // question text
                 $(input).attr('id', question + j);
@@ -86,13 +107,16 @@ class LikertFrame extends Frame {
 
                 let input_text = document.createElement('label');
                 $(input_text).attr('class', 'likert_input_text');
+                $(input_text).attr('class', 'font-weight-light mr-3');
                 $(input_text).attr('for', question + j);
                 $(input_text).text(this.qualifiers[j - 1]);
 
-                statements.appendChild(input);
-                statements.appendChild(input_text);
+                item.appendChild(input);
+                item.appendChild(input_text);
             }
-            statements.appendChild(document.createElement('br'));
+            statements.appendChild(item);
+
+            // statements.appendChild(document.createElement('br'));
         }
         frame.appendChild(statements);
 

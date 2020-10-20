@@ -45,33 +45,27 @@ class ConsentDisclosureFrame extends Frame {
      *    Renders the data from this into that div.
      */
     render() {
+        this.set_background();
 
         // make a new empty div with id frame, not yet in the dom
         let frame = document.createElement('div'); 
         $(frame).attr('id', 'frame');
         
         // insert a h2 node for the title
-        let title = document.createElement('h5');
+        let title = document.createElement('h4');
         $(title).text(this.title);
-        $(title).attr('class', 'text-info text-uppercase mb-2');
+        $(title).addClass('text-primary text-uppercase mb-4');
         frame.appendChild(title);
 
-        let instructions = document.createElement('h5');
-        $(instructions).attr('class', 'text-info text-uppercase mb-2');
-
-        $(instructions).attr('class', 'consent_instructions');
+        let instructions = document.createElement('div');
+        $(instructions).addClass('font-weight-light mb-2');
+        // $(instructions).attr('class', 'consent_instructions'); <- Not defined anywhere
         $(instructions).text(this.instructions);
         frame.appendChild(instructions);
 
-        let pdf = document.createElement('a');
-        $(pdf).attr('href', 'images/consent.pdf');
-        $(pdf).attr('target', '_blank');    // opens pdf in new window/tab
-        $(pdf).attr('class', 'consent_pdf');
-        $(pdf).text('Consent Disclosure Form');
-        frame.appendChild(pdf);
-
         let container = document.createElement('div');
-        $(container).attr('class', 'consent_frame');
+        // $(container).attr('class', 'consent_frame'); <- Not defined or referenced
+        $(container).addClass('mt-4');
 
         this.disable_next_button();
 
@@ -84,15 +78,13 @@ class ConsentDisclosureFrame extends Frame {
             $(input).attr('class', 'consent_input');
             $(input).attr('type', 'checkbox');
             $(input).attr('id', question_text);
-            $(input).attr('disabled', true);
-            // enable next button if all boxes checked. disable if not
+            // enable next button if box checked, disable if not
             $(input).click(function() {
                 this.disable_next_button();
                 if($('.consent_input').filter(':not(:checked)').length === 0) {
                     this.enable_next_button();
                 }
             }.bind(this))
-
             $(input).prop('checked', answer);
             input.dataset.text = question_text;
             container.appendChild(input);
@@ -100,7 +92,6 @@ class ConsentDisclosureFrame extends Frame {
             let label = document.createElement('label');
             $(label).attr('class', 'form-check-label');
             $(label).attr('class', 'consent_label');
-            $(label).attr('grayed', true);
             $(label).attr('for', question_text);
             $(label).text(question_text);
             container.appendChild(label);
@@ -110,31 +101,10 @@ class ConsentDisclosureFrame extends Frame {
             container.appendChild(document.createElement('br'));
         }
 
-        // ONLY when pdf is clicked will checkboxes enable user input
-        $(pdf).click(function() {
-            container = this.after_form(container);
-        }.bind(this));
         frame.appendChild(container);
         
         let old_frame = $('#frame')[0];
         old_frame.replaceWith(frame);
-    }
-
-    /**
-     * Enables users to select/unselect checkboxes
-     * @param frame contains input and label elements
-     * @effects allows checkboxes to be checked and labels to auto styling
-     */
-    after_form(frame) {
-        var checkboxes = document.getElementsByTagName('input');
-        for (let checkbox of checkboxes) {
-            $(checkbox).attr('disabled', false);
-        }
-        var labels = document.getElementsByTagName('label');
-        for (let label of labels) {
-            $(label).attr('grayed', false);
-        }
-        return frame;
     }
 
     /**
