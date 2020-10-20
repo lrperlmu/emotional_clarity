@@ -117,16 +117,14 @@ class DbtWorksheetModelFwd extends Model {
                 this.frames.push(new BlockerFrame());
             }
 
+
             if(this.config.feedback) {
-                this.frames.push(new BlockerFrame());
                 for(let frame of this.build_feedback_frames()) {
                     this.frames.push(frame);
                 }
             }
-            if(this.config.end) {
-                this.frames.push(new BlockerFrame());
-                this.frames.push(this.build_end_frame());
-            }
+            this.frames.push(new BlockerFrame());
+            this.frames.push(this.build_end_frame());
 
             // index into frames
             this.frame_idx = -1;
@@ -1029,16 +1027,6 @@ class DbtWorksheetModelConfig {
         this.mood_induction = false;
         this.feedback = false;
         this.study = false;
-        this.end = false;
-    }
-
-    /**
-     * Setter for this.end, tells the model whether to include end
-     * @param value - boolean to set it to
-     * @return this
-     */
-    set_end(value) {
-        this.end = value;
     }
 
     /**
