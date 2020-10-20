@@ -26,6 +26,9 @@ class DbtWorksheetModelFwd extends Model {
         this.config = config;
         // full name of variant (not the slug)
         this.variant = config.section;
+        // slug of variant
+        this.variant_slug = VARIANT_SLUG_LOOKUP[this.variant];
+
         this.pid = null;
         this.initialize = this.async_init();
 
@@ -34,7 +37,8 @@ class DbtWorksheetModelFwd extends Model {
             logger.logUserPid(this.pid);
 
             console.log('variant', this.variant);
-            logger.logVariantEvent(this.pid, 'assign', this.variant);
+            this.variant_slug = VARIANT_SLUG_LOOKUP.get(this.variant);
+            logger.logVariantEvent(this.pid, 'assign', this.variant_slug);
         });
 
         this.uds = new UserDataSet();
@@ -272,7 +276,7 @@ class DbtWorksheetModelFwd extends Model {
             let num_to_delete = i - start_deleting_idx;
             this.frames.splice(start_deleting_idx, num_to_delete);
         } else {
-            this.logger.logVariantEvent(this.pid, 'start', this.variant);
+            this.logger.logVariantEvent(this.pid, 'start', this.variant_slug);
         }
     }
 
@@ -722,7 +726,7 @@ class DbtWorksheetModelFwd extends Model {
         end_frame.directions = END_DIRECTIONS;
         end_frame.contact = END_CONTACT;
         end_frame.pid = this.pid;
-        end_frame.variant = this.variant;
+        end_frame.variant_slug = this.variant_slug;
         return new EndFrame(end_frame, this.logger);
     }
 
