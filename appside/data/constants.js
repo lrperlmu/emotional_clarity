@@ -250,6 +250,17 @@ var DEMOGRAPHICS_QUESTIONS = [
     ['Do you have a disability?', 'customradio', false, '',
      ['Yes', 'No', 'Prefer not to disclose',]
     ],
+    ['If so, how do you describe your disability?', 'header'],
+    // ['Attention deficit', 'checkbox'],
+    // ['Autism', 'checkbox'],
+    // ['Blind or visually impaired', 'checkbox'],
+    // ['Deaf or hard of hearing', 'checkbox'],
+    // ['Health-related disability', 'checkbox'],
+    // ['Learning disability', 'checkbox'],
+    // ['Mental health condition', 'checkbox'],
+    // ['Mobility-related disability', 'checkbox'],
+    // ['Speech-related disability', 'checkbox'],
+    ['Other (please specify)', 'shorttext', false],
     // ['If so, how do you describe your disability?', 'checkboxes', false, '',
     //  [
     //      'Attention deficit', 'Autism', 'Blind or visually impaired',

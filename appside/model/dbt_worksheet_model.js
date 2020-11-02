@@ -753,6 +753,8 @@ class DbtWorksheetModelFwd extends Model {
 
         for(let question of frame.questions) {
             let text = question[0];
+            let type = question[1];
+            if(type === 'header') continue;
             let ud = new UserData(text, '', [], RESPONSE_DEMOGRAPHICS);
             this.uds.add(ud);
         }
