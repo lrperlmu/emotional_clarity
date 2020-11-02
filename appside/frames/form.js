@@ -18,10 +18,12 @@ class FormFrame extends Frame {
      *    frame_data.instruction (string) -- instruction
      *    frame_data.questions (list) -- each entry in the form [question, type, [required]]
      *          question (string) -- text to show user
-     *          type (string) -- how to render the question: 'text', 'yesno', or 'likert'
+     *          type (string) -- how to render the question:
+     *                           'text', 'shorttext', 'yesno', 'likert', 'phq', 'customradio'
      *          required (boolean, optional) -- whether the question must be answered
      *                                          undefined/missing means not required
      *          follow (string, optional) -- text to display after the question
+     *          choices (list of string, optional) -- for custom question types
      *    frame_data.qualifiers (list) - list of options for 'likert' type questions
      *    frame_data.values (list) - list of values corresponding to qualifiers
      *    frame_data.response_name (string) - name this frame will attach to each piece
@@ -43,7 +45,7 @@ class FormFrame extends Frame {
         this.has_questions = this.questions.length>0;
 
         this.responses = [];
-        for(let q in this.questions) {
+        for(let q of this.questions) {
             this.responses.push('');
         }
     }
@@ -81,6 +83,7 @@ class FormFrame extends Frame {
             let type = q_info[1];
             let required = q_info[2];
             let follow = q_info[3];
+            let choices = q_info[4];
             let response = this.responses[q_idx];
 
             // Insert node for the question
@@ -97,7 +100,7 @@ class FormFrame extends Frame {
             frame.appendChild(qtext);
 
             // render the input field -- dispatch to proper type of FormElement
-            let element = FormElement.generate(type, this);
+            let element = FormElement.generate(type, this, choices);
             let html_element = element.generate_html(response, q_idx);
             frame.appendChild(html_element);
 
@@ -169,6 +172,7 @@ class FormFrame extends Frame {
             let text = q_info[0];
             let type = q_info[1];
             let required = q_info[2];
+            //if (type === 'header') continue;
 
             // dispatch to proper type of FormElement
             let element = FormElement.generate(type, this);
@@ -196,6 +200,7 @@ class FormFrame extends Frame {
         for(let q_info of this.questions) {
             let text = q_info[0];
             let type = q_info[1];
+            //if (type === 'header') continue;
             let known_response = data.lookup(text, this.response_name).response;
             this.responses[q_idx] = known_response;
             q_idx += 1;
@@ -212,9 +217,10 @@ class FormElement {
      * Generate the proper type of element given type as a string
      * @param type (string)
      * @param parent (FormFrame)
+     * @param choices (list of string, optional)
      * @return instance of a subclass of FormElement
      */
-    static generate(type, parent) {
+    static generate(type, parent, choices) {
         let ret;
         if(type === 'text') {
             ret = new TextFormElement(true);
@@ -224,12 +230,18 @@ class FormElement {
             ret = new RadioButtonFormElement(FEEDBACK_YESNO_OPTIONS, 
                 FEEDBACK_YESNO_VALUES);
         } else if(type === 'likert') {
-            ret = new RadioButtonFormElement(parent.qualifiers, 
-                parent.values);
+            ret = new RadioButtonFormElement(parent.qualifiers, parent.values);
         } else if(type === 'phq') {
-            ret = new RadioButtonFormElement(PHQ_OPTIONS,
-                PHQ_OPTION_VALUES);
+            ret = new RadioButtonFormElement(PHQ_OPTIONS, PHQ_OPTION_VALUES);
+        } else if(type === 'customradio') {
+            ret = new RadioButtonFormElement(choices, choices);
         }
+        // } else if(type === 'header') {
+        //     ret = new HeaderFormElement();
+        // } else if(type === 'checkboxes') {
+        //     ret = new CheckBoxFormElement(choices, choices);
+        // }
+        
         ret.parent = parent;
         return ret;
     }
@@ -250,6 +262,108 @@ class FormElement {
 }
 
 
+// TODO: docs
+// class HeaderFormElement extends FormElement {
+//     constructor() {
+//         super();
+//     }
+//     get_input(q_idx) {
+//         console.error('this should never have been called');
+//     }
+//     generate_html(q_idx) {
+//         return document.createElement('div');
+//     }
+// }
+
+
+
+// /**
+//  * FormElement that makes radio buttons
+//  */
+// class RadioButtonFormElement extends FormElement {
+//     /**
+//      * Construct RadioButtonFormElement with the given choices
+//      * @param choices (list of string) - choices to be displayed for the radio buttons
+//      * @param values (list of string) - values to be stored for each choice
+//      * @param required (boolean) - whether the question is required
+//      */
+//     constructor(choices, values) {
+//         super();
+//         this.choices = choices;
+//         if(values === undefined) {
+//             this.values = choices;
+//         } else {
+//             this.values = values;
+//         }
+//     }
+
+//     /**
+//      * Construct html element containing a check box for each choice in
+//      *   this.choices
+//      *
+//      * @param known_response (string) - response to be checked or empty string
+//      * @param q_idx (int) - question number of this question
+//      * @return a single html element with the radio buttons in it
+//      */
+//     generate_html(known_response, q_idx) {
+//         let ret = document.createElement('div');
+//         $(ret).addClass('mb-4');
+
+//         // button and label for each possible answer
+//         for(let i = 0; i < this.choices.length; i++) {
+//             let resp = this.choices[i];
+//             let val = this.values[i].toString();
+
+//             let button = document.createElement('input');
+//             $(button).attr('class', 'mr-1');
+//             // $(button).addClass('mr-1');
+//             $(button).attr('type', 'radio');
+//             $(button).attr('value', val); // storage value
+//             $(button).attr('name', `q_${q_idx}`); // radio button group
+//             $(button).attr('id', `q_${q_idx}_${resp}`); // for matching the label
+//             if(known_response === val) {
+//                 $(button).attr('checked', 'checked');
+//             }
+
+//             $(button).click(function() {
+//                 this.parent.check_required_questions();
+//             }.bind(this));
+
+//             let label = document.createElement('label');
+//             $(label).addClass('font-weight-light mr-3');
+//             $(label).attr('for', `q_${q_idx}_${resp}`); // matches with id of button
+//             $(label).text(resp); // display value
+
+//             ret.appendChild(button);
+//             ret.appendChild(label);
+
+//             // if 6 or more answers, insert line break after each
+//             if (this.choices.length > 5) {
+//                 ret.appendChild(document.createElement('BR'));
+//             }
+//         }
+//         return ret;
+//     }
+
+//     /**
+//      * Get the value of the button that is checked for the given question index,
+//      *   or empty string if none is checked
+//      * @param q_idx (int) - question index
+//      * @return (string) 'Yes', 'No', or ''
+//      */
+//     // get_input(q_idx) {
+//     //     // value of checked button with the given question id in its name
+//     //     let ret = '';
+//     //     let $checked_button = $(`input[name='q_${q_idx}']:checked`);
+//     //     if($checked_button.length !== 0) {
+//     //         ret = $checked_button.val();
+//     //     }
+//     //     return ret;
+//     // }
+// }
+
+
+
 /**
  * FormElement that makes radio buttons
  */
@@ -258,6 +372,7 @@ class RadioButtonFormElement extends FormElement {
      * Construct RadioButtonFormElement with the given choices
      * @param choices (list of string) - choices to be displayed for the radio buttons
      * @param values (list of string) - values to be stored for each choice
+     * @param required (boolean) - whether the question is required
      */
     constructor(choices, values, required) {
         super();
@@ -309,6 +424,11 @@ class RadioButtonFormElement extends FormElement {
 
             ret.appendChild(button);
             ret.appendChild(label);
+
+            // // if 6 or more answers, insert line break after each
+            // if (this.choices.length > 5) {
+            //     ret.appendChild(document.createElement('BR'));
+            // }
         }
         return ret;
     }

@@ -127,6 +127,10 @@ class DbtWorksheetModelFwd extends Model {
                     this.frames.push(frame);
                 }
             }
+            if(this.config.study) {
+                this.frames.push(this.build_demographics_frame());
+            }
+
             this.frames.push(new BlockerFrame());
             this.frames.push(this.build_end_frame());
 
@@ -232,6 +236,10 @@ class DbtWorksheetModelFwd extends Model {
         return ret;
     }
 
+    /**
+     * Build frame to warn participants of difficult content coming up
+     * @return the content warning frame
+     */
     build_content_warning_frame() {
         let frame = {};
         frame.template = CW_FRAME_TEMPLATE;
@@ -731,6 +739,27 @@ class DbtWorksheetModelFwd extends Model {
     }
 
     /**
+     * Build frame to collect demographic info
+     *
+     * @return the demographics frame
+     */
+    build_demographics_frame() {
+        let frame = {};
+        frame.template = DEMOGRAPHICS_FRAME_TEMPLATE;
+        frame.title = DEMOGRAPHICS_TITLE;
+        frame.instructions = DEMOGRAPHICS_INSTRUCTIONS;
+        frame.questions = DEMOGRAPHICS_QUESTIONS;
+        frame.response_name = RESPONSE_DEMOGRAPHICS;
+
+        for(let question of frame.questions) {
+            let text = question[0];
+            let ud = new UserData(text, '', [], RESPONSE_DEMOGRAPHICS);
+            this.uds.add(ud);
+        }
+        return new FormFrame(frame);
+    }
+
+    /**
      * Build feedback frames
      *
      * @return the list of frames
@@ -1039,6 +1068,7 @@ class DbtWorksheetModelConfig {
      *   - study welcome frame
      *   - browser check frame
      *   - phq frame
+     *   - demographics collection
      *   - we could potentially bundle more of the config items under the study flag
      *     to reduce the number of config options
      * @param value - boolean to set it to

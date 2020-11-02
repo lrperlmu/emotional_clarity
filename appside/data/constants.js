@@ -55,6 +55,7 @@ var RESPONSE_POST = 'post';
 var RESPONSE_INDUCTION = 'induction';
 var RESPONSE_MOOD = 'mood';
 var RESPONSE_FEEDBACK = 'feedback';
+var RESPONSE_DEMOGRAPHICS = 'demographics';
 
 // Body config (all DBT worksheet models)
 var BODY_MAX_STATEMENTS_PER_PAGE = 12;
@@ -146,7 +147,7 @@ var INDUCTION_CHAR_LIMIT = 180;
 var SHORTTEXT_CHAR_LIMIT = 180;
 var INDUCTION_NOTE = 'This event will be referred to as the "Reference Event"';
 var INDUCTION_WRITING_PROMPT = 'For the next few minutes, try to re-experience the event as vividly as you can. Picture the event happening to you all over again. Picture in your "mind\'s eye" the surroundings as clearly as possible. See the people or objects; hear the sounds; experience the events happening to you. Think the thoughts that this event makes you think. Feel the same feelings that this event makes you feel. Let yourself react as if you were actually in the middle of it right now. While you re-experience the event, write about what is happening in the situation, how the other person or people involved behaved toward you, and what you are thinking. You can move on to the next screen when the time is up. Begin writing now.';
-var INDUCTION_TIME_LIMIT = 130; // Reduce for testing/debugging
+var INDUCTION_TIME_LIMIT = 3; // Reduce for testing/debugging
 
 // Likert frame strings
 var LIKERT_FRAME_TEMPLATE = 'likert';
@@ -238,6 +239,29 @@ https://wellbeing.uw.edu/topic/mental-health">wellbeing.uw.edu/topic/mental-heal
 </ul>
 <p>If you have questions or concerns about this research, please contact the research team by emailing <a href=mailto:ec-study@cs.washington.edu>ec-study@cs.washington.edu</a>.
 `;
+
+// Demographics frame
+var DEMOGRAPHICS_FRAME_TEMPLATE = 'demographics';
+var DEMOGRAPHICS_TITLE = 'Demographics';
+var DEMOGRAPHICS_INSTRUCTIONS = 'We will use this information to try to recruit a diverse group of study participants. We acknowledge that BIPOC, genderqueer folx, and people with disabilities are often sidelined in the creation of technology. We want to get input from a diverse group of study participants so that we have a better chance of making technology that will be useful to a broader range of unique individuals within a diverse population.';
+var DEMOGRAPHICS_QUESTIONS = [
+    ['What is your gender?', 'shorttext', false],
+    ['What is your race or ethnicity?', 'shorttext', false],
+    ['Do you have a disability?', 'customradio', false, '',
+     ['Yes', 'No', 'Prefer not to disclose',]
+    ],
+    // ['If so, how do you describe your disability?', 'checkboxes', false, '',
+    //  [
+    //      'Attention deficit', 'Autism', 'Blind or visually impaired',
+    //      'Deaf or hard of hearing', 'Health-related disability', 'Learning disability',
+    //      'Mental health condition', 'Mobility-related disability',
+    //      'Speech-related disability', 'Other (please specify below)',
+    //  ],
+    // ['Other (please specify)', 'shorttext', false],
+    //],
+
+];
+
 
 // Feedback frames
 var FEEDBACK_FRAME_TEMPLATE = 'feedback';
