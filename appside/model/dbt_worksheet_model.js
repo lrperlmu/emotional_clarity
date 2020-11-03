@@ -747,7 +747,7 @@ class DbtWorksheetModelFwd extends Model {
         let frame = {};
         frame.template = DEMOGRAPHICS_FRAME_TEMPLATE;
         frame.title = DEMOGRAPHICS_TITLE;
-        frame.instructions = DEMOGRAPHICS_INSTRUCTIONS;
+        frame.instruction = DEMOGRAPHICS_INSTRUCTIONS;
         frame.questions = DEMOGRAPHICS_QUESTIONS;
         frame.response_name = RESPONSE_DEMOGRAPHICS;
 
