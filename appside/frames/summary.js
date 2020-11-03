@@ -39,7 +39,7 @@ class SummaryFrame extends Frame {
             throw new TypeError('cannot construct SummaryFrame directly (use child)');
         }
 
-        super(frame_data);
+        super();
         this.title = frame_data.title;
         this.instruction = frame_data.instruction;
         this.description = frame_data.description;

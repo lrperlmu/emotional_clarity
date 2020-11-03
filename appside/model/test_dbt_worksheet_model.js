@@ -24,6 +24,7 @@ $(document).ready(function() {
         'pre_measurement': visual_test_pre_measurement,
         'body': visual_test_body,
         'post_measurement': visual_test_post_measurement,
+        'demographics' : visual_test_demographics,
         'end': visual_test_end,
         'end2': visual_test_end2,
 
@@ -447,3 +448,26 @@ function postq(variant) {
         let nav = new Nav(model, logger);
     });
 }
+
+
+/*
+ * Integration test that constructs an EndFrame to render the end frame of this app.
+ * This end frame is used when the participant completes the study.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_demographics(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== DEMOGRAPHICS_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.back();
+        let nav = new Nav(model, logger);
+    });
+}
+
