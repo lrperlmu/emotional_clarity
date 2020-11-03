@@ -236,6 +236,8 @@ class FormElement {
 
     /**
      * Children must implement
+     *
+     * Get the value of the form element
      */
     get_input(q_idx) {
         console.log('get_input: not implemented');
@@ -312,14 +314,26 @@ class FormElement {
 }
 
 
-//TODO: docs
+/**
+ * FormElement that makes headers, which are not actually questions
+ */
 class HeaderFormElement extends FormElement {
     constructor(q_info) {
         super(q_info);
     }
+
+    /**
+     * Get the value of the form element
+     */
     get_input(q_idx) {
         console.error('this should never have been called');
+        // because FormFrame.get_user_input skips elements whose type is header
     }
+
+    /**
+     * Generate html for the response area
+     * @return empty div because there is no response area associated with a header
+     */
     generate_input_area_html(known_response, q_idx) {
         return document.createElement('div');
     }
