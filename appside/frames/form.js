@@ -217,8 +217,8 @@ class FormElement {
             ret = new RadioButtonFormElement(q_info, q_info[4], q_info[4]);
         } else if(type === 'header') {
             ret = new HeaderFormElement(q_info);
-        // } else if(type === 'checkbox') {
-        //     ret = new CheckBoxFormElement(q_info, q_info[4], q_info[4]);
+        } else if(type === 'checkbox') {
+            ret = new CheckBoxFormElement(q_info, q_info[4], q_info[4]);
         } else {
             console.error('unknown form element type', type);
         }
@@ -254,6 +254,7 @@ class FormElement {
         console.log('generate_input_area_html: not implemented');
     }
 
+    // helper method for generate_html
     generate_question_text(text, required) {
         let qtext = document.createElement('h5');
         $(qtext).attr('class', 'font-weight-light mb-2');
@@ -268,12 +269,13 @@ class FormElement {
         return qtext;
     }
 
+    // helper method for generate_html
     generate_follow_text(follow) {
         let follow_text = document.createElement('h5');
         if(follow) {
             $(follow_text).attr('class', 'font-weight-light mb-2');
             $(follow_text).text(follow);
-            //ret.appendChild(follow_text);
+            ret.appendChild(follow_text);
         }
         return follow_text;
     }
@@ -281,13 +283,14 @@ class FormElement {
     /**
      * Default behavior for generating the html for this question and response area
      * @param q_idx (int) - index of this question
+     * @return (Node) - html element for the question and response area
      */
     generate_html(q_idx) {
         let q_info = this.info;
         let text = q_info[0];
         let required = q_info[2];
         let follow = q_info[3];
-        let response = this.parent.responses[q_idx];
+        let known_response = this.parent.responses[q_idx];
 
         let ret = document.createElement('div');
 
@@ -296,7 +299,7 @@ class FormElement {
         ret.appendChild(qtext);
 
         // Insert node for the input area
-        let html_element = this.generate_input_area_html(response, q_idx);
+        let html_element = this.generate_input_area_html(known_response, q_idx);
         ret.appendChild(html_element);
 
         // Insert a line of text after the question, if applicable
@@ -317,48 +320,85 @@ class HeaderFormElement extends FormElement {
     get_input(q_idx) {
         console.error('this should never have been called');
     }
-    generate_input_area_html(response, q_idx) {
+    generate_input_area_html(known_response, q_idx) {
         return document.createElement('div');
     }
 }
 
 
+/**
+ * FormElement that makes single checkbox questions
+ */
 class CheckBoxFormElement extends FormElement {
+
     constructor(q_info) {
         super(q_info);
     }
 
+
+    /**
+     * Get the value of the checkbox for the given question index
+     * @param q_idx (int) - question index
+     * @return (boolean) whether the box is checked
+     */
     get_input(q_idx) {
-
+        let ret = false;
+        let $box = $(`input[name='q_${q_idx}']`);
+        return $box.prop('checked');
     }
 
-    generate_input_area_html(response, q_idx) {
-        let ret = document.createElement('div');
+    /**
+     * Construct html element containing checkbox
+     * @param known_response (boolean) - whether the checkbox is checked
+     * @param q_idx (int) - question number of this question
+     * @return the checkbox as an html element
+     */
+    generate_input_area_html(known_response, q_idx) {
+        let text = this.info[0];
 
+        // create a checkbox
+        let box = document.createElement('input');
+        $(box).attr('class', 'mr-1');
+        $(box).attr('type', 'checkbox');
+        $(box).attr('name', `q_${q_idx}`);
+        $(box).attr('id', `q_${q_idx}_${text}`); // for matching the label
+        if(known_response === true) {
+            $(box).attr('checked', 'checked');
+        }
+        return box;
     }
 
+    /**
+     * Generate html for this question and its response area
+     * @param q_idx (int) - index of this question
+     * @return (Node) - html element for the question and response area
+     */
     // override default behavior because checkbox goes before the question text
     // in this case
+    // AND, the question text is a label
     generate_html(q_idx) {
         let q_info = this.info;
         let text = q_info[0];
         let required = q_info[2];
         let follow = q_info[3];
-        let response = this.parent.responses[q_idx];
+        let known_response = this.parent.responses[q_idx];
 
         let ret = document.createElement('div');
 
         // Insert node for the input area
-        let html_element = this.generate_input_area_html(response, q_idx);
+        let html_element = this.generate_input_area_html(known_response, q_idx);
         ret.appendChild(html_element);
 
         // Insert node for the question
-        let qtext = this.generate_question_text(text, required);
-        ret.appendChild(qtext);
+        let label = document.createElement('label');
+        $(label).attr('class', 'form-check-label font-weight-light');
+        $(label).attr('for', `q_${q_idx}_${text}`); // matches with id of button
+        $(label).text(text); // display value
+        ret.appendChild(label);
 
         // Insert a line of text after the question, if applicable
         let follow_text = this.generate_follow_text(follow);
-        ret.appendChild(follow_text);
+        if(follow) ret.appendChild(follow_text);
 
         return ret;
     }
@@ -366,7 +406,7 @@ class CheckBoxFormElement extends FormElement {
 
 
 /**
- * FormElement that makes radio buttons
+ * FormElement that makes radio buttons questions
  */
 class RadioButtonFormElement extends FormElement {
     /**
@@ -403,7 +443,6 @@ class RadioButtonFormElement extends FormElement {
 
             let button = document.createElement('input');
             $(button).attr('class', 'mr-1');
-            // $(button).addClass('mr-1');
             $(button).attr('type', 'radio');
             $(button).attr('value', val); // storage value
             $(button).attr('name', `q_${q_idx}`); // radio button group
@@ -451,7 +490,7 @@ class RadioButtonFormElement extends FormElement {
 
 
 /**
- * FormElement that makes text boxes
+ * FormElement that makes text box questions
  */
 class TextFormElement extends FormElement {
     
@@ -467,7 +506,7 @@ class TextFormElement extends FormElement {
      * @param q_idx (int) - question number of this question
      * @return the textbox as an html element
      */
-    generate_input_area_html(response, q_idx) {
+    generate_input_area_html(known_response, q_idx) {
         let ret = document.createElement('div');
         $(ret).addClass('mb-4');
         // insert a text box
@@ -484,7 +523,7 @@ class TextFormElement extends FormElement {
         }
 
         $(textbox).attr('id', `q_${q_idx}_input`);
-        $(textbox).val(response);
+        $(textbox).val(known_response);
 
         $(textbox).keyup(function() {
             this.parent.check_required_questions();

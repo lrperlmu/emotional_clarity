@@ -464,7 +464,6 @@ function visual_test_demographics(variant) {
     model.initialize.then(() => {
         let frame = model.get_frame('next');
         while(frame.template !== DEMOGRAPHICS_FRAME_TEMPLATE) {
-            console.log('frame', frame);
             frame = model.get_frame('next');
         }
         model.back();
