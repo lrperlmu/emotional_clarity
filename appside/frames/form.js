@@ -20,6 +20,7 @@ class FormFrame extends Frame {
      *          question (string) -- text to show user
      *          type (string) -- how to render the question:
      *                           'text', 'shorttext', 'yesno', 'likert', 'phq', 'customradio'
+     *                           'header', 'checkbox'
      *          required (boolean, optional) -- whether the question must be answered
      *                                          undefined/missing means not required
      *          follow (string, optional) -- text to display after the question
@@ -243,10 +244,11 @@ class FormElement {
             ret = new RadioButtonFormElement(choices, choices);
         } else if(type === 'header') {
             ret = new HeaderFormElement();
-        }
-        // } else if(type === 'checkboxes') {
+        // } else if(type === 'checkbox') {
         //     ret = new CheckBoxFormElement(choices, choices);
-        // }
+        } else {
+            console.error('unknown form element type', type);
+        }
         
         ret.parent = parent;
         return ret;
@@ -261,8 +263,14 @@ class FormElement {
 
     /**
      * Children must implement
+     *
+     * Construct html element for the response area of this question
+     *
+     * @param known_response (string) - user's response or empty string
+     * @param q_idx (int) - question number of this question
+     * @return a single html element with the html of the response area
      */
-    generate_html(response, q_idx) {
+    generate_html(known_response, q_idx) {
         console.log('generate_html: not implemented');
     }
 }
@@ -276,11 +284,26 @@ class HeaderFormElement extends FormElement {
     get_input(q_idx) {
         console.error('this should never have been called');
     }
-    generate_html(q_idx) {
+    generate_html(response, q_idx) {
         return document.createElement('div');
     }
 }
 
+
+class CheckBoxFormElement extends FormElement {
+    constructor() {
+        super();
+    }
+
+    get_input(q_idx) {
+
+    }
+
+    generate_html(response, q_idx) {
+        let ret = document.createElement('div');
+    }
+
+}
 
 
 /**
