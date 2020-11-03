@@ -1,4 +1,4 @@
-s"use strict";
+"use strict";
 
 /**
  * Supports manual testing of each frame type, excluding navigation panel.

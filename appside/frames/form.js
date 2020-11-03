@@ -425,6 +425,7 @@ class CheckBoxFormElement extends FormElement {
 class RadioButtonFormElement extends FormElement {
     /**
      * Construct RadioButtonFormElement with the given choices
+     * @param q_info (list) -- see FormFrame param frame_data.questions
      * @param choices (list of string) - choices to be displayed for the radio buttons
      * @param values (list of string) - values to be stored for each choice
      */
@@ -508,6 +509,11 @@ class RadioButtonFormElement extends FormElement {
  */
 class TextFormElement extends FormElement {
     
+    /**
+     * Construct TextFormElement
+     * @param q_info (list) - see FormFrame param frame_data.questions
+     * @param is_long (boolean) - true for long answer, false for short
+     */
     constructor(q_info, is_long) {
         super(q_info);
         this.is_long = is_long;
