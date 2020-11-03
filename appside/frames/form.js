@@ -254,22 +254,7 @@ class FormElement {
         console.log('generate_input_area_html: not implemented');
     }
 
-    /**
-     * Default behavior for generating the html for this question and response area
-     * @param q_idx (int) - index of this question
-     */
-    generate_html(q_idx) {
-        let q_info = this.info;
-        let ret = document.createElement('div');
-
-        let text = q_info[0];
-        let type = q_info[1];
-        let required = q_info[2];
-        let follow = q_info[3];
-        let choices = q_info[4];
-        let response = this.parent.responses[q_idx];
-
-        // Insert node for the question
+    generate_question_text(text, required) {
         let qtext = document.createElement('h5');
         $(qtext).attr('class', 'font-weight-light mb-2');
         $(qtext).text(text);
@@ -280,17 +265,44 @@ class FormElement {
             $(asterisk).text(' *');
             qtext.appendChild(asterisk);
         }
+        return qtext;
+    }
+
+    generate_follow_text(follow) {
+        let follow_text = document.createElement('h5');
+        if(follow) {
+            $(follow_text).attr('class', 'font-weight-light mb-2');
+            $(follow_text).text(follow);
+            //ret.appendChild(follow_text);
+        }
+        return follow_text;
+    }
+
+    /**
+     * Default behavior for generating the html for this question and response area
+     * @param q_idx (int) - index of this question
+     */
+    generate_html(q_idx) {
+        let q_info = this.info;
+        let text = q_info[0];
+        let required = q_info[2];
+        let follow = q_info[3];
+        let response = this.parent.responses[q_idx];
+
+        let ret = document.createElement('div');
+
+        // Insert node for the question
+        let qtext = this.generate_question_text(text, required);
         ret.appendChild(qtext);
 
+        // Insert node for the input area
         let html_element = this.generate_input_area_html(response, q_idx);
         ret.appendChild(html_element);
 
-        if(follow) {
-            let follow_text = document.createElement('h5');
-            $(follow_text).attr('class', 'font-weight-light mb-2');
-            $(follow_text).text(follow);
-            ret.appendChild(follow_text);
-        }
+        // Insert a line of text after the question, if applicable
+        let follow_text = this.generate_follow_text(follow);
+        ret.appendChild(follow_text);
+
         return ret;
     }
 
@@ -322,8 +334,34 @@ class CheckBoxFormElement extends FormElement {
 
     generate_input_area_html(response, q_idx) {
         let ret = document.createElement('div');
+
     }
 
+    // override default behavior because checkbox goes before the question text
+    // in this case
+    generate_html(q_idx) {
+        let q_info = this.info;
+        let text = q_info[0];
+        let required = q_info[2];
+        let follow = q_info[3];
+        let response = this.parent.responses[q_idx];
+
+        let ret = document.createElement('div');
+
+        // Insert node for the input area
+        let html_element = this.generate_input_area_html(response, q_idx);
+        ret.appendChild(html_element);
+
+        // Insert node for the question
+        let qtext = this.generate_question_text(text, required);
+        ret.appendChild(qtext);
+
+        // Insert a line of text after the question, if applicable
+        let follow_text = this.generate_follow_text(follow);
+        ret.appendChild(follow_text);
+
+        return ret;
+    }
 }
 
 
