@@ -55,6 +55,7 @@ var RESPONSE_POST = 'post';
 var RESPONSE_INDUCTION = 'induction';
 var RESPONSE_MOOD = 'mood';
 var RESPONSE_FEEDBACK = 'feedback';
+var RESPONSE_DEMOGRAPHICS = 'demographics';
 
 // Body config (all DBT worksheet models)
 var BODY_MAX_STATEMENTS_PER_PAGE = 12;
@@ -238,6 +239,30 @@ https://wellbeing.uw.edu/topic/mental-health">wellbeing.uw.edu/topic/mental-heal
 </ul>
 <p>If you have questions or concerns about this research, please contact the research team by emailing <a href=mailto:ec-study@cs.washington.edu>ec-study@cs.washington.edu</a>.
 `;
+
+// Demographics frame
+var DEMOGRAPHICS_FRAME_TEMPLATE = 'demographics';
+var DEMOGRAPHICS_TITLE = 'Demographics';
+var DEMOGRAPHICS_INSTRUCTIONS = 'We will use this information to try to recruit a diverse group of study participants. We acknowledge that BIPOC, genderqueer folx, and people with disabilities are often sidelined in the creation of technology. We want to get input from a diverse group of study participants so that we have a better chance of making technology that will be useful to a broader range of unique individuals within a diverse population.';
+var DEMOGRAPHICS_QUESTIONS = [
+    ['What is your gender?', 'shorttext', false],
+    ['What is your race or ethnicity?', 'shorttext', false],
+    ['Do you have a disability?', 'customradio', false, '',
+     ['Yes', 'No', 'Prefer not to disclose',]
+    ],
+    ['If so, how do you describe your disability?', 'header'],
+    ['Attention deficit', 'checkbox'],
+    ['Autism', 'checkbox'],
+    ['Blind or visually impaired', 'checkbox'],
+    ['Deaf or hard of hearing', 'checkbox'],
+    ['Health-related disability', 'checkbox'],
+    ['Learning disability', 'checkbox'],
+    ['Mental health condition', 'checkbox'],
+    ['Mobility-related disability', 'checkbox'],
+    ['Speech-related disability', 'checkbox'],
+    ['Other (please specify)', 'shorttext', false],
+];
+
 
 // Feedback frames
 var FEEDBACK_FRAME_TEMPLATE = 'feedback';
