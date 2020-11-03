@@ -80,38 +80,10 @@ class FormFrame extends Frame {
 
         let q_idx = 0;
         for(let q_info of this.questions) {
-            let text = q_info[0];
-            let type = q_info[1];
-            let required = q_info[2];
-            let follow = q_info[3];
-            let choices = q_info[4];
-            let response = this.responses[q_idx];
-
-            // Insert node for the question
-            let qtext = document.createElement('h5');
-            $(qtext).attr('class', 'font-weight-light mb-2');
-            $(qtext).text(text);
-            if (required){
-                let asterisk = document.createElement('span');
-                $(asterisk).addClass('text-danger');
-                $(asterisk).addClass('h5');
-                $(asterisk).text(' *');
-                qtext.appendChild(asterisk);
-            }
-            frame.appendChild(qtext);
-
-            // render the input field -- dispatch to proper type of FormElement
-            let element = FormElement.generate(type, this, choices);
-            let html_element = element.generate_html(response, q_idx);
-            frame.appendChild(html_element);
-
-            if(follow) {
-                let follow_text = document.createElement('h5');
-                $(follow_text).attr('class', 'font-weight-light mb-2');
-                $(follow_text).text(follow);
-                frame.appendChild(follow_text);
-            }
-
+            // render question + input field -- dispatch to proper type of FormElement
+            let element = FormElement.generate(q_info, this);
+            let question_html = element.generate_html(q_idx);
+            frame.appendChild(question_html);
             q_idx += 1;
         }
         let old_frame = $('#frame')[0];
@@ -179,7 +151,7 @@ class FormFrame extends Frame {
             }
 
             // dispatch to proper type of FormElement
-            let element = FormElement.generate(type, this);
+            let element = FormElement.generate(q_info, this);
             let user_response = element.get_input(q_idx);
 
             let value = {};
@@ -217,41 +189,49 @@ class FormFrame extends Frame {
 
 
 /**
- * Input Element of a FormFrame
+ * Input Element of a FormFrame, and its corresponding question
  */
 class FormElement {
     /**
      * Generate the proper type of element given type as a string
-     * @param type (string)
+     * @param q_info (list) -- see FormFrame param frame_data.questions
      * @param parent (FormFrame)
-     * @param choices (list of string, optional)
      * @return instance of a subclass of FormElement
      */
-    static generate(type, parent, choices) {
+    static generate(q_info, parent) {
+        let type = q_info[1];
+
         let ret;
         if(type === 'text') {
-            ret = new TextFormElement(true);
+            ret = new TextFormElement(q_info, true);
         } else if(type === 'shorttext') {
-            ret = new TextFormElement(false);
+            ret = new TextFormElement(q_info, false);
         } else if(type === 'yesno') {
-            ret = new RadioButtonFormElement(FEEDBACK_YESNO_OPTIONS, 
+            ret = new RadioButtonFormElement(q_info, FEEDBACK_YESNO_OPTIONS,
                 FEEDBACK_YESNO_VALUES);
         } else if(type === 'likert') {
-            ret = new RadioButtonFormElement(parent.qualifiers, parent.values);
+            ret = new RadioButtonFormElement(q_info, parent.qualifiers, parent.values);
         } else if(type === 'phq') {
-            ret = new RadioButtonFormElement(PHQ_OPTIONS, PHQ_OPTION_VALUES);
+            ret = new RadioButtonFormElement(q_info, PHQ_OPTIONS, PHQ_OPTION_VALUES);
         } else if(type === 'customradio') {
-            ret = new RadioButtonFormElement(choices, choices);
+            ret = new RadioButtonFormElement(q_info, q_info[4], q_info[4]);
         } else if(type === 'header') {
-            ret = new HeaderFormElement();
+            ret = new HeaderFormElement(q_info);
         // } else if(type === 'checkbox') {
-        //     ret = new CheckBoxFormElement(choices, choices);
+        //     ret = new CheckBoxFormElement(q_info, q_info[4], q_info[4]);
         } else {
             console.error('unknown form element type', type);
         }
         
         ret.parent = parent;
         return ret;
+    }
+
+    constructor(q_info) {
+        if(new.target === FormElement) {
+            throw new TypeError('cannot construct FormElement directly (use generator)');
+        }
+        this.info = q_info;
     }
 
     /**
@@ -270,36 +250,77 @@ class FormElement {
      * @param q_idx (int) - question number of this question
      * @return a single html element with the html of the response area
      */
-    generate_html(known_response, q_idx) {
-        console.log('generate_html: not implemented');
+    generate_input_area_html(known_response, q_idx) {
+        console.log('generate_input_area_html: not implemented');
     }
+
+    /**
+     * Default behavior for generating the html for this question and response area
+     * @param q_idx (int) - index of this question
+     */
+    generate_html(q_idx) {
+        let q_info = this.info;
+        let ret = document.createElement('div');
+
+        let text = q_info[0];
+        let type = q_info[1];
+        let required = q_info[2];
+        let follow = q_info[3];
+        let choices = q_info[4];
+        let response = this.parent.responses[q_idx];
+
+        // Insert node for the question
+        let qtext = document.createElement('h5');
+        $(qtext).attr('class', 'font-weight-light mb-2');
+        $(qtext).text(text);
+        if (required){
+            let asterisk = document.createElement('span');
+            $(asterisk).addClass('text-danger');
+            $(asterisk).addClass('h5');
+            $(asterisk).text(' *');
+            qtext.appendChild(asterisk);
+        }
+        ret.appendChild(qtext);
+
+        let html_element = this.generate_input_area_html(response, q_idx);
+        ret.appendChild(html_element);
+
+        if(follow) {
+            let follow_text = document.createElement('h5');
+            $(follow_text).attr('class', 'font-weight-light mb-2');
+            $(follow_text).text(follow);
+            ret.appendChild(follow_text);
+        }
+        return ret;
+    }
+
 }
 
 
 //TODO: docs
 class HeaderFormElement extends FormElement {
-    constructor() {
-        super();
+    constructor(q_info) {
+        super(q_info);
     }
     get_input(q_idx) {
         console.error('this should never have been called');
     }
-    generate_html(response, q_idx) {
+    generate_input_area_html(response, q_idx) {
         return document.createElement('div');
     }
 }
 
 
 class CheckBoxFormElement extends FormElement {
-    constructor() {
-        super();
+    constructor(q_info) {
+        super(q_info);
     }
 
     get_input(q_idx) {
 
     }
 
-    generate_html(response, q_idx) {
+    generate_input_area_html(response, q_idx) {
         let ret = document.createElement('div');
     }
 
@@ -314,12 +335,10 @@ class RadioButtonFormElement extends FormElement {
      * Construct RadioButtonFormElement with the given choices
      * @param choices (list of string) - choices to be displayed for the radio buttons
      * @param values (list of string) - values to be stored for each choice
-     * @param required (boolean) - whether the question is required
      */
-    constructor(choices, values, required) {
-        super();
+    constructor(q_info, choices, values) {
+        super(q_info);
         this.choices = choices;
-        this.required = required;
         if(values === undefined) {
             this.values = choices;
         } else {
@@ -335,7 +354,7 @@ class RadioButtonFormElement extends FormElement {
      * @param q_idx (int) - question number of this question
      * @return a single html element with the radio buttons in it
      */
-    generate_html(known_response, q_idx) {
+    generate_input_area_html(known_response, q_idx) {
         let ret = document.createElement('div');
         $(ret).addClass('mb-4');
 
@@ -398,10 +417,9 @@ class RadioButtonFormElement extends FormElement {
  */
 class TextFormElement extends FormElement {
     
-    constructor(is_long, required) {
-        super();
+    constructor(q_info, is_long) {
+        super(q_info);
         this.is_long = is_long;
-        this.required = required;
     }
 
     /**
@@ -411,7 +429,7 @@ class TextFormElement extends FormElement {
      * @param q_idx (int) - question number of this question
      * @return the textbox as an html element
      */
-    generate_html(response, q_idx) {
+    generate_input_area_html(response, q_idx) {
         let ret = document.createElement('div');
         $(ret).addClass('mb-4');
         // insert a text box
