@@ -52,9 +52,6 @@ class Logger {
     logUds(uds, pid) {
         this.signIn.then(credential => {
             for(let ud of uds) {
-
-                //console.log('ud', ud);
-
                 // clean the strings.
                 let name = this.encodeString(ud.name);
                 let question = this.encodeString(ud.question);

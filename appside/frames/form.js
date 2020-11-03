@@ -222,7 +222,7 @@ class FormElement {
         } else {
             console.error('unknown form element type', type);
         }
-        
+
         ret.parent = parent;
         return ret;
     }
@@ -310,7 +310,6 @@ class FormElement {
 
         return ret;
     }
-
 }
 
 
@@ -420,7 +419,7 @@ class CheckBoxFormElement extends FormElement {
 
 
 /**
- * FormElement that makes radio buttons questions
+ * FormElement that makes radio button questions
  */
 class RadioButtonFormElement extends FormElement {
     /**

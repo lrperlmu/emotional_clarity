@@ -147,7 +147,7 @@ var INDUCTION_CHAR_LIMIT = 180;
 var SHORTTEXT_CHAR_LIMIT = 180;
 var INDUCTION_NOTE = 'This event will be referred to as the "Reference Event"';
 var INDUCTION_WRITING_PROMPT = 'For the next few minutes, try to re-experience the event as vividly as you can. Picture the event happening to you all over again. Picture in your "mind\'s eye" the surroundings as clearly as possible. See the people or objects; hear the sounds; experience the events happening to you. Think the thoughts that this event makes you think. Feel the same feelings that this event makes you feel. Let yourself react as if you were actually in the middle of it right now. While you re-experience the event, write about what is happening in the situation, how the other person or people involved behaved toward you, and what you are thinking. You can move on to the next screen when the time is up. Begin writing now.';
-var INDUCTION_TIME_LIMIT = 3; // Reduce for testing/debugging
+var INDUCTION_TIME_LIMIT = 130; // Reduce for testing/debugging
 
 // Likert frame strings
 var LIKERT_FRAME_TEMPLATE = 'likert';
@@ -261,16 +261,6 @@ var DEMOGRAPHICS_QUESTIONS = [
     ['Mobility-related disability', 'checkbox'],
     ['Speech-related disability', 'checkbox'],
     ['Other (please specify)', 'shorttext', false],
-    // ['If so, how do you describe your disability?', 'checkboxes', false, '',
-    //  [
-    //      'Attention deficit', 'Autism', 'Blind or visually impaired',
-    //      'Deaf or hard of hearing', 'Health-related disability', 'Learning disability',
-    //      'Mental health condition', 'Mobility-related disability',
-    //      'Speech-related disability', 'Other (please specify below)',
-    //  ],
-    // ['Other (please specify)', 'shorttext', false],
-    //],
-
 ];
 
 
