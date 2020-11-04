@@ -277,7 +277,6 @@ class FormElement {
         if(follow) {
             $(follow_text).attr('class', 'font-weight-light mb-2');
             $(follow_text).text(follow);
-            ret.appendChild(follow_text);
         }
         return follow_text;
     }
