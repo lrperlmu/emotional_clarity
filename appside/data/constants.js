@@ -49,7 +49,6 @@ let VARIANT_SLUG_LOOKUP = new Map([
 
 // generic value for frame name (when we don't need to distinguish)
 var RESPONSE_GENERIC = 'response';
-var RESPONSE_CONSENT = 'consent';
 var RESPONSE_PHQ = 'phq';
 var RESPONSE_PRE = 'pre';
 var RESPONSE_POST = 'post';

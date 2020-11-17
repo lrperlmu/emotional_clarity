@@ -417,14 +417,14 @@ class DbtWorksheetModelFwd extends Model {
         let consent_frame = {};
 
         consent_frame.title = CONSENT_DISCLOSURE_TITLE;
-        consent_frame.response_name = RESPONSE_CONSENT;
+        consent_frame.response_name = RESPONSE_GENERIC;
         consent_frame.template = CONSENT_FRAME_TEMPLATE;
         consent_frame.instructions = CONSENT_DISCLOSURE_INSTRUCTIONS;
 
         consent_frame.questions = consent_questions;
 
         for(let item of consent_questions) {
-            let ud = new UserData(item[0], item[1], [], RESPONSE_CONSENT);
+            let ud = new UserData(item[0], item[1], [], RESPONSE_GENERIC);
             this.uds.add(ud);
         }
 
@@ -798,14 +798,14 @@ class DbtWorksheetModelFwd extends Model {
             frame.title = FEEDBACK_TITLE;
             frame.instruction = FEEDBACK_COMPARISON_INSTRUCTION.replace(
                 FEEDBACK_PLACEHOLDER, order_string);
-            frame.response_name = RESPONSE_FEEDBACK;
+            frame.response_name = RESPONSE_GENERIC;
 
             let questions = [];
             for(let q of FEEDBACK_COMPARISON_SKELETON) {
                 let question = q.concat(); // make a copy
                 question = question.replace(FEEDBACK_PLACEHOLDER, platform.toUpperCase());
                 questions.push([question, 'text']);
-                this.uds.add(new UserData(question, '', [], RESPONSE_FEEDBACK));
+                this.uds.add(new UserData(question, '', [], RESPONSE_GENERIC));
             }
             frame.questions = questions;
 
