@@ -254,7 +254,7 @@ class SummaryFrameCount extends SummaryFrame {
         let responses_container = document.createElement('div');
         $(responses_container).attr('class', 'summary_responses_container');
 
-        // button to make popup appear
+        // create button to make popover appear
         let responses_button = document.createElement('button');
         $(responses_button).attr('class', 'btn btn-outline-info px-1 py-0');
         $(responses_button).attr('type', 'button');
@@ -266,9 +266,10 @@ class SummaryFrameCount extends SummaryFrame {
             $(responses_button).text(`${count} responses`);
         }
 
+        // create attributes of the popover element
         $(responses_button).attr('data-toggle', 'popover');
-        $(responses_button).attr('title', 'Responses consistent with ' + self.build_match_string(item));
-        
+        $(responses_button).attr(
+            'title', 'Responses consistent with ' + self.build_match_string(item));
         let response_list = document.createElement('ul');
         for (let response of item.responses) {
             let list_item = document.createElement('li');
@@ -276,8 +277,13 @@ class SummaryFrameCount extends SummaryFrame {
             response_list.appendChild(list_item);
         }
         
+        // attach the popover to the button
         $(responses_button).attr('data-html', 'true');
-        $(responses_button).popover({container: 'body', content: response_list});
+        $(responses_button).popover({
+            container: 'body',
+            content: response_list,
+            trigger: 'focus',
+        });
 
         responses_container.appendChild(responses_button);
         return responses_container;
