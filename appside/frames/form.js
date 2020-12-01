@@ -74,7 +74,7 @@ class FormFrame extends Frame {
 
         // instructions
         let instruction = document.createElement('div');
-        $(instruction).text(this.instruction);
+        $(instruction).html(this.instruction);
         $(instruction).addClass('font-weight-light mb-4');
         frame.appendChild(instruction);
 

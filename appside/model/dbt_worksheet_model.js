@@ -512,7 +512,7 @@ class DbtWorksheetModelFwd extends Model {
         mood_check_frame.title = MOOD_FRAME_TITLE;
         mood_check_frame.template = MOOD_FRAME_TEMPLATE;
         mood_check_frame.response_name = RESPONSE_MOOD;
-        mood_check_frame.instructions = MOOD_INSTRUCTIONS;
+        mood_check_frame.instruction = MOOD_INSTRUCTIONS;
         mood_check_frame.qualifiers = MOOD_QUALIFIERS;
         mood_check_frame.values = MOOD_VALUES;
         mood_check_frame.questions = mood_questions;
@@ -1070,6 +1070,7 @@ class DbtWorksheetModelConfig {
      *   - study welcome frame
      *   - browser check frame
      *   - phq frame
+     *   - transition frames before and after app
      *   - demographics collection
      *   - we could potentially bundle more of the config items under the study flag
      *     to reduce the number of config options

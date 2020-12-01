@@ -67,7 +67,18 @@ var SVG_URL = 'http://www.w3.org/2000/svg';
 // Welcome frame (study)
 var SW_FRAME_TEMPLATE = 'study-welcome';
 var SW_TITLE = 'Welcome to the Emotional Clarity Study';
-var SW_TEXT = 'Thank you for volunteering for this study.';
+//var SW_TEXT = 'Thank you for volunteering for this study.';
+
+var SW_TEXT = `<p>Thank  you for volunteering for this study.</p>
+
+<p><b>The purpose of this study</b> is to test an intervention called the <b>Emotional Clarity App</b> that might be offered to the general population of teens as a tool to help reflect while experiencing intense emotions. </p>
+
+<p><b>Before</b> you use the Emotional Clarity App, we\'ll ask you <b>some questions about yourself</b>. We\'ll also use a <b>mood induction exercise</b> to evoke intense emotions in order to recreate a situation closer to the intended use case of the Emotional Clarity App. </p>
+
+<p><b>Next, you will use the Emotional Clarity App</b>. We will tell you when you are transitioning in and out of the Emotional Clarity App, and the transition will also be signalled with a change of background and fonts. <b>Please take note of when the app starts and ends so that you can provide your feedback with an accurate frame of reference.</b></p>
+
+<p><b>After</b> you use the Emotional Clarity App, we will ask you some more questions about your emotions, offer a positive mood induction in case you are feeling down, and ask for your feedback on the app.</p>`;
+
 
 // Browser check frame
 var BC_FRAME_TEMPLATE = 'browser-check';
@@ -147,7 +158,7 @@ var INDUCTION_CHAR_LIMIT = 180;
 var SHORTTEXT_CHAR_LIMIT = 180;
 var INDUCTION_NOTE = 'This event will be referred to as the "Reference Event"';
 var INDUCTION_WRITING_PROMPT = 'For the next few minutes, try to re-experience the event as vividly as you can. Picture the event happening to you all over again. Picture in your "mind\'s eye" the surroundings as clearly as possible. See the people or objects; hear the sounds; experience the events happening to you. Think the thoughts that this event makes you think. Feel the same feelings that this event makes you feel. Let yourself react as if you were actually in the middle of it right now. While you re-experience the event, write about what is happening in the situation, how the other person or people involved behaved toward you, and what you are thinking. After 2 minutes, you\'ll have the option to move on to the next screen. Begin writing now.';
-var INDUCTION_TIME_LIMIT = 130; // Reduce for testing/debugging
+var INDUCTION_TIME_LIMIT = 3; // Reduce for testing/debugging
 
 // Likert frame strings
 var LIKERT_FRAME_TEMPLATE = 'likert';
@@ -164,7 +175,7 @@ var SDERS_VALUES = [0, 1, 2, 3, 4];
 var MOOD_FRAME_TEMPLATE = 'mood_check';
 var MOOD_FRAME_TITLE = 'Mood Assessment';
 var MOOD_TITLE = 'Likert';
-var MOOD_INSTRUCTIONS = 'Please answer the following questions about your current mood.';
+var MOOD_INSTRUCTIONS = 'Please answer the following questions about your current mood. If you answer "quite a bit" or "extremely" to any question, then we will offer a positive mood induction exercise to help you feel better.';
 var MOOD_LOWEST_FAIL = 3;
 
 // Pre-measurement strings
