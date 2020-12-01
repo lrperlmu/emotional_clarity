@@ -58,10 +58,18 @@ class Frame {
         if (this.is_app){
             let body = document.getElementsByTagName('body'); 
             $(body[0]).addClass('doodle');
+
+            let divs = document.getElementsByTagName('div');
+            $(divs[0]).removeClass('bg-secondary');
+            $(divs[1]).removeClass('bg-light');
         }
         else {
             let body = document.getElementsByTagName('body'); 
             $(body[0]).removeClass('doodle');
+
+            let divs = document.getElementsByTagName('div');
+            $(divs[0]).addClass('bg-secondary');
+            $(divs[1]).addClass('bg-light');
         }
     }
 

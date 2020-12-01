@@ -219,26 +219,6 @@ function visual_test_end2(variant) {
  * Manually verified.
  * @param variant - the variant to test
  */
-function visual_test_pre_transition(variant) {
-    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
-    config.set_study(true);
-    let logger = new Logger();
-    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
-    model.initialize.then(() => {
-        let frame = model.get_frame('next');
-        while(frame.template !== TRANSITION_FRAME_TEMPLATE) {
-            frame = model.get_frame('next');
-        }
-        frame.render();
-    });
-}
-
-
-/*
- * Integration test for the pre-app transition frames
- * Manually verified.
- * @param variant - the variant to test
- */
 function visual_test_post_transition(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
     config.set_study(true);
@@ -399,6 +379,27 @@ function visual_test_phq(variant) {
     model.initialize.then(() => {
         let frame = model.get_frame('next');
         while(frame.template !== PHQ_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
+
+
+/*
+ * Integration test for the pre-app transition frames
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_pre_transition(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== TRANSITION_FRAME_TEMPLATE) {
             frame = model.get_frame('next');
         }
         model.get_frame('back');
