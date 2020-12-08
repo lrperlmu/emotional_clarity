@@ -172,7 +172,7 @@ var INDUCTION_CHAR_LIMIT = 180;
 var SHORTTEXT_CHAR_LIMIT = 180;
 var INDUCTION_NOTE = 'This event will be referred to as the "Reference Event"';
 var INDUCTION_WRITING_PROMPT = 'For the next few minutes, try to re-experience the event as vividly as you can. Picture the event happening to you all over again. Picture in your "mind\'s eye" the surroundings as clearly as possible. See the people or objects; hear the sounds; experience the events happening to you. Think the thoughts that this event makes you think. Feel the same feelings that this event makes you feel. Let yourself react as if you were actually in the middle of it right now. While you re-experience the event, write about what is happening in the situation, how the other person or people involved behaved toward you, and what you are thinking. After 2 minutes, you\'ll have the option to move on to the next screen. Begin writing now.';
-var INDUCTION_TIME_LIMIT = 3; // Reduce for testing/debugging
+var INDUCTION_TIME_LIMIT = 130; // Reduce for testing/debugging
 
 // Likert frame strings
 var LIKERT_FRAME_TEMPLATE = 'likert';
