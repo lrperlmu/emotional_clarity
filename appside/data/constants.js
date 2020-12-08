@@ -64,6 +64,9 @@ var EMOTION_TYPE = ['anger', 'disgust', 'envy', 'fear', 'guilt', 'happiness', 'l
 var BODY_PART = ['head', 'neck', 'arms', 'chest', 'belly', 'legs'];
 var SVG_URL = 'http://www.w3.org/2000/svg';
 
+var EC_ICON = 'images/heartgreen.png'
+var EC_ICON_ALT = 'Icon for Emotional Clarity App: a heart in a speech bubble';
+
 // Welcome frame (study)
 var SW_FRAME_TEMPLATE = 'study-welcome';
 var SW_TITLE = 'Welcome to the Emotional Clarity Study';
@@ -75,7 +78,18 @@ var SW_TEXT = `<p>Thank  you for volunteering for this study.</p>
 
 <p><b>Before</b> you use the Emotional Clarity App, we\'ll ask you <b>some questions about yourself</b>. We\'ll also use a <b>mood induction exercise</b> to evoke intense emotions in order to recreate a situation closer to the intended use case of the Emotional Clarity App. </p>
 
-<p><b>Next, you will use the Emotional Clarity App</b>. We will tell you when you are transitioning in and out of the Emotional Clarity App, and the transition will also be signalled with a change of background and fonts. <b>Please take note of when the app starts and ends so that you can provide your feedback with an accurate frame of reference.</b></p>
+<p><b>Next, you will use the Emotional Clarity App</b>. We will tell you when you are transitioning in and out of the Emotional Clarity App, and the transition will be signalled with a change of background. </p>
+
+<div class="d-flex flex-row align-items-center">
+<div>
+<p>In the app, you will also see this icon.</p>
+</div>
+<div class="mx-4 mb-3">
+<img src="${EC_ICON}" height="50" alt="${EC_ICON_ALT}">
+</div>
+</div>
+
+<p><b>Please take note of when the app starts and ends so that you can provide your feedback with an accurate frame of reference.</b></p>
 
 <p><b>After</b> you use the Emotional Clarity App, we will ask you some more questions about your emotions, offer a positive mood induction in case you are feeling down, and ask for your feedback on the app.</p>`;
 
