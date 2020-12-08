@@ -58,10 +58,35 @@ class Frame {
         if (this.is_app){
             let body = document.getElementsByTagName('body'); 
             $(body[0]).addClass('doodle');
+
+            let divs = document.getElementsByTagName('div');
+            $(divs[0]).removeClass('bg-secondary');
+            $(divs[1]).removeClass('bg-light');
+
+            let icons = $('#ec_app_icon');
+            if (icons.length === 0) {
+                let icon = document.createElement('img');
+                icon.setAttribute('src', EC_ICON);
+                icon.setAttribute('height', 50);
+                $(icon).addClass('float-right');
+                $(icon).attr('id', 'ec_app_icon');
+                $(icon).attr('alt', EC_ICON_ALT);
+                $(divs[1]).prepend(icon);
+            }
+
         }
         else {
             let body = document.getElementsByTagName('body'); 
             $(body[0]).removeClass('doodle');
+
+            let divs = document.getElementsByTagName('div');
+            $(divs[0]).addClass('bg-secondary');
+            $(divs[1]).addClass('bg-light');
+
+            let icons = $('#ec_app_icon');
+            if (icons.length > 0) {
+                icons[0].remove();
+            }
         }
     }
 

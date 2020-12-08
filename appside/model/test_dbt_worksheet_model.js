@@ -19,11 +19,15 @@ $(document).ready(function() {
         'page_counts': test_compute_page_counts,
 
         // integ tests
+        'welcome': visual_test_welcome,
+        'pre_transition': visual_test_pre_transition,
         'intro': visual_test_intro,
         'self_report': visual_test_self_report,
         'pre_measurement': visual_test_pre_measurement,
         'body': visual_test_body,
+        'post_transition': visual_test_post_transition,
         'post_measurement': visual_test_post_measurement,
+        'mood_check': visual_test_mood_check,
         'demographics' : visual_test_demographics,
         'end': visual_test_end,
         'end2': visual_test_end2,
@@ -144,6 +148,32 @@ function wksht_noerror(config, logger) {
 
 
 /*
+ * Integration for the study welcome frame.
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_welcome(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
+    config.set_consent_disclosure(true);
+    config.set_mood_induction(true);
+    config.set_self_report(true);
+    config.set_mood_check(true);
+    config.set_pre_post_measurement(true);
+    config.set_feedback(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== SW_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        frame.render();
+    });
+}
+
+
+/*
  * Integration test that constructs an EndFrame to render the end frame of this app.
  * This end frame is used when the participant completes the study.
  * Manually verified.
@@ -179,6 +209,31 @@ function visual_test_end2(variant) {
             frame = model.get_frame('next');
         }
         frame.set_passed_phq(false);
+        frame.render();
+    });
+}
+
+
+/*
+ * Integration test for the pre-app transition frames
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_post_transition(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== TRANSITION_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        frame = model.get_frame('next');
+        while(frame.template !== TRANSITION_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+
         frame.render();
     });
 }
@@ -234,6 +289,24 @@ function visual_test_post_measurement() {
         let frame = model.get_frame('next');
         while(frame.template !== LIKERT_FRAME_TEMPLATE 
               && frame.response_name !== RESPONSE_POST) {
+            frame = model.get_frame('next');
+        }
+        frame.render();
+    });
+}
+
+
+/*
+ * Integration test for the mood check
+ * Manually verified.
+ */
+function visual_test_mood_check() {
+    FWD_PROMPTING_CONFIG.set_mood_check(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, FWD_PROMPTING_CONFIG, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== MOOD_FRAME_TEMPLATE) {
             frame = model.get_frame('next');
         }
         frame.render();
@@ -315,6 +388,27 @@ function visual_test_phq(variant) {
 
 
 /*
+ * Integration test for the pre-app transition frames
+ * Manually verified.
+ * @param variant - the variant to test
+ */
+function visual_test_pre_transition(variant) {
+    let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
+    let logger = new Logger();
+    let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
+    model.initialize.then(() => {
+        let frame = model.get_frame('next');
+        while(frame.template !== TRANSITION_FRAME_TEMPLATE) {
+            frame = model.get_frame('next');
+        }
+        model.get_frame('back');
+        let nav = new Nav(model, logger);
+    });
+}
+
+
+/*
  * Integration test that invokes StatementsBodyFrame to render a body frame of this app.
  * Manually verified.
  * @param variant - the variant to test
@@ -342,8 +436,13 @@ function visual_test_body(variant) {
  */
 function visual_test_summary(variant) {
     let config = new DbtWorksheetModelConfig(DIRECTION_FWD, variant);
+    config.set_study(true);
+    config.set_consent_disclosure(true);
+    config.set_mood_induction(true);
     config.set_self_report(true);
+    config.set_mood_check(true);
     config.set_pre_post_measurement(true);
+    config.set_feedback(true);
     let logger = new Logger();
     let model = new DbtWorksheetModelFwd(knowledgebase, config, logger);
     model.initialize.then(() => {
