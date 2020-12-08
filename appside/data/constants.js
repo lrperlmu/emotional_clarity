@@ -49,6 +49,7 @@ let VARIANT_SLUG_LOOKUP = new Map([
 
 // generic value for frame name (when we don't need to distinguish)
 var RESPONSE_GENERIC = 'response';
+var RESPONSE_CONSENT = 'consent';
 var RESPONSE_PHQ = 'phq';
 var RESPONSE_PRE = 'pre';
 var RESPONSE_POST = 'post';
@@ -146,7 +147,7 @@ var INDUCTION_THINKING_PROMPT = 'Think of an event in your life when someone clo
 var INDUCTION_CHAR_LIMIT = 180;
 var SHORTTEXT_CHAR_LIMIT = 180;
 var INDUCTION_NOTE = 'This event will be referred to as the "Reference Event"';
-var INDUCTION_WRITING_PROMPT = 'For the next few minutes, try to re-experience the event as vividly as you can. Picture the event happening to you all over again. Picture in your "mind\'s eye" the surroundings as clearly as possible. See the people or objects; hear the sounds; experience the events happening to you. Think the thoughts that this event makes you think. Feel the same feelings that this event makes you feel. Let yourself react as if you were actually in the middle of it right now. While you re-experience the event, write about what is happening in the situation, how the other person or people involved behaved toward you, and what you are thinking. You can move on to the next screen when the time is up. Begin writing now.';
+var INDUCTION_WRITING_PROMPT = 'For the next few minutes, try to re-experience the event as vividly as you can. Picture the event happening to you all over again. Picture in your "mind\'s eye" the surroundings as clearly as possible. See the people or objects; hear the sounds; experience the events happening to you. Think the thoughts that this event makes you think. Feel the same feelings that this event makes you feel. Let yourself react as if you were actually in the middle of it right now. While you re-experience the event, write about what is happening in the situation, how the other person or people involved behaved toward you, and what you are thinking. After 2 minutes, you\'ll have the option to move on to the next screen. Begin writing now.';
 var INDUCTION_TIME_LIMIT = 130; // Reduce for testing/debugging
 
 // Likert frame strings
@@ -178,7 +179,7 @@ var POSITIVE_INDUCTION_TEMPLATE = 'positive_induction';
 var POSITIVE_INDUCTION_TITLE = 'Address your negative mood';
 var POSITIVE_INDUCTION_WRITING_PROMPT = '<p>The results of your mood assessment suggest that you may still have lingering negative emotions from recalling a memory. We would like to have you review another memory, one that made you happy.</p>' + 
     '<p>Think of one event in your life when someone close to you made you feel <b>happy</b>. If you think of more than one event, try to pick one that continues to bring up some pleasant feelings right now. </p>' + 
-    '<p>For the next few minutes, try to re-experience the event as vividly as you can. Picture the event happening to you all over again. Picture in your "mind\'s eye" the surroundings as clearly as possible. See the people or objects; hear the sounds; experience the events happening to you. Think the thoughts that this event makes you think. Feel the same feelings that this event makes you feel. Let yourself react as if you were actually in the middle of it right now. While you re-experience the event, write about what is happening in the situation, how the other person or people involved behaved toward you, and what you are thinking. You can move on to the next screen when the time is up. Begin writing now.</p>';
+    '<p>For the next few minutes, try to re-experience the event as vividly as you can. Picture the event happening to you all over again. Picture in your "mind\'s eye" the surroundings as clearly as possible. See the people or objects; hear the sounds; experience the events happening to you. Think the thoughts that this event makes you think. Feel the same feelings that this event makes you feel. Let yourself react as if you were actually in the middle of it right now. While you re-experience the event, write about what is happening in the situation, how the other person or people involved behaved toward you, and what you are thinking. After 2 minutes, you\'ll have the option to move on to the next screen. Begin writing now.</p>';
 
 
 // Self report strings
