@@ -113,19 +113,20 @@ class DbtWorksheetModelFwd extends Model {
             if(this.config.pre_post_measurement) {
                 this.frames.push(this.build_likert_frame(RESPONSE_POST));
             }
-            if(this.config.mood_check) {
-                for(let frame of this.build_mood_check_frames())
-                    this.frames.push(frame);
-            }
-            if(this.config.pre_post_measurement || this.config.self_report || this.config.mood_check) {
+            if(this.config.pre_post_measurement || this.config.self_report) {
                 this.frames.push(new BlockerFrame());
             }
 
-
+            // Feedback
             if(this.config.feedback) {
                 for(let frame of this.build_feedback_frames()) {
                     this.frames.push(frame);
                 }
+            }
+            if(this.config.mood_check) {
+                for(let frame of this.build_mood_check_frames())
+                    this.frames.push(frame);
+                this.frames.push(new BlockerFrame());
             }
             if(this.config.study) {
                 this.frames.push(this.build_demographics_frame());
